@@ -1,0 +1,8 @@
+import OtpVerify from '@/components/shared/OtpVerify'
+import React from 'react'
+
+const OTP = () => {
+  return  <OtpVerify />
+}
+
+export default OTP
