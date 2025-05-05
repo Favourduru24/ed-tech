@@ -13,9 +13,15 @@ const initialState = feedsAdapter.getInitialState()
 export const feedsApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         getFeeds: builder.query({
-          query: ({ searchTerm = '', page = 1, limit = 5 }) => 
-            `/feeds?search=${encodeURIComponent(searchTerm)}&page=${page}&limit=${limit}`,
-          
+          query: ({ searchTerm = '', page = 1, limit = 5, category = '' }) => ({
+            url: `/feeds`,
+            params: {
+              search: searchTerm,
+              page,
+              limit,
+              category,// Fix typo
+            }
+          }),
           validateStatus: (response, result) => {
             return response.status === 200 && !result.isError
           },
@@ -50,8 +56,8 @@ export const feedsApiSlice = apiSlice.injectEndpoints({
             transformResponse: responseData => {
                 // Single feed response doesn't need .feed property
                 return feedsAdapter.setOne(initialState, {
-                  ...responseData,
-                  id: responseData._id
+                  ...responseData.feedId,
+                  id: responseData.feedId._id
                 });
               },
              providesTags: (result, error, arg) => {

@@ -13,7 +13,7 @@ const Feed = ({feed, id}) => {
                        <div className='  bg-black/10 w-16 h-16 rounded-full'>
                   <Image src="/images/user5.png" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
                           </div>
-                     <p className='text-lg text-white font-semibold'>Henry James</p>
+                     <p className='text-lg text-white font-semibold'>{feed.userId.username}</p>
                      </div>
                       <div>
                          <div className='flex gap-2 items-center'>
@@ -29,10 +29,10 @@ const Feed = ({feed, id}) => {
     
                   <div className='flex items-center mt-2 p-2 w-full justify-between'>
                     <div className='flex gap-2 items-center'>
-                     <Image src="/icons/feed.png" height={24} width={24} alt='img'/>
+                     <Image src="/icons/like.png" height={24} width={24} alt='img'/>
                         {/* <Image src="/icons/skill.png" height={24} width={24} alt='img'/> */}
                         <Image src="/icons/comment.png" height={24} width={24} alt='img'/>
-                        <Image src="/icons/comment.png" height={24} width={24} alt='img'/>
+                        <Image src="/icons/share.png" height={24} width={24} alt='img'/>
                         <Link href={`/feeds/${feed?._id}/update`}>
                         <div className='flex items-center justify-center rounded-full cursor-pointer hover:bg-black hover:rounded-full p-2 shrink-0'>
                         <Image src='/icons/more.png' width={20} height={20} alt='more' className='rotate-90' />

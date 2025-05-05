@@ -12,27 +12,27 @@ export const categoryApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         getCategory: builder.query({
             query: () => '/category',
-             validateStatus: (response, result) => {
-                    return response.status === 200 && !result.isError
-             },
-            //  keepUnusedDataFor:5,
-             transformResponse: responseData => {
-                const loadedCategory = responseData.map(category => {
-                      category.id = category._id
-                      return category 
-                })
-                return categoryAdapter.setAll(initialState, loadedCategory)
-             },
-             providesTags: (result, error, arg) => {
-                if(result?.ids){
-             return [{type:'Category', id:'List'},
-             ...result.ids.map(id => ({type: 'Category', id}))
-            ]
-                }else {
-                    return [{type: 'Category', id: 'List'}]
-                }
-             }
-        }),
+            validateStatus: (response, result) => {
+              return response.status === 200 && !result.isError;
+            },
+            transformResponse: (responseData) => {
+              const loadedCategory = responseData.allCategory.map(category => ({
+                ...category,
+                id: category._id
+              }));
+              return categoryAdapter.setAll(initialState, loadedCategory);
+            },
+            providesTags: (result, error, arg) => {
+              if(result?.ids) {
+                return [
+                  { type: 'Category', id: 'List' },
+                  ...result.ids.map(id => ({ type: 'Category', id }))
+                ];
+              } else {
+                return [{ type: 'Category', id: 'List' }];
+              }
+            }
+          }),
           addNewCategory: builder.mutation({
             query: initailCategoryData => ({
                 url: '/category',
@@ -67,7 +67,9 @@ export const categoryApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: (result, error, arg) => [{type: 'Category', id:arg.id}]
           }),
-        })
+        }),
+        overrideExisting: true
+
 })
 
 export const {  

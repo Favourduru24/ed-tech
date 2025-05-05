@@ -54,35 +54,6 @@ const createFeed = async (req, res, next) => {
   }
 };
 
-  //  const getAllFeed = async (req, res) => {
-
-  //     try {
-   
-  //       const {query, page, limit = 5} = req.params 
-
-  //       const titleCondition = query ? { title: { $regex: query, $options: 'i' } } : {}
-   
-  //       const  skipAmount = (Number(page - 1 * limit))
-   
-  //        const feeds = await Feed.find(titleCondition)
-  //        .sort({createdAt: -1})
-  //        .limit(5)
-  //        .skip(skipAmount)
-
-  //       if(!feeds.length) return res.status(401).json({message: 'No feed found!'})
-   
-  //        const feedsCount = await Feed.countDocuments(titleCondition)
-   
-  //         return res.status(200).json({
-  //          feeds,
-  //          totalPages: feedsCount > page * limit
-  //        })
-   
-  //     } catch(error) {
-  //       console.log('Error fetching feeds!', error)
-  //     }
-  //   }
-
   const getCategoryByName = async (name) => {
     return Category.findOne({ name: { $regex: name, $options: 'i' } })
   }
@@ -96,12 +67,15 @@ const createFeed = async (req, res, next) => {
 
   const getAllFeed = async (req, res) => {
     try {
-      const { search: query, page = 1, limit = 5, category } = req.query; // Changed to req.query
+      const { search: query, page = 1, limit = 5, category = '' } = req.query; // Changed to req.query
       const numLimit = Number(limit);
       const numPage = Number(page);
   
       const titleCondition = query ? { title: { $regex: query, $options: 'i' } } : {};
-      const categoryCondition = category ? await getCategoryByName(category) : null
+      const categoryCondition = category ? await getCategoryByName(category) : null;
+       if (category && !categoryCondition) {
+       return res.status(404).json({ message: 'Category not found' });
+        }
 
       const conditions = {
         $and: [titleCondition, categoryCondition ? { category: categoryCondition._id } : {}],
@@ -112,15 +86,17 @@ const createFeed = async (req, res, next) => {
       const feeds = await Feed.find(conditions)
         .sort({ createdAt: -1 })
         .limit(numLimit)
-        .skip(skipAmount);
+        .skip(skipAmount)
+        .populate("userId", "username")
+        .populate("category", "_id name")
   
       if(!feeds.length) return res.status(404).json({ message: 'No feed found!' });
   
       const feedsCount = await Feed.countDocuments(conditions);
-      const feedQuery = await populateFeed(feeds)
+      // const feedQuery = await populateFeed(feeds)
   
       return res.status(200).json({
-        feedQuery, // Make sure this matches what your frontend expects (responseData.feeds)
+        feeds, // Make sure this matches what your frontend expects (responseData.feeds)
         totalPages: Math.ceil(feedsCount / numLimit),
         currentPage: numPage
       });
@@ -130,10 +106,7 @@ const createFeed = async (req, res, next) => {
       return res.status(500).json({ message: 'Server error fetching feeds' });
     }
   }
-
-
  
-
   const getFeedById = async (req, res) => {
 
          try{
@@ -144,12 +117,14 @@ const createFeed = async (req, res, next) => {
         }
 
        const feedQuery = await Feed.findById(id)
+                          .populate("category", "name")
+                          .populate("userId", "username")
 
         if(feedQuery._id.toString() !== id) {
          return res.status(400).json({message: 'No feedId found!'})
         }
 
-         const feedId = await populateFeed(feedQuery)
+         const feedId = await feedQuery
 
          return res.status(200).json({message: 'Fetch Feed Successfully', feedId})
 

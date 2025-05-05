@@ -51,7 +51,7 @@ const CreateForm = () => {
     const [open, setOpen] = useState(false)
     const [name, setName] = useState('')
     
-    // const {id} = useAuth()
+    const {id} = useAuth()
 
       const upload = async () => {
          try {
@@ -70,7 +70,7 @@ const CreateForm = () => {
       let imgUrl = ''
       if (imageUrl) imgUrl = await upload()
 
-      //  await addFeed({title, pitch, image: imgUrl, description, category, userId: id})
+       await addFeed({title, pitch, image: imgUrl, description, category, userId: id})
        console.log({title, pitch, image: imageUrl, description, category})
     }
 
@@ -88,7 +88,7 @@ const CreateForm = () => {
                  <form  className='flex flex-col gap-4 flex-grow max-w-[560px] h-full'>
                    <input type="text" className='w-[560px] h-13 p-2 font-sans text-light-100 text-lg border-[1.6px] border-[#4B4D4F] rounded-lg outline-none' placeholder='Add a category name..' value={name} onChange={(e) => setName(e.target.value)} required/>
                     <div className='flex gap-2 items-center justify-end'>
-                         <button className='w-20 h-10 bg-[#B391F0] font-semibold rounded-lg cursor-pointer' onClick={handleCreateCategory}  type='submit'>{catIsLoading ? '....' : Add}</button>
+                         <button className='w-20 h-10 bg-[#B391F0] font-semibold rounded-lg cursor-pointer' onClick={handleCreateCategory}  type='submit'>{catIsLoading ? '....' : 'Add'}</button>
                          <button className='w-20 h-10 bg-[#9E4B9E] font-semibold rounded-lg cursor-pointer' onClick={() => setOpen(false)}>Cancel</button>
                     </div>
                  </form>
@@ -135,7 +135,7 @@ const CreateForm = () => {
       </div>
       <div className="flex justify-between items-center w-full gap-4 h-full sm:flex-row flex-col">
                <div className="sm:w-[50%] h-56 w-full sm:mb-0 mb-2">
-                    <textarea name="textarea" className="w-full h-full bg-[#1F2225] border-[1.0px] border-[#4B4D4F] rounded-xl p-2 placeholder:text-gray-500 placeholder:text-sm p-2 placeholder:font-sans placeholder:font-semibold text-white " placeholder='Write brief feeds description (at least 150 char)' value={description} onChange={(e) => setDescription(e.target.value)} maxLength={150}/>
+                    <textarea name="textarea" className="w-full h-full bg-[#1F2225] border-[1.0px] border-[#4B4D4F] rounded-xl p-2 placeholder:text-gray-500 placeholder:text-sm p-2 placeholder:font-sans placeholder:font-semibold text-white " placeholder='Write brief feeds description (at least 150 char)' value={description} onChange={(e) => setDescription(e.target.value)} maxLength={300}/>
 
                </div>
 

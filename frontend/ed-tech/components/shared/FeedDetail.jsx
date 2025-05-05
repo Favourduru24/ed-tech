@@ -6,12 +6,20 @@ import { useState } from 'react'
 
 const FeedDetail = ({id}) => {
 
-    const {data: feedId} = useGetFeedQuery(id)
+    const {data: feedId, isLoading} = useGetFeedQuery(id)
+
+     console.log({feedId})
 
     const feed = feedId?.entities[id]
 
 
     const [pitch, setPitch] = useState('')
+
+     if(isLoading){
+         return(
+            <p className="text-white">Loading...</p>
+         )
+     }
 
   return (
     <section className='flex flex-col sm:py-8 py-5'>
@@ -29,14 +37,14 @@ const FeedDetail = ({id}) => {
                                                  <Image src="/images/user5.png" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
                                                </div>
                                                 <div className='flex flex-col leading-0 gap-3'>
-                                                  <p className='text-lg font-semibold text-[#FAFAFA] font-sans '>Javascript Mastery</p>
+                                                  <p className='text-lg font-semibold text-[#FAFAFA] font-sans '>{feed?.userId?.username}</p>
                                                  <p className='text-[0.8rem] font-semibold text-[#B391F0] font-sans'>Posted on Apr 23</p>
                                                 </div>
                                              </div> 
 
                                              <div className='p-2 flex flex-col gap-3 '>
                        <h2 className='text-5xl font-bold  font-sans capitalize text-gray-300 leading-16'>{feed?.title}</h2>
-                      <p className='leading-6 text-justify font-sans text-[#B391F0] text-[1rem] max-sm:text-sm italic'><span className='text-white'>#</span>{feed?.category}</p>
+                      <p className='leading-6 text-justify font-sans text-[#B391F0] text-[1rem] max-sm:text-sm italic'><span className='text-white'>#</span>{feed?.category?.name}</p>
                    </div> 
                
                   <p className='mt-2 leading-8 text-2xl  text-light-100 pl-2 font-sans font-normal'>{feed?.description}.</p>
@@ -74,7 +82,7 @@ const FeedDetail = ({id}) => {
                                                </div>
                                                 <div className='flex flex-col '>
                                                 <div className='flex leading-0 gap-3 items-center'>
-                                                  <p className='text-lg font-semibold text-[#FAFAFA] font-sans relative'>Javascript Mastery <span className="bg-[#B391F0] h-2 w-2 rounded-full flex top-2 absolute -right-3"/></p>
+                                                  <p className='text-lg font-semibold text-[#FAFAFA] font-sans relative'>Javascript Mastery<span className="bg-[#B391F0] h-2 w-2 rounded-full flex top-2 absolute -right-3"/></p>
                                                  <p className='text-md font-semibold text-[#B391F0] font-sans ml-2'>Posted on Apr 23</p>
                                                 </div>
                                                 <p className='mt-2 leading-8 text-xl text-light-100 font-sans font-normal max-w-4xl'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero, </p>

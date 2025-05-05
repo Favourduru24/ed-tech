@@ -39,15 +39,23 @@ const Feeds = ({searchText, cat}) => {
        }, [query, searchParams, router])
 
 
-  const {data} = useGetFeedsQuery({
+  const {data, isLoading} = useGetFeedsQuery({
     searchTerm: searchText,
      category: cat
   })
 
   const { ids, entities } =  data || {}
 
+  console.log({entities})
+
 
   const buttons = ["All", "Category", "Date +"]
+
+   if(isLoading) {
+     return (
+       <p>Loading...</p>
+        )
+   }
 
   return (     
        <> 

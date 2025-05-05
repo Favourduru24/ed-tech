@@ -7,22 +7,25 @@ import { formUrlQuery, removeKeysFromQuery } from "@/libs/utils"
 
 const Category = ({buttons}) => {
 
-    // const {data: Category} = useGetCategoryQuery()
+    const {data, isLoading } = useGetCategoryQuery()
 
-    //  console.log()
-
+    const {ids, entities} = data || { }
+ 
     const [items, setItems] = useState(buttons[0])
     const [category, setCategory] = useState('')
     const [date, setDate] = useState('')
     const router = useRouter()
     const searchParams = useSearchParams()
 
-    const Category = [
-      { value: 'Select Category', label: 'Select Category' },
-      { value: 'Mathematics', label: 'Mathematics' },
-      { value: 'Chemistry', label: 'Chemistry' },
-     { value: 'Communication', label: 'Communication' }
-]
+    if(isLoading){
+       return (
+         <select  className="h-full w-full rounded-xl
+         outline-none cursor-pointer font-semibold text-lg font-sans border-0 gap-2 p-1"
+         >
+             <option>Loading...</option>
+         </select>
+       )
+    }
 
     const Date = [
       { value: 'Date Added', label: 'Date Added' },
@@ -83,13 +86,16 @@ const onSelectDate = (date) => {
            onClick={(e) => onSelectCategory(e.target.value)}
            className="h-full w-full rounded-xl
            outline-none cursor-pointer font-semibold text-lg font-sans border-0 gap-2 p-1"
-           
          >
-           {Category.map((cat) => (
-             <option key={cat.value} value={cat.value} style={{ backgroundColor: '#1F2225', color: '#FAFAFA', fontFamily: 'sans', width: '100rem'}} className="w-[50vh]">
-                {cat.label}
+            <option value="Select Category" className="bg-[#1F2225]">Select Category</option>
+           {ids ?  ids.map((id) => {
+             const cat = entities[id]
+              return (
+                <option key={cat.id} value={cat.name} style={{ backgroundColor: '#1F2225', color: '#FAFAFA', fontFamily: 'sans', width: '100rem'}} className="w-[50vh]">
+                {cat.name}
              </option>
-           ))}
+              )
+           }) : ''}
          </select>
          </div>
       ) : id === 'Date +' ? 
