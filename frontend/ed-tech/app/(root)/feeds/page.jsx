@@ -6,9 +6,11 @@ const Page = async (props) => {
 
    const searchText = (searchParams?.query) || ''
    const category = (searchParams?.category) || ''
+   const date = (searchParams?.date) || ''
+  //  const 
 
   return (     
-    <Feeds searchText={searchText} cat={category}/>    
+    <Feeds searchText={searchText} cat={category} date={date}/>    
   )
 }
 

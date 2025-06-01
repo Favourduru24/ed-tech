@@ -8,6 +8,7 @@ import { useLoginMutation } from "@/features/auth/authApiSlice"
 import { useDispatch } from "react-redux"
 import { setCredentials } from "@/features/auth/authSlice"
 import usePersist from "@/hooks/usePersist"
+import useSocket from "@/features/socket/socket"
 
 
 const AuthForm = ({type}) => {
@@ -70,6 +71,7 @@ const AuthForm = ({type}) => {
         const handleSignIn = async (e) => {
           e.preventDefault()
               await addNewUser({username: form.username, email: form.email, password: form.password, confirmPassword: form.confirmPassword})
+              
        }
             
        const handlePersist = (e) => {
@@ -82,8 +84,8 @@ const AuthForm = ({type}) => {
 
             try {
               const  {accessToken } = await loginUser({email: form.email, password:form.password}).unwrap()
-        dispatch(setCredentials({ accessToken }))
-
+             dispatch(setCredentials({ accessToken }))
+              useSocket(form.username)
             } catch (err) {
               if (!err.status) {
                 setErrMsg('No Server Response!`');

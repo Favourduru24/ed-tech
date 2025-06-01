@@ -1,7 +1,10 @@
 const Feed = require('../models/Feed')
 const mongoose = require('mongoose')
 const Category = require('../models/Category')
+const Comment = require('../models/Comment')
 const User = require('../models/User')
+const cloudinary = require('../config/cloudinary')
+const {emitLikeNotification, io} = require('../config/socket')
 
 const createFeed = async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -58,47 +61,65 @@ const createFeed = async (req, res, next) => {
     return Category.findOne({ name: { $regex: name, $options: 'i' } })
   }
 
-  const populateFeed = async (query) => {
-    return query
-    .populate({path: 'userId', model: User, select: "username"})
-    .populate({path: 'category', model: Category, select: "_id name"})
-}
-  
-
   const getAllFeed = async (req, res) => {
-    try {
-      const { search: query, page = 1, limit = 5, category = '' } = req.query; // Changed to req.query
-      const numLimit = Number(limit);
-      const numPage = Number(page);
-  
-      const titleCondition = query ? { title: { $regex: query, $options: 'i' } } : {};
-      const categoryCondition = category ? await getCategoryByName(category) : null;
-       if (category && !categoryCondition) {
-       return res.status(404).json({ message: 'Category not found' });
-        }
 
-      const conditions = {
-        $and: [titleCondition, categoryCondition ? { category: categoryCondition._id } : {}],
+    try {
+        const { search: query, page = 1, limit = 5, category = '', date } = req.query; 
+         const numPage = Number(page);
+         const numLimit = Number(limit);
+
+          let timeCondition = {}
+     
+         if (date) {
+          const now = new Date();
+          
+          if (date === '1hr') {
+              timeCondition.createdAt = { $gte: new Date(now - 60 * 60 * 1000) };
+          } 
+          else if (date === 'yesterday') {
+              const yesterday = new Date(now);
+              yesterday.setDate(yesterday.getDate() - 1);
+              timeCondition.createdAt = { $gte: yesterday };
+          } 
+          else if (date === '1week') {
+              const lastWeek = new Date(now);
+              lastWeek.setDate(lastWeek.getDate() - 7);
+              timeCondition.createdAt = { $gte: lastWeek };
+          }
       }
 
-      const skipAmount = (numPage - 1) * numLimit;
+         const titleCondition = query ? { title: { $regex: query, $options: 'i' } } : {};
+         const categoryCondition = category ? await getCategoryByName(category) : null;
+
+         if (category && !categoryCondition) {
+         return res.status(404).json({ message: 'Category not found' });
+        }
+
+        const conditions = {
+          $and: [
+            timeCondition,
+            titleCondition, 
+            categoryCondition ? { category: categoryCondition._id } : {}
+          ].filter(cond => Object.keys(cond).length > 0) // Remove empty conditions
+        };
+
+        const skipAmount = (numPage - 1) * numLimit;
   
-      const feeds = await Feed.find(conditions)
+        const feeds = await Feed.find(conditions)
         .sort({ createdAt: -1 })
-        .limit(numLimit)
         .skip(skipAmount)
+        .limit(numLimit)
         .populate("userId", "username")
         .populate("category", "_id name")
   
       if(!feeds.length) return res.status(404).json({ message: 'No feed found!' });
   
       const feedsCount = await Feed.countDocuments(conditions);
-      // const feedQuery = await populateFeed(feeds)
-  
+       
       return res.status(200).json({
-        feeds, // Make sure this matches what your frontend expects (responseData.feeds)
-        totalPages: Math.ceil(feedsCount / numLimit),
-        currentPage: numPage
+        feeds, 
+        totalPages: Math.ceil(feedsCount / numLimit), // 10 / 5 = 2
+        // currentPage: numPage
       });
   
     } catch(error) {
@@ -133,89 +154,15 @@ const createFeed = async (req, res, next) => {
        }
   }
 
-  // const updateFeed = async (req, res, next) => {
-
-  //    const session = await mongoose.startSession()
-
-  //     try{
-
-  //        await session.startTransaction()
-
-  //       const {title, pitch, category, userId, image, description, id} = req.body
-
-  //       if(!mongoose.Types.ObjectId.isValid(id)) {
-  //         await session.abortTransaction()
-  //         session.endSession()
-  //         return res.status(400).json({message: 'Invalid ID format'})
-  //       }
- 
-  //      const missingFields = []
-        
-  //       if(!title) missingFields.push('title')
-  //       if(!pitch) missingFields.push('pitch')
-  //       if(!category) missingFields.push('category')
-  //       if(!userId) missingFields.push('userId')
-  //       if(!image) missingFields.push('image')
-  //       if(!description) missingFields.push('description')
-  //       if(!id) missingFields.push('Id') 
-
-  //       if(missingFields.length > 0) {
-  //         await session.abortTransaction()
-  //          session.endSession()
-  //           return res.status(400).json({
-  //              message: 'Missing required field',
-  //              missingFields
-  //         })
-
-  //           }
-
-  //        const feed = await Feed.findById(id)
-
-  //         if(feed._id.toString() !== id){
-  //           await session.abortTransaction()
-  //            session.endSession()
-  //            return res.status(400).json({
-  //              message: 'Invalid ID format!'
-  //            })
-  //         }
-        
-  //        feed.title = title
-  //        feed.pitch = pitch
-  //        feed.category = category
-  //        feed.description = description
-  //        feed.image = image
-
-  //        const newFeed = await Feed.updateOne([{feed}], {session})
-
-  //        if(!newFeed) {
-  //         await session.abortTransaction()
-  //           session.endSession()
-  //            return res.status(400).json({message: 'Something went wrong updating feed!'})
-  //        }
-
-  //       await session.commitTransaction()
-  //        .endSession()
-  //       res.status(201).json({message: 'Feed Updated successfully!'})
-
-  //     } catch(error) {
-  //        next(error)
-  //        console.log('Error occured updating feed', error)
-  //        await session.abortTransaction()
-  //        session.endSession()
-  //        return res.status(500).json({message: 'Something went wrong updating feed!', error: error.message})
-  //     }
-      
-  // }
-
-
   const updateFeed = async (req, res, next) => {
     const session = await mongoose.startSession();
     
     try {
         await session.startTransaction();
-        
-        const { title, pitch, category, userId, image, description, id } = req.body;
-
+        const { id } = req.params
+        const { title, pitch, category, image, description} = req.body;
+         
+           
         // Validate ID
         if (!mongoose.Types.ObjectId.isValid(id)) {
             await session.abortTransaction();
@@ -224,25 +171,22 @@ const createFeed = async (req, res, next) => {
         }
 
         // Validate required fields
-        const requiredFields = { title, pitch, category, userId, image, description };
+        const requiredFields = { title, pitch }; // Remove other fields
         const missingFields = Object.entries(requiredFields)
-            .filter(([_, value]) => !value)
-            .map(([key]) => key);
-
-        if (missingFields.length > 0) {
-            await session.abortTransaction();
-            await session.endSession();
-            return res.status(400).json({
-                message: 'Missing required fields',
-                missingFields
-            });
-        }
+          .filter(([_, value]) => !value?.trim()) // Check for empty strings
+          .map(([key]) => key);
 
         // Update operation
         const updatedFeed = await Feed.findByIdAndUpdate(
-            id,
-            { title, pitch, category, description, image },
-            { new: true, runValidators: true, session }
+          id,
+          { 
+            title: title.trim(),
+            pitch: pitch.trim(),
+            category,
+            description: description?.trim(), // Optional
+            image: image || null,
+          },
+          { new: true, runValidators: true, session }
         );
 
         if (!updatedFeed) {
@@ -276,27 +220,135 @@ const createFeed = async (req, res, next) => {
     }
 };
 
-   const likeFeed = async (req, res) => {
+const deleteFeed = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction(); // Explicitly start transaction
 
-        const userId = req.userId
-        const id = req.params
-         
-         const feed = await Feed.findById(id)
+  try {
+    const { id } = req.params;
+    const user = req.id;
 
-          if(!userId || !id) {
-             return res.status(400).json({message: 'Invalid credential recieved!'})
-          }  
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      await session.abortTransaction();
+      return res.status(400).json({ message: 'Invalid ID Format' });
+    }
 
-        if(feed.likes.includes(userId)) {
-            feed.likes.pull(userId)
-        } else {
-           feed.likes.push(userId)
+    const feed = await Feed.findOne({ _id: id, userId: user }).session(session);
+    
+    if (!feed) {
+      await session.abortTransaction();
+      return res.status(404).json({ message: 'No feed found with this ID' });
+    }
+
+    // Delete Cloudinary image (if exists)
+    if (feed.image?.cloudinaryPublicId) {
+      const cloudinaryResult = await cloudinary.uploader.destroy(
+        feed.image.cloudinaryPublicId
+      );
+      if (cloudinaryResult.result !== 'ok') {
+        throw new Error('Cloudinary deletion failed');
+      }
+    }
+
+    // Delete MongoDB data
+    await Feed.deleteOne({ _id: id }).session(session);
+    await Comment.deleteMany({ feedId: id }).session(session);
+
+    await session.commitTransaction();
+    res.status(200).json({ message: 'Feed deleted successfully' });
+  } catch (error) {
+    await session.abortTransaction();
+    console.error("Error deleting feed:", error);
+    res.status(500).json({ message: 'Failed to delete feed' });
+  } finally {
+    session.endSession();
+  }
+};
+
+
+  const getUserFeed = async (req, res) => {
+
+     try {
+       
+       const user = req.params.userId
+
+       const userFeed = await Feed.find({userId: user})
+        .sort({createdAt: -1})
+        .populate("userId", "username")
+
+      if(!userFeed) {
+        return res.status(400).json({
+        message: 'No Feed Found!'
+        })
+      }
+
+      res.status(201).json({message: 'Feed fetched successfully!', userFeed})
+      
+     } catch(error) {
+      console.log('Error Fetching Feed!', error)
+       res.status(500).json({message: 'Something went wrong fetching feed.'})
+      }}
+
+
+       const likeFeed = async (req, res) => {
+        try {
+            const {userId }= req.body;
+            const { id } = req.params;
+            
+            if (!id) {
+                return res.status(400).json({ message: 'Post ID is required!' });
+            }
+    
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                return res.status(400).json({ message: 'Invalid ID format!' });
+            }
+    
+            const feed = await Feed.findById(id);
+            if (!feed) {
+                return res.status(404).json({ message: 'No Feed Found!' });
+            }
+    
+            // Toggle like
+            const likeIndex = feed.likes.indexOf(userId);
+            if (likeIndex > -1) {
+                feed.likes.splice(likeIndex, 1);
+                await feed.save();
+                return res.status(200).json({ 
+                    message: 'Post unliked successfully',
+                    liked: false,
+                    likeCount: feed.likes.length
+                });
+            } else {
+                feed.likes.push(userId);
+                await feed.save();
+                return res.status(200).json({ 
+                    message: 'Post liked successfully',
+                    liked: true,
+                    likeCount: feed.likes.length,
+                    feed
+                });
+            }
+
+          // if (feed.userId.toString() !== userId) {
+          //       await emitLikeNotification({
+          //         postOwnerId: feed.userId,
+          //         likerId: userId,
+          //         postId: feed._id
+          //       });
+          //     }
+
+        } catch (error) {
+            console.error('Like error:', error);
+            res.status(500).json({ message: 'Server error' });
         }
-
-        await feed.save()
-
-        res.status(201).json({message: 'liked feed!'})
-   }
+    }
 
 
-module.exports = {createFeed, getAllFeed, getFeedById, updateFeed, likeFeed}
+module.exports = {
+                   createFeed,
+                   getAllFeed,
+                   getFeedById,
+                   updateFeed,
+                   likeFeed,
+                   deleteFeed,
+                   getUserFeed }

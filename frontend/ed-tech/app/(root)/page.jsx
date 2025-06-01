@@ -1,5 +1,6 @@
 import Button from "@/components/shared/Button"
 import Category from "@/components/shared/Category"
+import Header from "@/components/shared/Header"
 import { Skills } from "@/constants"
 import Image from "next/image"
 
@@ -9,11 +10,12 @@ const Dashboard = () => {
    const buttons = ["This Week", "This Month", "This Year"];
     
   return (
-    <section className="flex flex-col sm:py-5 py-5"> 
-        <p className="text-[#FAFAFA] text-2xl font-medium leading-10">Welcome, {name}</p>
-        <p className="text-gray-300 text-sm font-sans ">Here's is a brief summary of your progress and upcomming task on your schedule.</p>
+    <section className="flex flex-col"> 
+        <Header title="Dashboard"/>
+        <p className="text-[#FAFAFA] text-2xl font-medium leading-10 sm:pt-1">Welcome, {name}</p>
+        <p className="text-light-100 text-md font-sans font-semibold ">Here's is a brief summary of your progress and quizes and lesson taken.</p>
 
-         <div className="w-full bg-[#1F2225] my-10 rounded-2xl flex items-cente p-8 justify-star max-lg:flex-col gap-20 ">
+         <div className="w-full bg-[#1F2225] my-10 rounded-2xl flex items-cente p-8 justify-between max-lg:flex-col gap-20 ">
             <div className="flex flex-col gap-4">
                 <h2 className="text-white text-4xl font-semibol">Enhance Your Critical Thinking!</h2>
                  <p className="text-gray-300 max-w-md leading-8">Improve your ability to analyze solutions, evaluate information and make logical decisions, Strengthen this essential skill for better problem-solving decision making in everyday life</p>
@@ -21,7 +23,7 @@ const Dashboard = () => {
             </div>
                  <div className="flex gap-5">
                  <Image src='/images/robot.png' alt="robotnic" width={280} height={280} className="max-xl:hidden"/>
-                  <div className="flex gap-2 h-full flex-col justify-between items-center ">
+                  {/* <div className="flex gap-2 h-full flex-col justify-between items-center ">
                        <div className="text-white">
                         oooooo
                        </div>
@@ -29,7 +31,7 @@ const Dashboard = () => {
                       <Image src='/icons/aleft.png' width={40} height={40} alt="arrow/logo" className="p-1 bg-black backdrop-blur-2xl rounded-full cursor-pointer"/>
                       <Image src='/icons/aright.png' width={40} height={40} alt="arrow/logo" className="p-1 bg-black backdrop-blur-2xl rounded-full cursor-pointer"/>
                       </div>
-                  </div>
+                  </div> */}
                  </div>
            </div>
           
@@ -39,17 +41,24 @@ const Dashboard = () => {
                  <p className="underline text-[#FAFAFA] text-lg outline-b-4 cursor-pointer">See All</p>
                </div>
 
-            <div className="gap-5 grid xl:gap-5 grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
+            <div className="gap-5 grid xl:gap-3 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
                {Skills.map((items) => (
-                   <div className="  bg-[#1F2225] h-32 rounded-xl flex p-2 justify-between cursor-pointer" key={items.id}>
-                   <div className="flex flex-col justify-between">
-                   <Image src={items.icons} width={40} height={40} alt="volume" className="p-1 bg-black backdrop-blur-2xl rounded-md cursor-pointer"/>
-                     <p className="text-[#FAFAFA] font-semibold">{items.title}</p>
-                     </div>   
-                    <div className="w-24 h-8 flex items-center justify-center font-semibold rounded-full" style={{backgroundColor: items.color}}>
-                     <p className="text-[#FAFAFA]">{items.subtitle}</p>
+                    <div className="  bg-[#1F2225] h-40 rounded-xl flex p-2 justify-cente cursor-pointer items-center gap-3" key={items.id}>
+                     <div className="flex flex-col gap-4 ">
+                       <p className="font-semibold text-[1.5rem] font-sans text-light-100">{items.title}</p>
+                        <div className="flex gap-10 items-center">
+                        <div className="flex flex-col gap-2 items-center">
+                         <p className="text-3xl font-semibold ">{items.number}</p>
+                         <p className="text-sm text-destructive-100 font-semibold font-sans">{items.subtitle}</p>
+                        </div>
+                        <div className="flex  gap-2 -rotate-45 ">
+                        <div className="w-24 h-5 flex justify-end font-semibold rounded-full" style={{backgroundColor: items.color}}>
+                        </div> 
                     </div>
-               </div>
+                     </div>
+                      
+                      </div>
+                      </div>
                ))}
              </div>
              </div>
@@ -78,7 +87,7 @@ const Dashboard = () => {
                     </div>
 
                    </div>
-                   <Image src='/icons/save.png' width={24} height={24} alt="save" className="justify-end"/>
+                   <Image src='/icons/bookmark.png' width={24} height={24} alt="bookmark" className="justify-end"/>
                    </div>
                       <div className="flex flex-col">
                       <h2 className="text-[#FAFAFA] leading-8 mt-5 text-xl">Presentation Techniques</h2>
@@ -107,7 +116,7 @@ const Dashboard = () => {
                     </div>
 
                    </div>
-                   <Image src='/icons/save.png' width={24} height={24} alt="save" className="justify-end"/>
+                   <Image src='/icons/bookmark.png' width={24} height={24} alt="bookmark" className="justify-end"/>
                    </div>
                       <div className="flex flex-col">
                       <h2 className="text-[#FAFAFA] leading-8 mt-5 text-xl">Presentation Techniques</h2>
@@ -136,7 +145,7 @@ const Dashboard = () => {
                     </div>
 
                    </div>
-                   <Image src='/icons/save.png' width={24} height={24} alt="save" className="justify-end"/>
+                   <Image src='/icons/bookmark.png' width={24} height={24} alt="bookmark" className="justify-end"/>
                    </div>
                       <div className="flex flex-col">
                       <h2 className="text-[#FAFAFA] leading-8 mt-5 text-xl">Presentation Techniques</h2>
@@ -160,7 +169,7 @@ C
              <div className="flex flex-col mt-5">
                <div className="w-full flex justify-between items-center">
                <p className="text-[#FAFAFA] text-2xl font-medium leading-16">My Progress</p>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 h-full">
                <Category buttons={buttons}/>
                    </div>
                </div>

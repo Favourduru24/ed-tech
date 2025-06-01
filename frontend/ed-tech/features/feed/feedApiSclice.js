@@ -13,15 +13,20 @@ const initialState = feedsAdapter.getInitialState()
 export const feedsApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         getFeeds: builder.query({
-          query: ({ searchTerm = '', page = 1, limit = 5, category = '' }) => ({
+          query: ({ searchTerm = '', page = 1, limit = 5, category = '', date = ''}) => ({
             url: `/feeds`,
             params: {
-              search: searchTerm,
-              page,
-              limit,
-              category,// Fix typo
+            search: searchTerm,
+            page,
+            limit,
+            date,
+            category,
             }
           }),
+          forceRefetch: ({ currentArg, previousArg }) => {
+            // Trigger refetch when page changes
+            return currentArg?.page !== previousArg?.page;
+          },
           validateStatus: (response, result) => {
             return response.status === 200 && !result.isError
           },
@@ -71,13 +76,12 @@ export const feedsApiSlice = apiSlice.injectEndpoints({
              }
         }),
           getUserFeed: builder.query({
-            query: (id) => `/feeds/user/${id}`,
+             query: (userId) => `/feeds/feed/user/${userId}`,
              validateStatus: (response, result) => {
                     return response.status === 200 && !result.isError
              },
-            //  keepUnusedDataFor:5,
              transformResponse: responseData => {
-                const loadedFeeds = responseData.map(feed => {
+                const loadedFeeds = responseData.userFeed.map(feed => {
                     feed.id = feed._id
                       return feed 
                 })
@@ -106,44 +110,32 @@ export const feedsApiSlice = apiSlice.injectEndpoints({
             ]
           }),
                  updateFeed: builder.mutation({
-                  query: ({ id, ...initailFeedsData }) => ({  // Destructure id from arguments
+                  query: ({ id, initailFeedsData }) => ({  // Destructure id from arguments
                     url: `/feeds/feed/${id}`,
                     method: 'PATCH',
-                    body: initailFeedsData,  // The rest of the data
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Accept': 'application/json' // Explicitly request JSON
-                    }
+                    body: {
+                      ...initailFeedsData
+                    }  // The rest of the data
                   }),
-                  transformErrorResponse: (response) => {
-                    // Handle HTML errors
-                    if (response.data.startsWith('<!DOCTYPE html>')) {
-                      return { message: 'Resource not found' };
-                    }
-                    return response.data;
-                  },
              invalidatesTags: (result, error, arg) => {
              return [{type: 'Feed', id: arg.id}]
             }
           }),
-
           likeFeed: builder.mutation({
-            query: (id) => ({
-                url: `/feeds/like/${id}`,
+            query: ({userId, id}) => ({
+                url: `/feeds/feed/like/${id}`,
                 method:'PUT',
+                body: {userId}
             }),
-            invalidatesTags: (result, error, arg) => {
-             return [{type: 'Feed', id: arg.id}]
-            }
+            invalidatesTags: (result, error, { id }) => [
+              { type: 'Feed', id },
+              { type: 'Feed', id: 'LIST' }
+            ]
           }),
-
           deleteFeed: builder.mutation({
-            query: ({id}) => ({
-                url: '/feeds',
+            query: (id) => ({
+                url: `/feeds/delete/${id}`,
                 method: 'DELETE',
-                body: {
-                    id
-                }
             }),
             invalidatesTags: (result, error, arg) => [{type: 'Feed', id:arg.id}]
           }),
@@ -151,15 +143,15 @@ export const feedsApiSlice = apiSlice.injectEndpoints({
         overrideExisting: true
 })
 
-export const {  
-useGetFeedsQuery,
-useGetFeedQuery,
-useGetUserFeedQuery,
-useAddNewFeedMutation,
-useUpdateFeedMutation,
-useDeleteFeedMutation,
-useLikeFeedMutation,
-} = feedsApiSlice
+          export const {  
+          useGetFeedsQuery,
+          useGetFeedQuery,
+          useGetUserFeedQuery,
+          useAddNewFeedMutation,
+          useUpdateFeedMutation,
+          useDeleteFeedMutation,
+          useLikeFeedMutation,
+      } = feedsApiSlice
 
 // returns the query result object
 export const selectFeedsResult = feedsApiSlice.endpoints.getFeeds.select()

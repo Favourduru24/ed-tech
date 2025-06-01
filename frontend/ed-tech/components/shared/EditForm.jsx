@@ -166,7 +166,6 @@ import SelectDropdown from './Dropdown'
 
   const { data: feed, isLoading: isFeedLoading } = useGetFeedQuery(id)
   const feedId = feed?.entities[id]
-  // const { id: currentUser } = useAuth()
 
   const [updateFeed, {
     isLoading, 
@@ -185,19 +184,19 @@ import SelectDropdown from './Dropdown'
   const [description, setDescription] = useState('')
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
-
   const router = useRouter()
 
   // Update states when feed data loads
   useEffect(() => {
     if (feedId) {
-      setTitle(feedId?.title || '')
-      setPitch(feedId?.pitch || '')
-      setCategory(feedId?.category || '')
-      setDescription(feedId?.description || '')
-      setImageUrl(feedId?.image?.cloudinaryUrl || null)
+      console.log("Loaded feed data:", feedId); // Check if data exists
+      setTitle(feedId.title || "");
+      setPitch(feedId.pitch || "");
+      setCategory(feedId.category || "");
+      setDescription(feedId.description || "");
+      setImageUrl(feedId.image?.cloudinaryUrl || null);
     }
-  }, [feedId])
+  }, [feedId]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -219,41 +218,25 @@ import SelectDropdown from './Dropdown'
     } 
   }
 
-  // const handleUpdateFeed = async (e) => {
-  //   e.preventDefault()
-    
-  //   try {
-  //     const imgUrl = await upload()
-      
-  //     await updateFeed({
-  //       id,
-  //       title, 
-  //       pitch, 
-  //       image: imgUrl, 
-  //       description, 
-  //       category, 
-  //       // userId: currentUser
-  //     }).unwrap()
-      
-  //   } catch (error) {
-  //     console.error('Failed to update feed:', error)
-  //   }
-  // }
-
+   
+   
   const handleUpdateFeed = async (e) => {
           e.preventDefault()
              
           let imgUrl = ''
           if (imageUrl) imgUrl = await upload()
     
-           await updateFeed({title, pitch, image: imgUrl, description, category})
-             console.log({title, pitch, image: imageUrl, description, category})
+          await updateFeed({title, pitch, image: imgUrl, description, category, id })
+           console.log({title, pitch, image: imageUrl, description, category})
         }
+
+  
 
   if (isFeedLoading) return <div>Loading feed data...</div>
 
   return (
     <>
+       <Header title="Edit Feed"/>
       {open && (
         <div className='bg-black min-h-[91vh] w-[130vh] absolute z-50 flex justify-center items-center'>
           <div className="w-[45rem] h-[12rem] bg-[#1F2225] rounded-xl flex flex-col p-10 justify-center items-center">
@@ -296,7 +279,7 @@ import SelectDropdown from './Dropdown'
               className="h-15 bg-[#1F2225] w-[10%] border-[1.0px] border-[#4B4D4F] rounded-lg text-gray-500 flex items-center justify-center cursor-pointer" 
               onClick={() => setOpen(true)}
             >
-              <Image src='/icons/add.png' width={24} height={24} alt="create"/>
+              <Image src='/icons/plus.png' width={24} height={24} alt="create"/>
             </div>
           </div>
         </div>

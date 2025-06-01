@@ -2,18 +2,18 @@ export const navLinks = [
     {
       label: "Dashboard",
       route: "/",
-      icon: "/icons/grid.png",
+      icon: "/icons/dash.png",
     },
     {
       label: "Trainings",
       route: "/training",
-      icon: "/icons/interact.png",
+      icon: "/icons/mark.png",
     },
-    {
-      label: "Message",
-      route: "/message",
-      icon: "/icons/message.png",
-    },
+    // {
+    //   label: "Message",
+    //   route: "/message",
+    //   icon: "/icons/message.png",
+    // },
     {
       label: "Feeds",
       route: "/feeds",
@@ -22,62 +22,62 @@ export const navLinks = [
     {
       label: "Notification",
       route: "/notification",
-      icon: "/icons/bell.png",
+      icon: "/icons/notify.png",
     },
+    // {
+    //   label: "Explore",
+    //   route: "/leadership",
+    //   icon: "/icons/explore.png",
+    // },
     {
-      label: "LeaderShip",
-      route: "/leadership",
-      icon: "/icons/lead.png",
-    },
-    {
-      label: " Chat Ai",
-      route: "/chat-ai",
-      icon: "/icons/lead.png",
+      label: "Quizes",
+      route: "/quiz",
+      icon: "/icons/feeds.png",
     },
     {
       label: "Profile",
       route: "/profile",
-      icon: "/icons/train.png",
+      icon: "/icons/training.png",
     },
-    // {
-    //   label: "Settings",
-    //   route: "/settings",
-    //   icon: "/icons/setting.png",
-    // },
   ];
 
   export const Skills = [
      {
-       title: 'Communication',
-       subtitle: 'Average',
-       icons: '/icons/volume.png',
-       color: '#9E4B9E',
-       id:'1'
-     },
-     {
-       title: 'Strategic',
-       subtitle: 'Low',
-       icons: '/icons/leardership.png',
-       color: '#E07B38',
-       id:'2'
-     },
-     {
-       title: 'Planning',
-       subtitle: 'High',
+       title: 'Today Lesson taken',
+       number: '10',
        icons: '/icons/trophy.png',
+       subtitle: '20% vs last month',
        color: '#2923D9',
        id:'3'
      },
      {
-       title: 'Adaptive',
-       subtitle: 'Medium',
-       icons: '/icons/globe.png',
+       title: 'Total Quiz taken',
+       number: '20',
+       icons: '/icons/volume.png',
+       subtitle: '40% vs last month',
        color: '#9E4B9E',
-       id:'4'
+       id:'1'
      },
+     {
+       title: 'Total Lesson taken',
+       number: '40',
+       icons: '/icons/leardership.png',
+       subtitle: '30% vs last month',
+       color: '#E07B38',
+       id:'2'
+     },
+     
+    //  {
+    //    title: 'Total Quiz created',
+    //    number: '5',
+    //    icons: '/icons/globe.png',
+    //    subtitle: '100% vs last month',
+    //    color: '#9E4B9E',
+    //    id:'4'
+    //  },
   ]
   
-  export const notification = [
+  export const notify = [
     {
       title: 'Upcomming Assesment: Marketing Strategy and Basics',
       subtitle: "Your schedule arrangement on Marketing Strategy and Basics is Due today at 13:00 Dont't forget to complete it on time",
@@ -105,26 +105,96 @@ export const navLinks = [
      }
     ]
 
-    export const Feeds = [
+    export const data2 = [
       {
-        username: 'Alex Mason',
-        title: 'How i ace my physic Jamb',
-        subtitle: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro expedita magnam sit, architecto quo itaque voluptatibus quibusdam magni maiores asperiores iusto nemo eaque repellat in aliquam soluta cum quam quod orem ipsum dolor sit amet consectetur adipisicing elit. Porro expedita magnam sit, architecto quo itaque voluptatibus quibusdam magni maiores...',
-        id: 1
-      },
+       title: 'Mathematics',
+       id: 1
+        },
       {
-        username: 'Banner kelvin',
-        title: 'Best way to top your grade!',
-        subtitle: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro expedita magnam sit, architecto quo itaque voluptatibus quibusdam magni maiores asperiores iusto nemo eaque repellat in aliquam soluta cum quam quod orem ipsum dolor sit amet consectetur adipisicing elit. Porro expedita magnam sit, architecto quo itaque voluptatibus quibusdam magni maiores...',
-        id: 2
-      },
+       title: 'Economics',
+       id: 2
+        },
+       {
+       title: 'Physic',
+       id: 3
+        },
+       {
+       title: 'Coding',
+       id: 4
+        },
+       {
+       title: 'Chemistry',
+       id: 5
+        }
+     ]
+
+    export const data5 = [
       {
-        username: 'Banner kelvin',
-        title: 'Best way to top your grade!',
-        subtitle: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro expedita magnam sit, architecto quo itaque voluptatibus quibusdam magni maiores asperiores iusto nemo eaque repellat in aliquam soluta cum quam quod orem ipsum dolor sit amet consectetur adipisicing elit. Porro expedita magnam sit, architecto quo itaque voluptatibus quibusdam magni maiores...',
-        id: 3
-      }
-    ]
+       title: 'Beginner',
+       id: 1
+        },
+       {
+       title: 'Intermediate',
+       id: 2
+        },
+       {
+       title: 'Advance',
+       id: 3
+        },
+       {
+       title: 'Under Graduate',
+       id: 4
+        },
+       {
+       title: 'Post Graduate',
+       id: 5
+        },
+       {
+       title: 'Graduate',
+       id: 6
+        },
+       {
+       title: 'Master',
+       id: 7
+        },
+       {
+       title: 'SS1',
+       id: 8
+        },
+       {
+       title: 'SS2',
+       id: 9
+        },
+       {
+       title: 'SS3',
+       id: 10
+        },
+     ]
+
+     export const sideLinks = [
+             {
+               label: "Personal Information",
+               icon: "/icons/lead.png",
+             },
+             {
+               label: "My Tranings",
+               icon: "/icons/chat.png",
+             },
+             {
+               label: "My Feeds",
+               icon: "/icons/add.png",
+             },
+             {
+               label: "My Quizes",
+               icon: "/icons/add.png",
+             }
+           ];
+
+           export const voices = {
+  male: { casual: "2BJW5coyhAzSr8STdHbE", formal: "c6SfcYrb2t09NHXiT80T" },
+  female: { casual: "ZIlrSGI4jZqobxRKprJz", formal: "sarah" },
+};
+
 //   export const plans = [
 //     {
 //       _id: 1,

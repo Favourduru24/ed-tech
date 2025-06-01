@@ -1,5 +1,4 @@
-import FeedDetail from '@/components/shared/FeedDetail'
-import React from 'react'
+import FeedDetail from '@/section/FeedDetail'
 
 const Page = async (props) => {
 

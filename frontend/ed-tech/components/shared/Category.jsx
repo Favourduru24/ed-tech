@@ -10,6 +10,7 @@ const Category = ({buttons}) => {
     const {data, isLoading } = useGetCategoryQuery()
 
     const {ids, entities} = data || { }
+
  
     const [items, setItems] = useState(buttons[0])
     const [category, setCategory] = useState('')
@@ -28,10 +29,9 @@ const Category = ({buttons}) => {
     }
 
     const Date = [
-      { value: 'Date Added', label: 'Date Added' },
-      { value: '24 hour', label: '24 hour' },
-      { value: 'Yesterday', label: 'Yesterday' },
-     { value: '1 Week', label: '1 Week' }
+      { value: '1hr', label: '1 hour' },
+      { value: 'yesterday', label: 'Yesterday' },
+     { value: '1week', label: '1 Week' }
 ]
 
  
@@ -76,7 +76,7 @@ const onSelectDate = (date) => {
   return (
      <div className="flex gap-2 h-full px-1 rounded-full items-center justify-center">
     {buttons.map((id) => (
-      <div className={`${items === id ? 'text-white bg-[#9E4B9E] w-34 h-full flex items-center justify-center  rounded-full cursor-pointer transition-all duration-500' : 'text-white w-32 h-full flex items-center justify-center rounded-full cursor-pointer transition-all duration-500'} `} onClick={() => setItems(id)} key={id}>
+      <div className={`${items === id ? 'text-white bg-[#9E4B9E] w-34 max-md:w-24 h-full flex items-center justify-center  rounded-full cursor-pointer transition-all duration-500' : 'text-white w-32 max-md:w-24 h-full flex items-center justify-center rounded-full cursor-pointer transition-all duration-500'} `} onClick={() => setItems(id)} key={id}>
       <div className="font-semibold text-light-100">{id === 'Category' ? 
          (
          <div className="w-full"> 
@@ -87,7 +87,7 @@ const onSelectDate = (date) => {
            className="h-full w-full rounded-xl
            outline-none cursor-pointer font-semibold text-lg font-sans border-0 gap-2 p-1"
          >
-            <option value="Select Category" className="bg-[#1F2225]">Select Category</option>
+            <option value="Select Category" className="bg-[#1F2225] max-md:hidden" disabled>Select Category</option>
            {ids ?  ids.map((id) => {
              const cat = entities[id]
               return (
@@ -109,7 +109,8 @@ const onSelectDate = (date) => {
           outline-none cursor-pointer font-semibold text-lg font-sans border-0 gap-2 p-1"
           
         >
-          {Date.map((cat) => (
+            <option value="Date Added" className="bg-[#1F2225] max-md:hidden" disabled>Date Added</option>
+           {Date.map((cat) => (
             <option key={cat.value} value={cat.value} style={{ backgroundColor: '#1F2225', color: '#FAFAFA', fontFamily: 'sans', width: '100rem'}} className="w-[50vh]">
                {cat.label}
             </option>
