@@ -75,6 +75,28 @@ export const feedsApiSlice = apiSlice.injectEndpoints({
                 }
              }
         }),
+           getFeedByCategory: builder.query({
+        query: ({id, categoryId}) => `/feeds/feed-category/${id}/${categoryId}`,
+      validateStatus: (response, result) => {
+       return response.status === 200 && !result.isError;
+  },
+  transformResponse: (responseData) => {
+    // Now handles array response
+    const loadedFeeds = responseData.map(feed => ({
+      ...feed,
+      id: feed._id
+    }));
+    return feedsAdapter.setAll(initialState, loadedFeeds);
+  },
+  providesTags: (result) => {
+    return result?.ids 
+      ? [
+          { type: 'Feed', id: 'LIST' },
+          ...result.ids.map(id => ({ type: 'Feed', id }))
+        ]
+      : [{ type: 'Feed', id: 'LIST' }];
+  }
+}),
           getUserFeed: builder.query({
              query: (userId) => `/feeds/feed/user/${userId}`,
              validateStatus: (response, result) => {
@@ -151,6 +173,7 @@ export const feedsApiSlice = apiSlice.injectEndpoints({
           useUpdateFeedMutation,
           useDeleteFeedMutation,
           useLikeFeedMutation,
+          useGetFeedByCategoryQuery
       } = feedsApiSlice
 
 // returns the query result object

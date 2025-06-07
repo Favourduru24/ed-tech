@@ -1,11 +1,11 @@
-import TutorDatail from "@/section/TutorDetails"
+import TutorDetail from "@/section/TutorDetails"
 
 const Page = async (props) => {
 
     const {id} = await props.params
 
   return (
-    <TutorDatail id={id}/>
+    <TutorDetail id={id}/>
   )
 }
 

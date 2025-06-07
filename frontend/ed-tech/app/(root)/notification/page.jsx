@@ -5,10 +5,10 @@ const Page = async (props) => {
 
   const searchParams = await props.searchParams
 
-  const search = (searchParams?.notification) || ''
+  const notification = (searchParams?.notification) || ''
 
   return (
-    <Notification search={search}/>
+    <Notification notification={notification}/>
   )
 }
 

@@ -1,3 +1,4 @@
+const mongoose  = require('mongoose')
 const History = require('../models/History')
 
 const addUserToSessionHistory = async (req, res) => {
@@ -10,7 +11,7 @@ const addUserToSessionHistory = async (req, res) => {
          userId: user,
          tutorId,
          quizId
-    })
+      })
 
       res.status(201).json({
          message: 'User history fetched successfully.',
@@ -26,27 +27,128 @@ const addUserToSessionHistory = async (req, res) => {
     
     }
 
-  const getUserSessionHistory = async (req, res) => {
+    const getUserQuizHistory = async (req, res) => {
+  try {
+    const user = req.id;
 
-       try {
-         const user = req.id
+    if (!mongoose.Types.ObjectId.isValid(user)) {
+      return res.status(400).json({ message: 'Invalid ID format' });
+    }
 
-         const userHistory = await History.find({
-             userId: user
-         }).populate("tutorId", "topic subject duration name")
-           .populate("userId", "username")
+    const now = new Date();
+    
+    // Current month range (with precise time boundaries)
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0);
+    const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+    
+    // Last month range (with precise time boundaries)
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1, 0, 0, 0);
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
 
-         res.status(201).json('User history fetched successfully.', userHistory)
+    // Base query for quiz-only records
+    const quizQuery = {
+      userId: user,
+      quizId: { $exists: true, $ne: null },
+      tutorId: null // Ensure no tutorId exists
+    };
 
-       } catch(error) {
-         console.log('failed to fetch user history', error)
-         return res.status(500).json({
-            message:'failed to fetch user history'
-         })
-       } 
+    // Execute all queries in parallel for better performance
+    const [currentMonthQuizzes, lastMonthQuizzes, fullQuizHistory] = await Promise.all([
+      History.countDocuments({
+        ...quizQuery,
+        createdAt: { $gte: currentMonthStart, $lte: currentMonthEnd }
+      }),
+      History.countDocuments({
+        ...quizQuery,
+        createdAt: { $gte: lastMonthStart, $lte: lastMonthEnd }
+      }),
+      History.find(quizQuery)
+        .populate('quizId', 'topic subject duration name questions voice level')
+        .populate('userId', 'username')
+        .sort({ createdAt: -1 }) // Newest first
+    ]);
+
+    res.status(200).json({
+      message: 'Quiz history and statistics fetched successfully.',
+      quizHistory: fullQuizHistory,
+      stats: {
+        quizCount: fullQuizHistory.length,
+        currentMonthQuizzes,
+        lastMonthQuizzes
+      }
+    });
+
+  } catch (error) {
+    console.error('Failed to fetch quiz history:', error);
+    res.status(500).json({
+      message: 'Failed to fetch quiz history',
+      error: error.message
+    });
   }
+};
+
+const getUserTutorHistory = async (req, res) => {
+  try {
+    const user = req.id;
+
+    if (!mongoose.Types.ObjectId.isValid(user)) {
+      return res.status(400).json({ message: 'Invalid ID format' });
+    }
+
+    const now = new Date();
+    
+    // Current month range (1st day to last day)
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0);
+    const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+    
+    // Last month range (1st day to last day)
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1, 0, 0, 0);
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+
+    // Fetch tutor-only lessons (no quizzes)
+    const tutorQuery = { 
+      userId: user,
+      tutorId: { $exists: true, $ne: null },
+      quizId: null // Ensure no quizId exists
+    };
+
+    // Get counts for current & last month
+    const [currentMonthLessons, lastMonthLessons, tutorHistory] = await Promise.all([
+      History.countDocuments({
+        ...tutorQuery,
+        createdAt: { $gte: currentMonthStart, $lte: currentMonthEnd }
+      }),
+      History.countDocuments({
+        ...tutorQuery,
+        createdAt: { $gte: lastMonthStart, $lte: lastMonthEnd }
+      }),
+      History.find(tutorQuery)
+        .populate('tutorId', 'topic subject duration name')
+        .populate('userId', 'username')
+    ]);
+
+    res.status(200).json({
+      message: 'Tutor lesson history and statistics fetched successfully.',
+      tutorHistory,
+      stats: {
+        tutorCount: tutorHistory.length,
+        currentMonthLessons,
+        lastMonthLessons
+      }
+    });
+
+  } catch (error) {
+    console.error('Failed to fetch tutor history:', error);
+    res.status(500).json({
+      message: 'Failed to fetch tutor history',
+      error: error.message
+    });
+  }
+};
+
 
  module.exports = {
      addUserToSessionHistory,
-     getUserSessionHistory
+     getUserQuizHistory,
+     getUserTutorHistory,
  }

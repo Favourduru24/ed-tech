@@ -68,7 +68,7 @@ const getComment = async (req, res) => {
         try {
          const {commentId} = req.params
              
-         const comment = await Comment.findByIdAndDelete({
+         const comment = await Comment.deleteOne({
             _id: commentId,
             userId: req.id
          })
@@ -80,14 +80,71 @@ const getComment = async (req, res) => {
             res.json({ message: 'Comment deleted' });
  
             } catch(error) {
-                 console.log("Error deleting comment")
+                 console.log("Error deleting comment", error)
     }
 
     }
 
+    const likeComment = async (req, res) => {
+
+         try {
+         const user = req.id
+        const { commentId } = req.params;
+
+      if(!mongoose.Types.ObjectId.isValid(commentId)) {
+         return res.status(400).json({
+             message: 'Invalid ID format.'
+         })
+      }
+
+       if(!user) {
+          return res.status(400).json({
+             message: 'Invalid userID format.'
+         })
+       }
+
+       const comment = await Comment.findById(commentId)
+
+        if(!comment){
+             return res.status(404).json({
+                message: 'No comment found'
+             })
+        }
+       
+        const likeIndex = comment.likes.indexOf(user)
+
+        if(likeIndex > -1) {
+         comment.likes.splice(likeIndex, 1)
+          await comment.save()
+           return res.status(200).json({
+            message: 'Comment unliked successfully!',
+            liked: false,
+            likeCount: comment.likes.length,
+           })
+       } else {
+         comment.likes.push(user)
+         await comment.save()
+         return res.status(200).json({
+             message: 'Comment liked successfully',
+             likeCount: comment.likes.length,
+            comment
+         })
+       }
+         } catch(error) {
+            console.log(error, 'Something went wrong with the comment.')
+            return res.status(500).json({
+                message: 'Something went wrong with the comment.',
+               error
+            })
+         }
+     
+    }
+     
 
 module.exports = {
      createComment,
      getComment,
-     deleteComment
+     deleteComment,
+     likeComment,
+
 }

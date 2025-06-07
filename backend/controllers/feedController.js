@@ -295,10 +295,6 @@ const deleteFeed = async (req, res) => {
             const {userId }= req.body;
             const { id } = req.params;
             
-            if (!id) {
-                return res.status(400).json({ message: 'Post ID is required!' });
-            }
-    
             if (!mongoose.Types.ObjectId.isValid(id)) {
                 return res.status(400).json({ message: 'Invalid ID format!' });
             }
@@ -343,6 +339,44 @@ const deleteFeed = async (req, res) => {
         }
     }
 
+     const getRelatedFeedByCategory = async (req, res) => {
+  try {
+    const { id, categoryId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(categoryId)) {
+      return res.status(400).json({
+        message: 'Invalid credentials received.'   
+      });
+    }
+   
+    const conditions = { 
+      $and: [
+        { category: categoryId }, 
+        { _id: { $ne: id } }
+      ] 
+    };
+    
+    const feeds = await Feed.find(conditions)
+                          .sort({ createdAt: -1 });
+
+    if (!feeds || feeds.length === 0) {
+      return res.status(404).json({
+        message: 'No related feeds found.'
+      });
+    }
+
+    return res.status(200).json(feeds); // Directly return the array
+
+  } catch(error) {
+    console.log("Error fetching feed by category!", error);
+    return res.status(500).json({
+      message: 'Internal server error',
+      error: error.message
+    });
+  }
+};
+
+
 
 module.exports = {
                    createFeed,
@@ -351,4 +385,6 @@ module.exports = {
                    updateFeed,
                    likeFeed,
                    deleteFeed,
-                   getUserFeed }
+                   getUserFeed,
+                   getRelatedFeedByCategory
+                  }

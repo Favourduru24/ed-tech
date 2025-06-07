@@ -1,20 +1,29 @@
 "use client"
- import {  useGetFeedQuery } from '@/features/feed/feedApiSclice'
+ import {  useGetFeedQuery, useGetFeedByCategoryQuery} from '@/features/feed/feedApiSclice'
  import {useAddNewCommentMutation, useGetCommentQuery} from '@/features/comment/commentApiSlice'
+ import Header from '@/components/shared/Header'
+ import Like from '@/components/shared/Like'
 import MDEditor from '@uiw/react-md-editor'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useAuth from '@/hooks/useAuth'
-import Header from './Header'
 import markdownIt from "markdown-it"
+import Feed from './Feed'
 
 const FeedDetail = ({id}) => {
 
     const {data: feedId, isLoading} = useGetFeedQuery(id)
-    const [addComment, {isLoading: isCommentLoading}] = useAddNewCommentMutation()
+    const [addComment, {isLoading: isCommentLoading, isSuccess}] = useAddNewCommentMutation()
     const {data, isLoading: loadingComment} = useGetCommentQuery(id)
-
      const feed = feedId?.entities[id]
+    const {data: feedCategory} = useGetFeedByCategoryQuery({id, categoryId: feed?.category?._id})
+
+     const {ids: feedCategoryIds, entities: feedCategoryEntities} = feedCategory || {}
+
+    const [content, setContent] = useState('')
+
+      console.log({feedCategory})
+       
 
      const md = markdownIt()
 
@@ -22,9 +31,15 @@ const FeedDetail = ({id}) => {
 
       const {ids, entities} = data || {}
 
-    const {id: user} = useAuth()
+      const {id: user} = useAuth()
 
-    const [content, setContent] = useState('')
+
+     useEffect(() => {
+       if(isSuccess) {
+         setContent('')
+       }
+     }, [isSuccess])
+
 
      if(isLoading){
          return(
@@ -40,8 +55,10 @@ const FeedDetail = ({id}) => {
          await addComment({feedId: id, content, user})
      }
 
+      
+
   return (
-    <section className='flex flex-col'>
+    <section className='flex flex-col my-2'>
        <Header title="Explore Feed"/>
        
            <div className='min-h-[100vh] bg-[#1F2225] flex flex-col  p-4 rounded-2xl mt-4'>
@@ -77,7 +94,7 @@ const FeedDetail = ({id}) => {
                            />
                          ): <p>No details provided</p>}
                        </div>
-                 <div data-color-mode="dark" className='w-[100%] h-[30%] mt-10 relative'>
+                 <div data-color-mode="dark" className='w-[100%] h-[25%] mt-10 relative'>
                         <MDEditor 
                       preview='edit'
                       id="pitch"
@@ -101,55 +118,78 @@ const FeedDetail = ({id}) => {
                       <div className='flex items-center mt-10 gap-2 mb-5'>
                           <p className='font-semibold font-sans text-2xl'>Comments</p>
                            <div className='bg-[#B391F0] h-7 w-8 flex items-center justify-center rounded-sm font-semibold'>
-                                  <p>25</p>
+                                  <p>{ids?.length}</p>
                            </div>
                      </div>
                      <div className='flex flex-col gap-4'>
                               {ids && ids.map((id) => {
                                  const comment = entities[id]
                                   return (
-                                    <div className='flex flex-col' key={comment.id}>
-                             <div className='flex gap-3 items-cente mt-5'>
-
+                                     <div className='flex flex-col' key={comment.id}>
+                                     <div className='flex gap-3 items-cente mt-5'>
                                                 <div className='  bg-black/10 w-16 h-16 rounded-full'>
                                                  <Image src="/images/user5.png" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
                                                </div>
-
                                                 <div className='flex flex-col '>
                                                 <div className='flex leading-0 gap-3 items-center'>
                                                   <p className='text-lg font-semibold text-[#FAFAFA] font-sans relative'>Javascript Mastery<span className="bg-[#B391F0] h-2 w-2 rounded-full flex top-2 absolute -right-3"/></p>
-                                                 <p className='text-md font-semibold text-[#B391F0] font-sans ml-2'>Posted on Apr 23</p>
+                                                 <p className='text-md font-semibold text-[#B391F0] font-sans ml-2'>Posted on 13:00 min ago</p>
                                                 </div>
-                                                <p className='mt-2 leading-8 text-xl text-light-100 font-sans font-normal max-w-4xl'>{comment.content} </p>
+                                                <p className='mt-2 leading-6 text-[1rem] text-gray-300 font-sans max-w-3xl mb-2'>{comment.content} </p>
+                                                    <Like user={user} commentId={comment.id} comment={comment}/>
                                                 </div>
-                                                  
                                                  </div>
-                                                 
-                                                <div className='flex flex-col'>
-                                              <div className='flex gap-3 mt-5'>
-                                                 <div className='  bg-black/10 w-14 h-14 rounded-full'>
-                                                 <Image src="/images/user5.png" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
                                                </div>
-                                                <div className='flex flex-col '>
-                                                <div className='flex flex-co leading-0 gap-3 items-center'>
-                                                  <p className='text-lg font-semibold text-[#FAFAFA] font-sans relative'>Javascript Mastery <span className="bg-[#9E4B9E] h-2 w-2 rounded-full flex top-2 absolute -right-3"/></p>
-                                                 <p className='text-md font-semibold text-[#9E4B9E] font-sans ml-2'>Posted on Apr 23</p>
-                                                </div>
-                                                <p className='mt-2 leading-8 text-lg text-light-100 font-sans font-normal max-w-3xl'>Thank for sharing this with us.</p>
-                                                </div>
-                                                  
-                                             </div> 
-                                          </div>  
 
-                                          </div>
-                                  )
-                              })}
+                                      )
+                                     })}
                                                    
-                                          </div>
+                             </div>
+                         <div className='flex items-center mt-10 gap-2 mb-5'>
+                          <p className='font-semibold font-sans text-2xl'>Related Feeds</p>
+                           <div className='bg-[#B391F0] h-7 w-8 flex items-center justify-center rounded-sm font-semibold'>
+                            <Image src='/icons/ask.png' width={20} height={20} alt='more' className='rotate-90 size-5 cursor-pointer group' />
+                           </div>
+                     </div>
+                <div className="flex flex-col items-center w-full">
+     <div className="w-full max-w-[70rem]"> {/* Adjust max-width as needed */}
+       {feedCategoryIds?.length > 0 ? feedCategoryIds?.map(id => {
+       const feed = feedCategoryEntities[id];
+        return (
+        <Feed feed={feed} id={feed._id} key={feed?._id} />
+       )
+    }) : <p>No Feed Found!</p>}
+  </div>
+</div>
+            </div> 
+
                   
-            </div>    
     </section>
   )
 }
 
 export default FeedDetail
+
+
+
+
+
+                                  //         {notify && notify.map((comment, index) => {
+                                  // return (
+                                  //   <div className='flex flex-col' key={index}>
+                                  //    <div className='flex gap-3 items-cente mt-5'>
+                                  //               <div className='  bg-black/10 w-16 h-16 rounded-full'>
+                                  //                <Image src="/images/user5.png" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
+                                  //              </div>
+                                  //               <div className='flex flex-col '>
+                                  //               <div className='flex leading-0 gap-3 items-center'>
+                                  //                 <p className='text-lg font-semibold text-[#FAFAFA] font-sans relative'>Javascript Mastery<span className="bg-[#B391F0] h-2 w-2 rounded-full flex top-2 absolute -right-3"/></p>
+                                  //                <p className='text-md font-semibold text-[#B391F0] font-sans ml-2'>Posted on {comment.time} min ago</p>
+                                  //               </div>
+                                  //               <p className='mt-2 leading-6 text-[1rem] text-gray-300 font-sans max-w-3xl mb-2'>{comment.title} </p>
+                                  //                   <Like user={user} commentId={index} comment={comment}/>
+                                  //               </div>
+                                  //                </div>
+                                  //              </div>
+                                  //    )
+                                  //  })}

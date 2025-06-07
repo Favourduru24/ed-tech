@@ -45,23 +45,24 @@ export const navLinks = [
      {
        title: 'Today Lesson taken',
        number: '10',
-       icons: '/icons/trophy.png',
-       subtitle: '20% vs last month',
+       image: '/images/decrement.svg',
+       icon: '/icons/arrow-down-red.svg',
+       subtitle: '20%',
        color: '#2923D9',
        id:'3'
      },
      {
        title: 'Total Quiz taken',
        number: '20',
-       icons: '/icons/volume.png',
-       subtitle: '40% vs last month',
+       image: '/images/increment.svg',
+       icon:'/icons/arrow-up-green.svg',
+       subtitle: '40%',
        color: '#9E4B9E',
        id:'1'
      },
      {
        title: 'Total Lesson taken',
        number: '40',
-       icons: '/icons/leardership.png',
        subtitle: '30% vs last month',
        color: '#E07B38',
        id:'2'
@@ -171,6 +172,49 @@ export const navLinks = [
         },
      ]
 
+     export const data6 = [
+      {
+       title: 'Liked Notification',
+       id: 1
+        },
+       {
+       title: 'Comm',
+       id: 2
+        },
+       {
+       title: 'Advance',
+       id: 3
+        },
+       {
+       title: 'Under Graduate',
+       id: 4
+        },
+       {
+       title: 'Post Graduate',
+       id: 5
+        },
+       {
+       title: 'Graduate',
+       id: 6
+        },
+       {
+       title: 'Master',
+       id: 7
+        },
+       {
+       title: 'SS1',
+       id: 8
+        },
+       {
+       title: 'SS2',
+       id: 9
+        },
+       {
+       title: 'SS3',
+       id: 10
+        },
+     ]
+
      export const sideLinks = [
              {
                label: "Personal Information",
@@ -186,6 +230,10 @@ export const navLinks = [
              },
              {
                label: "My Quizes",
+               icon: "/icons/add.png",
+             },
+             {
+               label: "My History",
                icon: "/icons/add.png",
              }
            ];

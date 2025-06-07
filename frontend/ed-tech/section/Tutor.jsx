@@ -44,7 +44,7 @@ const Tutor = ({subject, duration, query, page, urlParamName}) => {
     subject,
     duration,
     search: query,
-    limit: 1,
+    limit: 9,
     page
     })
  
@@ -92,9 +92,9 @@ const Tutor = ({subject, duration, query, page, urlParamName}) => {
                                {ids.map((id) => {
                                   const tutor = entities[id]
                                      return (
-                             <div key={tutor._id}>
+                                   <div key={tutor._id}>
 
-                                    <div className='bg-[#1F2225] h-[18rem] rounded-xl border-[1.9px] border-[#4B4D4F] flex flex-col p-2 justify-center' >
+                                    <div className='bg-[#1F2225] h-[18rem] rounded-xl border-[1.9px] border-[#4B4D4F] flex flex-col p-2 justify-center break-all' >
                                        <div className='flex gap-3 items-start'>
                                              <div className='  bg-black/10 w-16 h-16 rounded-full'>
                                                       <Image src="/images/user2.jpg" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
@@ -106,7 +106,7 @@ const Tutor = ({subject, duration, query, page, urlParamName}) => {
                                               </div>
                                                 <div className='flex flex-col pt-4 pb-2'>
                                                  <p className='text-xl font-semibold leading-8 text-light-100'>Learn {tutor.subject} <br/>  With {tutor.name}  </p>
-                                                 <p className='text-lg font-semibold font-sans max-w-72'>Topic: <span className='text-md text-base leading-6'>{tutor.topic}</span></p>
+                                                 <p className='text-gray-300 text-lg leading-6 max-w-72'>Topic: <span className='text-[#B391F0] text-[1rem] font semibold text-base leading-6 lowercase'>{tutor.topic}.</span></p>
                                                 </div>
                                             <div className="flex items-center justify-between">
                                                            <Link href={`/training/${tutor._id}`}>

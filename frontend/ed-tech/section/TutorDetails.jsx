@@ -9,7 +9,7 @@ import {useAddNewHistoryMutation} from '@/features/history/historyApiSclice'
 import { useRouter } from 'next/navigation'
 import useAuth from '@/hooks/useAuth'
 
-const TutorDatail = ({id}) => {
+const TutorDetail = ({id}) => {
 
     const {data} = useGetTutorIdQuery(id)
     const [addHistory, {isSuccess}] = useAddNewHistoryMutation()
@@ -56,7 +56,7 @@ const TutorDatail = ({id}) => {
           if(message.type === 'transcript' && message.transcriptType === 'final') {
              const newMessage = {role: message.role, content: message.transcript}
 
-             setMessage((prev) => [newMessage, ...prev])
+             setMessage((prev) => [...prev, newMessage])
           }
      }
 
@@ -101,7 +101,6 @@ const TutorDatail = ({id}) => {
         vapi.start(configureAssistant(voice, style), assistantOverides)
 
            }
-      
     }
 
     const handleDisconnect = async () => {
@@ -189,5 +188,5 @@ const TutorDatail = ({id}) => {
     )
   }
 
-export default TutorDatail
+export default TutorDetail
 

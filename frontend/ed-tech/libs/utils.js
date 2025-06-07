@@ -5,6 +5,72 @@ import { voices } from "@/constants";
 // import { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
 
 
+export const configureQuizTutor = (voice, style) => { 
+  
+const voiceId = voices[voice?.toLowerCase()]?.[style?.toLowerCase()] || "sarah";
+
+  const vapiAssistant = {
+    name: "Companion",
+    firstMessage:
+        "Welcome to your ${subject} assessment. Topic: ${topic}. Answer clearly, and let’s begin.",
+    transcriber: {
+      provider: "deepgram",
+      model: "nova-3",
+      language: "en",
+    },
+    voice: {
+      provider: "11labs",
+      voiceId: voiceId,
+      stability: 0.4,
+      similarityBoost: 0.8,
+      speed: 0.9,
+      style: 0.5,
+      useSpeakerBoost: true,
+    },
+    model: {
+      provider: "openai",
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system",
+          content: `You are a friendly and engaging quiz tutor conducting a real-time quiz session with a student. Your goal is to test the student's knowledge on the given topic and subject while keeping the experience interactive and fun.
+
+**Quiz Guidelines:**  
+- **Stick to the topic:** {{ topic }} (Subject: {{ subject }})  
+- **Follow the structured quiz flow:**  
+  {{ questions }}  
+
+**Engagement Rules:**  
+✅ **Ask one question at a time** – Wait for the student’s response before moving to the next.  
+✅ **Provide immediate feedback** –  
+   - If correct: *"Great job! That’s correct. [Brief explanation if needed]."*  
+   - If incorrect: *"Close! The correct answer is [X]. [Brief explanation]."*  
+✅ **Encourage the student** –  
+   - *"Take your time!"*  
+   - *"You're doing great!"*  
+✅ **Keep it natural** –  
+   - Avoid robotic phrasing.  
+   - Use a conversational but clear tone.  
+
+**Wrap-Up:**  
+- After the last question, summarize performance:  
+  *"You got [X] out of [Y] correct! Well done!"*  
+- End positively:  
+  *"Great effort today! Feel free to retake the quiz anytime to improve. Goodbye!"*  
+
+**Important Notes:**  
+- **Keep responses short** (like a real conversation).  
+- **Be encouraging** – even if answers are wrong.  
+- **Avoid long explanations** unless necessary.  
+- **Maintain a fun, quiz-show vibe!**
+              `,
+        },
+      ],
+    },
+  };
+  return vapiAssistant;
+};
+
 export const configureAssistant = (voice, style) => {
   // const voiceId = voices[voice][
   //         style()[keyof]
@@ -87,6 +153,34 @@ export function formUrlQuery({ params, key, value }) {
 
   export function cn(...inputs) {
   return twMerge(clsx(inputs));
+}
+
+export const calculateTrendPercentage = (countOfThisMonth, countOfLastMonth) => {
+  
+    if (countOfLastMonth === 0) {
+        return countOfThisMonth === 0
+            ? { trend: "no change", percentage: 0 }
+            : { trend: "increment", percentage: 100 };
+    }
+      // 40 - 17 
+    const change = countOfThisMonth - countOfLastMonth
+    const percentage = Math.abs((change / countOfLastMonth) * 100);
+
+    if (change > 0) {
+        return { trend: "increment", percentage };
+    } else if (change < 0) {
+        return { trend: "decrement", percentage };
+    } else {
+        return { trend: "no change", percentage: 0 };
+    }
+};
+
+export function formatDate(date) {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 // /* eslint-disable prefer-const */

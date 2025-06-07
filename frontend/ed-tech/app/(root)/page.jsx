@@ -1,18 +1,56 @@
+"use client"
 import Button from "@/components/shared/Button"
 import Category from "@/components/shared/Category"
+import {useGetTutorHistoryQuery, useGetQuizHistoryQuery} from "@/features/history/historyApiSlice"
 import Header from "@/components/shared/Header"
 import { Skills } from "@/constants"
 import Image from "next/image"
+import Link from 'next/link'
+import useAuth from '@/hooks/useAuth'
+import StatCard from "@/components/shared/StatCard"
 
 const Dashboard = () => {
-   const name = 'Pristine'
+  
+   const {id: user, username} = useAuth()
+
+    const statCard = {
+       totalTutor: 12450,
+       totalTutorLessonTaken: {
+       currentMonth: 40, lastMonth: 17
+      },
+       totalQuiz: 3210,
+       totalQuizTaken: {
+       currentMonth: 15, lastMonth: 20
+       },
+       totalQuizTakenToday: 200,
+       totalTutorLessonTakenToday: 200
+    }
+
+    const {totalTutor, totalTutorLessonTaken, totalTutorLessonTakenToday, totalQuiz, totalQuizTaken, totalQuizTakenToday} = statCard
 
    const buttons = ["This Week", "This Month", "This Year"];
-    
+
+    const {data: userTutorHistory} = useGetTutorHistoryQuery(user)
+    const {data: userQuizHistory, isLoading} = useGetQuizHistoryQuery(user)
+
+     if(isLoading) {
+       return ( 
+       <p>Loading...</p>
+      )
+      }
+
+        const {ids: historyTutorIds, entities: historyTutorEntities} = userTutorHistory?.tutors || { }
+        const {ids: historyQuizIds, entities: historyQuizsEntities} = userQuizHistory?.quizes || {}
+
+        const {currentMonthQuizzes, lastMonthQuizzes, quizCount} = userQuizHistory?.quizsStats || {}
+        const {currentMonthLessons, tutorCount, lastMonthLessons} = userTutorHistory?.tutorStats || {}
+
+
+
   return (
     <section className="flex flex-col"> 
         <Header title="Dashboard"/>
-        <p className="text-[#FAFAFA] text-2xl font-medium leading-10 sm:pt-1">Welcome, {name}</p>
+        <p className="text-[#FAFAFA] text-2xl font-medium leading-10 sm:pt-1">Welcome, {username}</p>
         <p className="text-light-100 text-md font-sans font-semibold ">Here's is a brief summary of your progress and quizes and lesson taken.</p>
 
          <div className="w-full bg-[#1F2225] my-10 rounded-2xl flex items-cente p-8 justify-between max-lg:flex-col gap-20 ">
@@ -23,15 +61,6 @@ const Dashboard = () => {
             </div>
                  <div className="flex gap-5">
                  <Image src='/images/robot.png' alt="robotnic" width={280} height={280} className="max-xl:hidden"/>
-                  {/* <div className="flex gap-2 h-full flex-col justify-between items-center ">
-                       <div className="text-white">
-                        oooooo
-                       </div>
-                       <div className="flex gap-1">
-                      <Image src='/icons/aleft.png' width={40} height={40} alt="arrow/logo" className="p-1 bg-black backdrop-blur-2xl rounded-full cursor-pointer"/>
-                      <Image src='/icons/aright.png' width={40} height={40} alt="arrow/logo" className="p-1 bg-black backdrop-blur-2xl rounded-full cursor-pointer"/>
-                      </div>
-                  </div> */}
                  </div>
            </div>
           
@@ -42,126 +71,119 @@ const Dashboard = () => {
                </div>
 
             <div className="gap-5 grid xl:gap-3 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
-               {Skills.map((items) => (
-                    <div className="  bg-[#1F2225] h-40 rounded-xl flex p-2 justify-cente cursor-pointer items-center gap-3" key={items.id}>
-                     <div className="flex flex-col gap-4 ">
-                       <p className="font-semibold text-[1.5rem] font-sans text-light-100">{items.title}</p>
-                        <div className="flex gap-10 items-center">
-                        <div className="flex flex-col gap-2 items-center">
-                         <p className="text-3xl font-semibold ">{items.number}</p>
-                         <p className="text-sm text-destructive-100 font-semibold font-sans">{items.subtitle}</p>
-                        </div>
-                        <div className="flex  gap-2 -rotate-45 ">
-                        <div className="w-24 h-5 flex justify-end font-semibold rounded-full" style={{backgroundColor: items.color}}>
-                        </div> 
-                    </div>
-                     </div>
-                      
-                      </div>
-                      </div>
-               ))}
+                 <StatCard 
+                   statTitle='Today Lesson taken'
+                   total={tutorCount}
+                   currentMonthCount={currentMonthLessons}
+                   lastMonthCount={lastMonthLessons}
+                 />
+                 <StatCard 
+                   statTitle='Total Quiz taken'
+                   total={quizCount}
+                   currentMonthCount={currentMonthQuizzes}
+                   lastMonthCount={lastMonthQuizzes}
+                 />
+                 <StatCard 
+                   statTitle='Total Quiz taken'
+                   total={totalQuiz}
+                   currentMonthCount={totalQuizTaken.currentMonth}
+                   lastMonthCount={totalQuizTaken.lastMonth}
+                 />
              </div>
              </div>
 
-             <div className="flex flex-col">
+             <div className="flex flex-col mt-5">
              <div className="w-full flex justify-between items-center">
-               <p className="text-[#FAFAFA] text-2xl font-medium leading-16">Pending Assignment ?</p>
-                 <p className="underline text-[#FAFAFA] text-lg outline-b-4 cursor-pointer">See All</p>
+                    <p className="underline text-[#FAFAFA] text-lg outline-b-4 cursor-pointer leading-10">Recently Taken Lesson</p>
+                 <p className="underline text-[#FAFAFA] text-lg outline-b-4 cursor-pointer leading-10">Recently Taken Quizes</p>
                </div>
                     
                <div className="grid grid-cols-2 gap-5 max-xl:grid-cols-1">
-                     {/* Todo here ... */}
                         <div className="flex flex-col gap-5">
-                 <div className="bg-[#1F2225] rounded-r-2xl p-5 border-l-4 border-l-[#9E4B9E]">
-                    <div className="flex justify-between items-center">
-                   <div className="flex items-center gap-2">
-                   <div className="w-20 h-8 flex items-center justify-center font-semibold rounded-full bg-[#E07B38]">
-                     <p className="text-[#FAFAFA]">Middle</p>
-                    </div>
-                   <div className="w-20 h-8 flex items-center justify-center font-semibold rounded-full bg-[#696060] backdrop-blur-xl ">
-                     <p className="text-[#FAFAFA]">Todo</p>
-                    </div>
 
-                   <div className="w-20 h-8 flex items-center justify-center font-semibold rounded-full bg-[#9E4B9E]">
-                     <p className="text-[#FAFAFA]">Middle</p>
-                    </div>
+                      {/* Todo here ... */}
+                        
+                        {historyTutorIds?.length && historyTutorIds?.slice(0, 3)?.map((id) => {
+                          const history = historyTutorEntities[id]
+                           return (
+                             <div className="bg-[#1F2225] rounded-r-2xl p-5 border-l-4 border-l-[#9E4B9E]" key={history?._id}>
+                     <div className="flex justify-between items-center">
 
-                   </div>
-                   <Image src='/icons/bookmark.png' width={24} height={24} alt="bookmark" className="justify-end"/>
-                   </div>
-                      <div className="flex flex-col">
-                      <h2 className="text-[#FAFAFA] leading-8 mt-5 text-xl">Presentation Techniques</h2>
-                         <p className="text-gray-300 max-w-md text-sm leading-6">Improve your public speaking skills by learning how to structure and deliver impactful presentation.</p>
-                      </div>
-                       <div className="w-full flex justify-between mt-5 items-end">
-                       <Button title="Start" color='#B391F0' links="/" />
-                       <p className="text-[#FAFAFA] text-sm">Due to 01:09 2024 9:30pm</p>
-                       </div>
-                 </div>
+                           <div className='flex gap-4 items-start'>
+                                             <div className='bg-black/10 w-16 h-16 rounded-full'>
+                                                      <Image src="/images/user2.jpg" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
+                                                </div>
+                                                     <div className='flex flex-col leading-0 gap-2 mt-1'>
+                                                       <p className='text-lg font-semibold text-[#FAFAFA] font-sans '>{history?.userId.username}</p>
+                                                      <p className='text-[0.8rem] font-semibold text-[#B391F0] font-sans'>pro</p>
+                                                     </div>
+                                              </div>
 
-                 <div className="bg-[#1F2225] rounded-r-2xl p-5 border-l-4 border-l-[#2923D9]">
-                    <div className="flex justify-between items-center">
-                   <div className="flex items-center gap-2">
-                   <div className="w-24 h-8 flex items-center justify-center font-semibold rounded-full bg-[#2923D9] backdrop-blur-xl shadow-2xl">
-                     <p className="text-[#FAFAFA]">Todo</p>
-                    </div>
+                          <Image src='/icons/book.png' width={24} height={24} alt="book" className="justify-end"/>
+                         </div>
+                         <div className="flex flex-col">
+                          <h2 className="text-[#FAFAFA] mt-3 text-xl font-semibold leading-8 text-light-100">Learn {history.tutorId.subject}<br/>  With {history.tutorId.name}</h2>
+                           <p className="text-gray-300 max-w-md text-sm leading-6"><span className="text-[#B391F0] text-lg semibold">Topic: </span>{history.tutorId.topic}</p>
+                         </div>
+                         <div className="w-full flex justify-between mt-5 items-end">
+                         <Button title="Start" color='#B391F0' links={`/training/${history.tutorId._id}`} />
+                          <div className="w-20 h-8 flex items-center justify-center font-semibold rounded-full bg-[#696060]  ">
+                                                           <p className="text-[#FAFAFA]">{history.tutorId.duration}min</p>
+                                                          </div>
+                         </div>
+                     </div> 
                     
-                   <div className="w-20 h-8 flex items-center justify-center font-semibold rounded-full bg-[#E07B38]">
-                     <p className="text-[#FAFAFA]">Middle</p>
-                    </div>
+                          )
+                        })}
+                     
                    
+                      {/* End Todo here */}
 
-                   <div className="w-20 h-8 flex items-center justify-center font-semibold rounded-full bg-[#9E4B9E]">
-                     <p className="text-[#FAFAFA]">Middle</p>
-                    </div>
-
-                   </div>
-                   <Image src='/icons/bookmark.png' width={24} height={24} alt="bookmark" className="justify-end"/>
-                   </div>
-                      <div className="flex flex-col">
-                      <h2 className="text-[#FAFAFA] leading-8 mt-5 text-xl">Presentation Techniques</h2>
-                         <p className="text-gray-300 max-w-md text-sm leading-6">Improve your public speaking skills by learning how to structure and deliver impactful presentation.</p>
-                      </div>
-                       <div className="w-full flex justify-between mt-5 items-end">
-                       <Button title="Start" color='#B391F0' links="/" />
-                       <p className="text-[#FAFAFA] text-sm">Due to 01:09 2024 9:30pm</p>
-                       </div>
-                 </div>
-
-                 <div className="bg-[#1F2225] rounded-r-2xl p-5 border-l-4 border-l-[#E07B38]">
-                    <div className="flex justify-between items-center">
-                   <div className="flex items-center gap-2">
-                   <div className="w-20 h-8 flex items-center justify-center font-semibold rounded-full bg-[#2923D9] backdrop-blur-xl shadow-2xl">
-                     <p className="text-[#FAFAFA]">Todo</p>
-                    </div>
-                    
-                   <div className="w-20 h-8 flex items-center justify-center font-semibold rounded-full bg-[#E07B38]">
-                     <p className="text-[#FAFAFA]">Middle</p>
-                    </div>
-                   
-
-                   <div className="w-20 h-8 flex items-center justify-center font-semibold rounded-full bg-[#9E4B9E]">
-                     <p className="text-[#FAFAFA]">Middle</p>
-                    </div>
-
-                   </div>
-                   <Image src='/icons/bookmark.png' width={24} height={24} alt="bookmark" className="justify-end"/>
-                   </div>
-                      <div className="flex flex-col">
-                      <h2 className="text-[#FAFAFA] leading-8 mt-5 text-xl">Presentation Techniques</h2>
-                         <p className="text-gray-300 max-w-md text-sm leading-6">Improve your public speaking skills by learning how to structure and deliver impactful presentation.</p>
-                      </div>
-                       <div className="w-full flex justify-between mt-5 items-end">
-                       <Button title="Start" color='#B391F0' links="/" otherStyle=''/>
-                       <p className="text-[#FAFAFA] text-sm">Due to 01:09 2024 9:30pm</p>
-                       </div>
-                 </div>
-                 {/* End of TODO */}
  
                  </div>
 
-                 <div className="bg-[#1F2225] rounded-2xl">
-C
+                      <div className="flex flex-col gap-5">
+
+                      {/* Todo here ... */}
+                        
+                        {historyQuizIds?.length && historyQuizIds?.slice(0, 3)?.map((id) => {
+                          const history = historyQuizsEntities[id]
+                           return (
+                             <div className="bg-[#1F2225] rounded-r-2xl p-5 border-l-4 border-l-[#9E4B9E]" key={history?._id}>
+                     <div className="flex justify-between items-center">
+
+                           <div className='flex gap-4 items-start'>
+                                             <div className='bg-black/10 w-16 h-16 rounded-full'>
+                                                      <Image src="/images/user2.jpg" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
+                                                </div>
+                                                     <div className='flex flex-col leading-0 gap-2 mt-1'>
+                                                       <p className='text-lg font-semibold text-[#FAFAFA] font-sans '>{history.userId.username}</p>
+                                                      <p className='text-[0.8rem] font-semibold text-[#B391F0] font-sans'>pro</p>
+                                                     </div>
+                                              </div>
+
+                          <Image src='/icons/book.png' width={24} height={24} alt="book" className="justify-end"/>
+                         </div>
+                         <div className="flex flex-col">
+                          <h2 className="text-[#FAFAFA] mt-3 text-xl font-semibold leading-8 text-light-100">{history.quizId.subject} Quiz <br/> With {history.quizId.name}</h2>
+                           <p className="text-gray-300 max-w-md text-sm leading-6"><span className="text-[#B391F0] text-lg semibold">Topic: </span>{history.quizId.topic}</p>
+                         </div>
+                         <div className="w-full flex justify-between mt-5 items-end">
+                         <Button title="Start" color='#B391F0' links={`/quiz/${history.quizId._id}`}/>
+                          <div className="w-20 h-8 flex items-center justify-center font-semibold rounded-full bg-[#696060]  ">
+                                                           <p className="text-[#FAFAFA]">{history.quizId.duration}min</p>
+                                                          </div>
+                         </div>
+                     </div> 
+                    
+                          )
+                        })}
+                     
+                   
+                      {/* End Todo here */}
+
+ 
+                 {/* </div> */}
                  </div>
                 </div>
              </div>

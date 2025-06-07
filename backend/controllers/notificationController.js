@@ -35,7 +35,6 @@ const getNotification = async (req, res) => {
   try {
     
    const {id} = req.params
-    const user = req.id
 
     if(!mongoose.Types.ObjectId.isValid(id)) {
        return res.status(400).json({

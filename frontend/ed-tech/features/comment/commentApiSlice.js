@@ -85,15 +85,25 @@ export const commentApiSlice = apiSlice.injectEndpoints({
             }
           }),
           deleteComment: builder.mutation({
-            query: ({id}) => ({
-                url: '/comment',
+            query: ({commentId}) => ({
+                url: `/comment/delete-comment/${commentId}`,
                 method: 'DELETE',
                 body: {
-                    id
+                    commentId
                 }
             }),
             invalidatesTags: (result, error, arg) => [{type: 'Comment', id:arg.id}]
           }),
+           likeComment: builder.mutation({
+         query: ({ commentId }) => ({ // Remove user from body
+    url: `/comment/like-comment/${commentId}`,
+    method: 'PUT'
+  }),
+  invalidatesTags: (result, error, { commentId }) => [
+    { type: 'Comment', id: commentId },
+    { type: 'Comment', id: 'LIST' }
+  ]
+}),
         }),
         overrideExisting: true
 
@@ -102,7 +112,9 @@ export const commentApiSlice = apiSlice.injectEndpoints({
 export const {  
  useGetCommentQuery,
  useAddNewCommentMutation,
- useUpdateCommentMutation
+ useUpdateCommentMutation,
+ useDeleteCommentMutation,
+ useLikeCommentMutation
 } = commentApiSlice
 
 // returns the query result object

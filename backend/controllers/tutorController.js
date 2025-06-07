@@ -51,7 +51,7 @@ const createTutor = async (req, res, next) => {
 
   const getAllTutor = async (req, res) => {
      try {
-            const {subject = '', duration = '', search = '', page = 1, limit = 1} = req.query
+            const {subject = '', duration = '', search = '', page = 1, limit = 9} = req.query
 
             const subjectCondition = subject ? { subject: { $regex: subject, $options: 'i' } } : {};
             const durationCondition = duration ? { duration: { $regex: duration, $options: 'i' } } : {};

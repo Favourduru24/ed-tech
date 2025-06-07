@@ -65,11 +65,11 @@ export default function useSocket(user) {
   const [notifications, setNotifications] = useState(getStoredNotifications());
 
   // Update localStorage when notifications change
-  useEffect(() => {
+   useEffect(() => {
     localStorage.setItem('notifications', JSON.stringify(notifications));
-  }, [notifications]);
+   }, [notifications]);
 
-  useEffect(() => {
+   useEffect(() => {
     if (!user?.username || !user?.userId) return;
 
     try {
@@ -88,8 +88,8 @@ export default function useSocket(user) {
           userId: user.userId
         });
       });
-
-      newSocket.on("getNotification", (notification) => {
+          
+       newSocket.on("getNotification", (notification) => {
         setNotifications(prev => {
           const updated = [notification, ...prev];
           return updated;

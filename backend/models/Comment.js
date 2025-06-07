@@ -18,7 +18,11 @@ const commentSchema = new mongoose.Schema({
      },
      reply:{
         type: String
-     }
+     },
+      likes: [{
+              type: mongoose.Schema.Types.ObjectId,
+              ref: 'User'
+           }]
 },
  {
      timestamps: true

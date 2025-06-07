@@ -42,11 +42,12 @@ const getUserByName = (username) => {
 
      try {
 
-            const title = type === 'like' ? 'New Like on Your Post!' : 
-                 type === 'comment' ? 'New Comment Notification!' : 
-                 'New Follow Notification!';
+            const title = type === 'like' ? 'New Like on Your Feed!' : 
+                 type === 'comment' ? 'New Comment on Your Feed!' : 
+                 type === 'share' ? 'New Share on Your Feed!' : 
+                 type === 'quiz' ? '' : type === 'tutor' ? '' : '' 
 
-       const notification = new Notification({
+        const notification = new Notification({
               recipient:  receiverId,
               sender: senderId,
               post: postId,
@@ -57,10 +58,10 @@ const getUserByName = (username) => {
 
          await notification.save()
 
-         const recipient = getUserById(receiverId) || getUserByName(receiverName)
+        //  const recipient = getUserById(receiverId) || getUserByName(receiverName)
 
-           if(recipient) {
-              io.to(recipient.socketId).emit('getNotification', {
+              if(receiverId) {
+              io.to(receiverId).emit('getNotification', {  // receiver.socketId
                      _id: notification._id,
                      sender: {
                        _id: senderId,

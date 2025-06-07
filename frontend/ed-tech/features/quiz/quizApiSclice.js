@@ -11,7 +11,7 @@ const initialState = quizAdapter.getInitialState()
 export const quizApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         getQuiz: builder.query({
-            query: ({level = '', subject = '', search = '', page = 1, limit = 1}) => ({
+            query: ({level = '', subject = '', search = '', page = 1, limit = 9}) => ({
                url: '/quiz/get-quiz',
                params: {
                 level,

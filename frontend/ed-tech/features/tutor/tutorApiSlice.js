@@ -11,7 +11,7 @@ const initialState = tutorAdapter.getInitialState()
 export const tutorApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         getTutor: builder.query({
-            query: ({subject = '', duration = '', search = '', page = 1, limit = 1}) => ({
+            query: ({subject = '', duration = '', search = '', page = 1, limit = 9}) => ({
               url: '/tutor/get-tutor',
                params: {
                 subject,

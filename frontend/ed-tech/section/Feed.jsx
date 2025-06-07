@@ -4,8 +4,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import useAuth from '@/hooks/useAuth'
 import {usePathname} from 'next/navigation'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import useSocket from '@/features/socket/socket'
+import { useRouter } from 'next/navigation'
+import { formatDate } from '../libs/utils'
 
 
      const Feed = ({feed, id}) => {
@@ -22,56 +24,82 @@ import useSocket from '@/features/socket/socket'
              }
           ]
 
+          const router = useRouter()
+    
+                
 
            const [likeFeed, {isLoading}] = useLikeFeedMutation(id)
            const [deleteFeed, {isLoading: delLoading, isSuccess}] = useDeleteFeedMutation()
            const pathname = usePathname()
            const [openModal, setOpenModal] = useState(false)
            const [open, setOpen] = useState(false)
-           const [likeCount, setLikeCount] = useState(feed.likes.length);
-        const {id: userId, username} = useAuth()
-
-     const handleDelete = async(e) => {
-      e.preventDefault()
+           const [share, setShare] = useState(false)
+           const [copy, setCopy] = useState('')
+           const [likeCount, setLikeCount] = useState(feed?.likes?.length);
+           const {id: userId, username} = useAuth()
+           
+          const handleDelete = async(e) => {
+              e.preventDefault()
                  
-       await deleteFeed(id) 
-   }
+                 await deleteFeed(id) 
+            }
+        
+               useEffect(() => {
+                  setTimeout(() => {
+               if(copy) setCopy(false)
+                }, 3000)
+               }, [copy])
+
+               useEffect(() => {
+                   if(isSuccess) {
+                     router.push('/feeds') 
+                   }
+               }, [isSuccess])
+
+              const { socket, notifications } = useSocket({ userId, username });
+
+                const handleLike = async (e) => {
+                      e.preventDefault();
+                    try {
+                    const response = await likeFeed({ id, userId }).unwrap();
+                      setLikeCount(response.likeCount);
      
-
-const { socket, notifications } = useSocket({ userId, username });
-
-const handleLike = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await likeFeed({ id, userId }).unwrap();
-    setLikeCount(response.likeCount);
-     
-    if(userId !== feed.userId._id ) {
-      socket?.emit("sendNotification", {
-        senderName: username,
-        senderId: userId,
-        receiverId: feed.userId._id,
-        receiverName: feed.userId.username,  // Use the post owner's userId
-        postId: id,
-        type: 'like'
-      });
-    }
-  } catch (err) {
-    console.error('Failed to like:', err);
-  }
-};
+                      if(userId !== feed.userId._id ) {
+                          socket?.emit("sendNotification", {
+                          senderName: username,
+                          senderId: userId,
+                          receiverId: feed.userId._id,
+                          receiverName: feed.userId.username,  // Use the post owner's userId
+                          postId: id,
+                          type: 'like'
+                              });
+                               }
+                             } catch (err) {
+                               console.error('Failed to like:', err);
+                             }
+                          };
     
- console.log(notifications)
+                     console.log(notifications)
 
- const handleOpen = () => {
-      setOpen((prev) => !prev)
-   }
+                     const handleOpen = () => {
+                       setOpen((prev) => !prev)
+                    }
     
-    const handleModal = () => {
-    setOpenModal((prev) => !prev)
-   } 
+                       const handleModal = () => {
+                       setOpenModal((prev) => !prev)
+                      }
+                      
+                      const handleShare = () => {
+                       setShare((prev) => !prev)
+                      } 
 
-  return (
+                      const handleCopyLink = (e) => {
+                           e.preventDefault()
+                          navigator.clipboard.writeText(`${window.location.origin}/feeds/${id}`)
+                          setCopy(true)
+                      }
+
+        return (
       <>
       
         {openModal && <div className='bg-black fixed inset-0 z-50 flex justify-center items-center' key={id}>
@@ -82,12 +110,34 @@ const handleLike = async (e) => {
                           <p className='text-[#B391F0] text-xl'>This action can't be undone!</p>
                       </div>
                     <div className='flex gap-3 items-center'>
-                         <button className='w-24 h-10 bg-red-400 font-semibold rounded-lg cursor-pointer' type='submit' onClick={handleDelete}>Delete</button>
+                         <button className='w-24 h-10 bg-red-400 font-semibold rounded-lg cursor-pointer' type='submit' onClick={handleDelete}>{delLoading ? 'loading...' : 'Delete'}</button>
                          <button className='w-24 h-10 bg-[#B391F0] font-semibold rounded-lg cursor-pointer' onClick={handleModal}>Cancel</button>
                     </div>
                  </form>
               </div> 
            </div>}
+
+            {share && <div className='bg-black fixed inset-0 z-50 flex justify-center items-center' >
+                        <div className="w-[45rem] h-[12rem] bg-[#1F2225] rounded-xl flex flex-col p-10 justify-center items-center">
+                            <form  className='flex flex-col gap-4 flex-gro h-full items-end'>
+           
+                                 <div className='flex flex-col justify-center w-full items-center'>
+                                       <div className='flex flex-col justify-center w-full items-center gap-2'>
+                                       <p className="text-[#B391F0] font-sans text-sm">Links to share this feed.</p>
+                                      <div className='w-[32rem] h-12 rounded-md bg-black/50 flex items-center justify-center'>
+                                        <p className="text-[#B391F0] font-sans text-sm">{`${window.location.origin}/feeds/${id}`}</p>
+                                      </div>
+                                    </div>
+                                 </div>
+           
+                               <div className='flex gap-3 '>
+                                    <button className='w-20 h-8 bg-[#B391F0] font-semibold rounded-lg cursor-pointer' onClick={handleCopyLink}>{copy ? 'Copied': 'Copy'}</button>
+                                    <button className='w-20 h-8 bg-destructive-100 font-semibold rounded-lg cursor-pointer'  onClick={handleShare}>Cancel</button>
+                               </div>
+                            </form>
+                         </div> 
+                      </div>}
+
              <section className='flex flex-col py-3 w-full gap-2' >
                  <div className='rounded-2xl relative bg-dark-200 border-[1.0px] border-[#4B4D4F] flex flex-col p-4' >
                  <div className='flex justify-between items-center mb-2'>
@@ -99,7 +149,7 @@ const handleLike = async (e) => {
                      </div>
                       <div>
                          <div className='flex gap-2 items-center'>
-                        <p className='font-semibold font-sans text-white'>4:00 PM</p>
+                        <p className='font-semibold font-sans text-white'>{formatDate(feed?.createdAt)}</p>
                          </div>
                       </div>
                   </div>
@@ -117,11 +167,11 @@ const handleLike = async (e) => {
                          <p className="font-zentry-regular font-semibold text-light-100">{likeCount} </p>
 
                         {/* <Image src="/icons/skill.png" height={24} width={24} alt='img'/> */}
-                       <button onClick={handleLike}>
+                          <button >
                             <Image src="/icons/comment.png" height={24} width={24} alt='img' className="cursor-pointer"/> 
                          </button>
                          <p className="font-zentry-regular font-semibold text-light-100">{feed?.comment?.length} </p>
-                        <Image src="/icons/share.png" height={24} width={24} alt='img'/>
+                        <Image src="/icons/share.png" height={24} width={24} alt='img' onClick={handleShare} className="cursor-pointer"/>
                          
                         {pathname === '/profile' ? (
                           <div className='flex items-center justify-center rounded-full cursor-pointer   hover:rounded-full p-2 shrink-0 relative' >
@@ -141,7 +191,7 @@ const handleLike = async (e) => {
                      ) : ''} 
                     </div>
                        <Link href={`/feeds/${feed?._id}`}>
-                       <p className='underline font-semibold underline-offset-1 cursor-pointer text-white'>Check out</p>  
+                       <p className='underline font-semibold underline-offset-1 cursor-pointer text-white '>Check out</p>  
                        </Link>
                     </div>  
                     

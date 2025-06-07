@@ -38,11 +38,10 @@ export const notificationApiSlice = apiSlice.injectEndpoints({
         //     }
         //   }),
          getNotification: builder.query({
-       query: ({ searchTerm = '', date = ''}) => ({
+       query: ({ notification = ''}) => ({
             url: `/notification`,
             params: {
-            search: searchTerm,
-            date
+            notification,
             }
           }),
       transformResponse: (response) => {
