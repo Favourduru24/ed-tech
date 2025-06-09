@@ -146,9 +146,123 @@ const getUserTutorHistory = async (req, res) => {
   }
 };
 
+ const getUserQuizStat = async (req, res) => {
+
+     try {
+              const userId = req.id; // Typically the user ID is here
+              const subject = req.query.subject; // Get specific subject from query params
+      
+              if(!userId) {
+                  return res.status(400).json({message: 'No user found.'})
+              }
+      
+              const matchStage = {
+                   userId: new mongoose.Types.ObjectId(userId),
+                   quizId: { $exists: true, $ne: null  },
+                   tutorId: null // Changed from 'user' to 'userId'
+              };
+      
+              if (subject) {
+                  matchStage.subject = subject;
+              }
+      
+              const topicCounts = await History.aggregate([
+                  { $match: matchStage },
+                  {
+                      $group: {
+                          _id: "$subject", // Grouping by subject (change to "$topic" if you want to group by topic)
+                          count: { $sum: 1 }
+                      }
+                  },
+                  {
+                      $project: {
+                          subject: "$_id",
+                          count: 1,
+                          _id: 0
+                      }
+                  },
+                  { $sort: { count: -1 } }
+              ]);
+      
+              console.log('Aggregation result:', topicCounts)
+      
+              res.status(200).json({
+                  success: true,
+                  data: topicCounts
+              });
+      
+          } catch(error) {
+              console.log('Something went wrong fetching the Tutor stats for chart', error);
+              res.status(500).json({
+                  success: false,
+                  message: "Error fetching lesson counts",
+                  error: error.message
+              });
+          }
+
+ }
+
+ const getUserTutorStat = async (req, res) => {
+    try {
+        const userId = req.id;
+        
+        if (!userId) {
+            return res.status(400).json({ message: 'No user found.' });
+        }
+
+        const subjectCounts = await History.aggregate([
+            {
+                $match: {
+                    userId: new mongoose.Types.ObjectId(userId),
+                    tutorId: { $exists: true, $ne: null },
+                    quizId: null
+                }
+            },
+            {
+                $lookup: {
+                    from: 'tutors', // The collection name for Tutor model
+                    localField: 'tutorId',
+                    foreignField: '_id',
+                    as: 'tutorData'
+                }
+            },
+            { $unwind: '$tutorData' }, // Flatten the tutorData array
+            {
+                $group: {
+                    _id: "$tutorData.subject", // Group by the subject from tutor
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $project: {
+                    subject: "$_id",
+                    count: 1,
+                    _id: 0
+                }
+            },
+            { $sort: { count: -1 } }
+        ]);
+
+        res.status(200).json({
+            success: true,
+            data: subjectCounts
+        });
+
+    } catch (error) {
+        console.error('Error fetching tutor stats:', error);
+        res.status(500).json({
+            success: false,
+            message: "Error fetching tutor session counts",
+            error: error.message
+        });
+    }
+};
+
 
  module.exports = {
      addUserToSessionHistory,
      getUserQuizHistory,
      getUserTutorHistory,
+     getUserQuizStat,
+     getUserTutorStat
  }

@@ -3,6 +3,16 @@ import useAuth from '@/hooks/useAuth'
 import Image from 'next/image'
 import Link from 'next/link'
 import useSocket from "@/features/socket/socket";
+import { usePathname } from 'next/navigation'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { navLinks } from '@/constants';
 
 const Header = ({title}) => {
 
@@ -10,6 +20,7 @@ const Header = ({title}) => {
 
         // const { socket, notifications: header } = useSocket({ username, userId });
       //  console.log({header})
+      const pathname = usePathname()
 
    return (
     <div className='sm:h-16 h-8 w-full flex items-center justify-between py-10 sm:py-10'>
@@ -30,11 +41,53 @@ const Header = ({title}) => {
           </div>
               </Link>
           
-          <div className='flex gap-2 items-center rounded-full backdrop-blur-xl cursor-pointer relative hover:bg-[#1F2225] hover:rounded-full p-2'>
+            <div className='flex gap-2 items-center rounded-full backdrop-blur-xl cursor-pointer relative hover:bg-[#1F2225] hover:rounded-full p-2'>
               <Image src='/icons/notify.png' width={24} height={24} alt='notification' />
                 <div className='bg-[#B391F0] h-5 w-5 items-center justify-center rounded-full absolute -top-1 -right-2 flex'>
                 {/* <p className='text-[#FAFAFA] text-sm '>{header ? header?.length : ''}</p> */}
                 </div>
+          </div>
+
+            <div className='text-white hover:bg-[#1F2225] p-[0.5px] lg:hidden flex'>
+               <Sheet>
+  <SheetTrigger>
+     <Image src='/icons/menu.png' width={32} height={32} alt='menu' className='cursor-pointer'/>
+  </SheetTrigger>
+  <SheetContent className="focus:ring-0 focus-visible:ring-transparent focus:ring-offset-0 focus-visible:ring-offset-0 focus-visible:outline-none focus-visible:border-none sm:w-64 bg-[#1F2225] w-72">
+     <h3 className='text-light-100 py-1 pl-2 font-semibold text-2xl'>Ed- Tech</h3>
+      <nav className='flex h-full flex-col justify-between md:flex md:gap-4 bg-[#1F2225] p-2 rounded-md'>
+
+              <ul className='w-full flex-col items-start gap-2 md:flex'>
+                  {navLinks?.slice(0, 4).map((link) => {
+                     const isActive = link.route === pathname 
+                      return (
+                        <li key={link.route} className={`w-full flex-col items-start gap-2 md:flex group ${isActive ? 'bg-[#B391F0] rounded-lg font-bold' : 'text-[#FAFAFA] items-center'} `}>
+                           <Link className='p-16-semibold flex w-full gap-4 p-4 items-center' href={link.route}>
+                               <Image className={`${isActive && 'brightness-200'}`} src={link.icon} height={24} width={24} alt='logo'/>
+                               {link.label}
+                           </Link> 
+                        </li>
+                      )
+                  })}
+              </ul>
+
+               <ul className='flex justify-center items-center p-16-semibold w-full whitespace-nowrap rounded-full bg-cover  transition-all flex-col'> 
+               {navLinks?.slice(4).map((link) => {
+                     const isActive = link.route === pathname 
+                      return (
+                        <li key={link.route} className={`w-full flex-col items-start gap-2 md:flex group ${isActive ? 'bg-[#B391F0] rounded-lg font-bold' : 'text-[#FAFAFA] items-center'} `}>
+                           <Link className='p-16-semibold flex w-full gap-4 p-4 items-center' href={link.route}>
+                               <Image className={`${isActive && 'brightness-200'}`} src={link.icon} height={24} width={24} alt='logo'/>
+                               {link.label}
+                           </Link> 
+                        </li>
+                      )
+                  })}
+               </ul>
+
+           </nav>
+  </SheetContent>
+</Sheet> 
           </div>
           </div>
     </div>

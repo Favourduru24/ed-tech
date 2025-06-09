@@ -11,7 +11,8 @@ import StatCard from "@/component/shared/StatCard"
 import CustomSelect from "@/component/shared/CustomSelect"
 import { useState } from 'react'
 import {useGetTutorStatsQuery} from '@/features/tutor/tutorApiSlice'
-// import { LineChartData } from "@/constants"
+import { Calendar } from "@/components/ui/calendar"
+
 import {Bar, Line} from 'react-chartjs-2'
 import {Chart, LinearScale, CategoryScale, BarElement, Title, Tooltip, Legend, LineElement, PointElement} from 'chart.js'
 
@@ -26,11 +27,16 @@ Chart.register(
   Legend 
 )
 
-const Dashboard = () => {
+ const Dashboard = () => {
   
    const {id: user, username} = useAuth()
+  // const user = 'iisfhsivhsieh23'
+  // const username = 'Duru Pristine'
 
-   
+   const [date, setDate] = useState(
+     new Date(2025, 5, 12)
+   )
+
   const {data: tutorStats} = useGetTutorStatsQuery({userId: user})
 
   const options = {
@@ -241,8 +247,7 @@ const Dashboard = () => {
 
              
              </div>
-             {/* <div className="h-[100rem]"/> */}
-               <div className="mt-10 rounded-md text-white flex flex-col gap-5" >
+               {/* <div className="mt-10 rounded-md text-white flex flex-col gap-5" >
                  <div className="bg-[#1F2225] rounded-md h-[35rem]">
                <Bar options={options} data={LineChartData} />
                </div>
@@ -255,10 +260,18 @@ const Dashboard = () => {
                <div className="bg-[#1F2225] rounded-md cursor-pointer h-[35rem]">
                <Line options={options} data={LineChartData} />
                </div>
-               </div>
-             <div className="h-[1rem]"/>
+               </div> */}
+                  
+              <div className="h-[1rem]"/>
                
-             
+               <Calendar
+                    mode="single"
+                    defaultMonth={date}
+                    numberOfMonths={2}
+                    selected={date}
+                    onSelect={setDate}
+                    className="rounded-lg border shadow-sm bg-[#1F2225] text-white w-[]"
+                  />
     </section>
   )
 }

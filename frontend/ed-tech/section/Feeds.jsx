@@ -73,7 +73,7 @@ import Header from '@/component/shared/Header'
 
      const { ids, entities } =  data || {}
 
-     const buttons = ["All", "Category", "Date +"]
+     const buttons = ["Category", "Date +"]
      
      if(isLoading) {
         return (
@@ -97,7 +97,7 @@ import Header from '@/component/shared/Header'
     </div>
      </form>
      <div className='flex justify-between items-center h-20 p-4 max-2xl:rounded-lg bg-[#1F2225] w-full rounded-r-xl'>
-    <div className='h-15 bg-dark p-2 rounded-full'>
+     <div className='h-15 bg-dark p-2 rounded-full'>
       <Category buttons={buttons}/>
        </div>
       <Link href="/feeds/create">

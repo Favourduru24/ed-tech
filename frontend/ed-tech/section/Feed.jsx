@@ -37,10 +37,10 @@ import { formatDate } from '../libs/utils'
            const [share, setShare] = useState(false)
            const [copy, setCopy] = useState('')
            const [likeCount, setLikeCount] = useState(feed?.likes?.length);
-           const {id: userId, username} = useAuth()
+          //  const {id: userId, username} = useAuth()
 
-      // const user = 'nndndsfgndfkgngv'
-      // const username = 'pristine'
+      const user = 'nndndsfgndfkgngv'
+      const username = 'pristine'
            
           const handleDelete = async(e) => {
               e.preventDefault()

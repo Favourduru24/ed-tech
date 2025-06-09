@@ -1,4 +1,5 @@
 import Header from "@/component/shared/Header"
+import MobileNav from "@/component/shared/MobileNav"
 import Sidebar from "@/component/shared/Sidebar"
 import PersistLogin from "@/features/auth/PersistLogin"
 import Prefetch from "@/features/auth/Prefetch"
@@ -7,6 +8,7 @@ const RootLayout = ({children}) => {
      return (
          <main className="flex min-h-screen w-full flex-col bg-[#060606] lg:flex-row">
               <Sidebar/>
+              {/* <MobileNav /> */}
              <div className="flex-1 overflow-auto lg:mt-0 lg:max-h-screen">
                  <div className="w-full max-w-6xl mx-auto">
                  {/* <PersistLogin> */}

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { formUrlQuery, removeKeysFromQuery } from "@/libs/utils"
-import { data5, data2 } from "@/constants"
+import CustomSelect from "./Select"
 
 
 const TutorCategory = ({buttons}) => {
@@ -24,14 +24,80 @@ const TutorCategory = ({buttons}) => {
       {  value: '30', label: '30 minute' },
       { value: '40', label: '40 minute' },
       { value: '50', label: '50 minute' },
-      { value: '60', label: '60 minute' },
+      { value: '60', label: '60 minute' }
   ]
+
+   const data2 = [
+      {
+       value: 'Mathematics',
+       label: 'Mathematics'
+        },
+      {
+       value: 'Economics',
+       label: "Economics"
+        },
+       {
+       value: 'Physic',
+       label: "Physic"
+        },
+       {
+       value: 'Coding',
+       label: 'Coding'
+        },
+       {
+       value: 'Chemistry',
+       label: 'Chemistry'
+        }
+     ]
+
+    const data5 = [
+           {
+            value: 'Beginner',
+            label: 'Beginner'
+             },
+            {
+            value: 'Intermediate',
+            label: 'Intermediate'
+             },
+            {
+            value: 'Advance',
+            label: 'Advance'
+             },
+            {
+            value: 'Under Graduate',
+            label: 'Under Graduate'
+             },
+            {
+            value: 'Post Graduate',
+            label: 'Post Graduate'
+             },
+            {
+            value: 'Graduate',
+            label: 'Graduate'
+             },
+            {
+            value: 'Master',
+            label: 'Master'
+             },
+            {
+            value: 'SS1',
+            label: 'SS1'
+             },
+            {
+            value: 'SS2',
+            label: 'SS2'
+             },
+            {
+            value: 'SS3',
+            label: 'SS3'
+             },
+          ]
 
  
 
 const onSelectSubject = (subject) => {
   let newUrl = ''
- if(subject !== '') {
+ if(subject && subject !== 'Select Subject') {
       newUrl = formUrlQuery({
         params: searchParams.toString(),
         key:'subject',
@@ -49,7 +115,7 @@ const onSelectSubject = (subject) => {
 
 const onSelectDuration = (duration) => {
   let newUrl = ''
- if(duration !== '') {
+ if(duration && duration !== 'Select Level') { //selectedDate && selectedDate !== 'Date Added'
       newUrl = formUrlQuery({
         params: searchParams.toString(),
         key:'duration',
@@ -65,9 +131,9 @@ const onSelectDuration = (duration) => {
    router.push(newUrl, {scroll: false})
 }
 
-const onSelectLevel = (duration) => {
+const onSelectLevel = (level) => {
   let newUrl = ''
- if(level !== '') {
+ if(level && level !== 'Select Level') {
       newUrl = formUrlQuery({
         params: searchParams.toString(),
         key:'level',
@@ -87,64 +153,58 @@ const onSelectLevel = (duration) => {
   return (
      <div className="flex gap-2 h-full px-1 rounded-full items-center justify-center">
     {buttons.map((id) => (
-      <div className={`${items === id ? 'text-white bg-[#9E4B9E] w-34 max-md:w-24 h-full flex items-center justify-center  rounded-full cursor-pointer transition-all duration-500' : 'text-white w-32 max-md:w-24 h-full flex items-center justify-center rounded-full cursor-pointer transition-all duration-500'} `} onClick={() => setItems(id)} key={id}>
+      <div className="" onClick={() => setItems(id)} key={id}>
       <div className="font-semibold text-light-100">{id === 'Category' ? 
          (
-         <div className="w-full"> 
-         <select
-           value={subject}
-           onChange={(e) => setSubject(e.target.value)}
-           onClick={(e) => onSelectSubject(e.target.value)}
-           className="h-full w-full rounded-xl
-           outline-none cursor-pointer font-semibold text-lg font-sans border-0 gap-2 p-1"
-         >
-            <option value="" className="bg-[#1F2225] max-md:hidden" disabled>Subject</option>
-           {data2 ?  data2.map((item) => (
-                <option key={item.id} value={item.title} style={{ backgroundColor: '#1F2225', color: '#FAFAFA', fontFamily: 'sans', width: '100rem'}} className="w-[50vh]">
-                {item.title}
-                 </option>
-              )
-           ) : ''}
-         </select>
+         <div className="w-[13rem]"> 
+         <CustomSelect
+                          options={[
+                            { value: '', label: 'Select Subject' },
+                            ...data2
+                          ]}
+                          value={subject}
+                          onChange={(value) => {
+                            setSubject(value)
+                            onSelectSubject(value)
+                          }}
+                          placeholder="Select Subject"
+                          className="h-full bg-transparent"
+                        />
          </div>
       ) : id === 'Level' && pathname === '/quiz' ? 
       (
-        <div className="w-full"> 
-        <select
-          value={level}
-          onChange={(e) => setLevel(e.target.value)}
-          onClick={(e) =>  onSelectLevel(e.target.value)}
-          className="h-full w-full rounded-xl
-          outline-none cursor-pointer font-semibold text-lg font-sans border-0 gap-2 p-1"
-          
-        >
-            <option value="" className="bg-[#1F2225] max-md:hidden" disabled>Level</option>
-          {data5.map((cat) => (
-            <option key={cat.id} value={cat.title} style={{ backgroundColor: '#1F2225', color: '#FAFAFA', fontFamily: 'sans', width: '100rem'}} className="w-[50vh]">
-               {cat.title}
-            </option>
-          ))}
-        </select>
+        <div className="w-[13rem]"> 
+        <CustomSelect
+                          options={[
+                            { value: '', label: 'Select Level' },
+                            ...data5
+                          ]}
+                          value={level}
+                          onChange={(value) => {
+                            setLevel(value)
+                            onSelectLevel(value)
+                          }}
+                          placeholder="Select Level"
+                          className="h-full bg-transparent"
+                        />
         </div>
      ) :
        pathname === '/training' && id === 'Date +' ? 
         (
-        <div className="w-full"> 
-        <select
-          value={duration}
-          onChange={(e) => setDuration(e.target.value)}
-          onClick={(e) =>  onSelectDuration(e.target.value)}
-          className="h-full w-full rounded-xl
-          outline-none cursor-pointer font-semibold text-lg font-sans border-0 gap-2 p-1"
-          
-        >
-            <option value="" className="bg-[#1F2225] max-md:hidden" disabled>Duration</option>
-          {Duration.map((cat) => (
-            <option key={cat.value} value={cat.value} style={{ backgroundColor: '#1F2225', color: '#FAFAFA', fontFamily: 'sans', width: '100rem'}} className="w-[50vh]">
-               {cat.label}
-            </option>
-          ))}
-        </select>
+        <div className="w-[12rem]"> 
+         <CustomSelect
+                          options={[
+                            { value: '', label: 'Select Duration' },
+                            ...Duration
+                          ]}
+                          value={duration}
+                          onChange={(value) => {
+                            setDuration(value)
+                            onSelectDuration(value)
+                          }}
+                          placeholder="Select Duration"
+                          className="h-full bg-transparent"
+                        />
         </div>
      ) : 
     id }</div>
