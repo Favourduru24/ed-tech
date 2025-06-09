@@ -1,4 +1,4 @@
-import EditForm from '@/components/shared/EditForm'
+import EditForm from '@/component/shared/EditForm'
 import React from 'react'
 
 const UpdatePage = async (props) => {

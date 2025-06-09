@@ -1,4 +1,4 @@
-import AuthForm from "@/components/shared/AuthForm"
+import AuthForm from "@/component/shared/AuthForm"
 
 const SignIn = () => {
   return <AuthForm type="sign-in"/>

@@ -1,4 +1,4 @@
-import CreateQuiz from "@/components/shared/CreateQuiz"
+import CreateQuiz from "@/component/shared/CreateQuiz"
 
 const Quiz = () => {
   return (

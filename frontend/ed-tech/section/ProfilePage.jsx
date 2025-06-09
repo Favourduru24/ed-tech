@@ -7,7 +7,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Feed from './Feed'
 import useAuth from '@/hooks/useAuth'
-import Header from '@/components/shared/Header'
+import Header from '@/component/shared/Header'
 import { sideLinks } from '@/constants'
 import { useState} from 'react'
 
@@ -46,7 +46,7 @@ import { useState} from 'react'
                  <div className='w-[30%] bg-[#1F2225] flex flex-col rounded-t-xl h-[90vh] relative sticky top-20'>
                   <nav className='h-full flex-col justify-between md:flex md:gap-4  p-2  rounded-t-xl'>
                                 <ul className='hidden w-full flex-col items-start gap-2 md:flex'>
-                                    {sideLinks.slice(0, 4).map((link, index) => 
+                                    {sideLinks?.slice(0, 4).map((link, index) => 
                                         (
                                           <li  className={`hidden w-full flex-col items-start gap-2 md:flex group ${items.label === link.label ? 'bg-[#B391F0] rounded-lg font-bold text-[#1F2225] text-lg' : 'text-[#FAFAFA] items-center cursor-pointer font-sans font-semibold'} `} key={index} onClick={() => setItems(link)}>
                                              <div className='p-16-semibold flex w-full gap-4 p-4 items-center justify-between'>
@@ -59,7 +59,7 @@ import { useState} from 'react'
                                 </ul>
                   
                                      <ul className='flex justify-center items-center p-16-semibold w-full whitespace-nowrap rounded-full bg-cover  transition-all flex-col'> 
-                                           {sideLinks.slice(4).map((link, index) => 
+                                           {sideLinks?.slice(4).map((link, index) => 
                                         (
                                           <li  className={`hidden w-full flex-col items-start gap-2 md:flex group ${items.label === link.label ? 'bg-[#B391F0] rounded-lg font-bold text-[#1F2225] font-sans text-lg' : 'text-[#FAFAFA] items-center cursor-pointer font-sans font-semibold'} `} key={index} onClick={() => setItems(link)}>
                                              <div className='p-16-semibold flex w-full gap-4 p-4 items-center justify-between'>

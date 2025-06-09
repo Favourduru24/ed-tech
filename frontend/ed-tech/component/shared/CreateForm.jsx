@@ -22,8 +22,6 @@ const CreateForm = () => {
 
      const router = useRouter()
 
-    
-
      useEffect(() => {
        if(isSuccess) {
             setCategory('')

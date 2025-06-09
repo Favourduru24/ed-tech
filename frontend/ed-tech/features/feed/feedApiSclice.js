@@ -133,7 +133,7 @@ export const feedsApiSlice = apiSlice.injectEndpoints({
           }),
                  updateFeed: builder.mutation({
                   query: ({ id, initailFeedsData }) => ({  // Destructure id from arguments
-                    url: `/feeds/feed/${id}`,
+                    url: `/feeds/feed/update/${id}`,
                     method: 'PATCH',
                     body: {
                       ...initailFeedsData

@@ -170,20 +170,14 @@ const createFeed = async (req, res, next) => {
             return res.status(400).json({ message: 'Invalid ID format' });
         }
 
-        // Validate required fields
-        const requiredFields = { title, pitch }; // Remove other fields
-        const missingFields = Object.entries(requiredFields)
-          .filter(([_, value]) => !value?.trim()) // Check for empty strings
-          .map(([key]) => key);
-
         // Update operation
         const updatedFeed = await Feed.findByIdAndUpdate(
           id,
           { 
-            title: title.trim(),
-            pitch: pitch.trim(),
+            title,
+            pitch,
             category,
-            description: description?.trim(), // Optional
+            description, // Optional
             image: image || null,
           },
           { new: true, runValidators: true, session }
@@ -192,7 +186,7 @@ const createFeed = async (req, res, next) => {
         if (!updatedFeed) {
             await session.abortTransaction();
             await session.endSession();
-            return res.status(404).json({ message: 'Feed not found' });
+            return res.status(404).json({ message: 'Feed not found'});
         }
 
         await session.commitTransaction();

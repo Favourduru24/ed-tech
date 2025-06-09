@@ -7,6 +7,7 @@ import { useAddNewTutorMutation } from '@/features/tutor/tutorApiSlice'
 import useAuth from '@/hooks/useAuth'
 import { useAddNewQuizMutation } from '@/features/quiz/quizApiSclice'
 import { data5, data2} from '@/constants'
+import CustomSelect from './CustomSelect'
 
 const CreateQuiz = ({type}) => {
 
@@ -22,35 +23,35 @@ const CreateQuiz = ({type}) => {
 
       const {id: user} = useAuth()
 
-    const data1 = [
+     const data1 = [
       {
-       title: 'Public',
+       value: 'Public',
        id: 1
         },
       {
-       title: 'Private',
+       value: 'Private',
        id: 2
         }
      ]
 
      const data3 = [
       {
-       title: 'Male',
+       value: 'Male',
        id: 1
         },
        {
-       title: 'Female',
+       value: 'Female',
        id: 2
         }
      ]
 
      const data4 = [
       {
-       title: 'Casual',
+       value: 'Casual',
        id: 1
         },
        {
-       title: 'Formal',
+       value: 'Formal',
        id: 2
         }
      ]
@@ -111,6 +112,7 @@ const CreateQuiz = ({type}) => {
        }
 
         await addNewQuiz({name, subject, visibility, voice, voicePattern, duration, topic, amount, level, user}) //user
+         console.log({name, subject, visibility, voice, voicePattern, duration, topic, amount, level, user})
     }
 
     
@@ -122,18 +124,20 @@ const CreateQuiz = ({type}) => {
           <section className='h-full flex flex-col items-center w-full'>
            <form className="flex flex-col sm:py-10 py-5 gap-5 mt-10 sm:mt-0 w-full" onSubmit={type === 'training' ? handleCreateTutor : handleCreateQuiz}>
             <div className="flex sm:flex-row justify-between items-center w-full gap-4 flex-col h-full ">
-               <div className="w-full flex gap-2">
-                    <Select value={subject} onChange={(value) => setSubject(value)} data={data2} title="Select Subject"/>
+               <div className="w-full flex gap-2 ">
+                    <CustomSelect value={subject} onChange={setSubject} options={data2} placeholder="Select a subject" className="w-full text-gray-300 font-sans"/>
+                    {/* <Select value={subject} onChange={(value) => setSubject(value)} data={data2} title="Select Subject"/> */}
                </div>
                <div className="w-full flex gap-2">
-                    <Select value={visibility} data={data1} onChange={(value) => setVisibility(value)} title="Select Visibility"/>
+                    {/* <Select value={visibility} data={data1} onChange={(value) => setVisibility(value)} title="Select Visibility"/> */}
+                    <CustomSelect value={visibility} onChange={setVisibility} options={data1} placeholder="Select Visibility" className="w-full text-gray-300 font-sans"/>
                </div>
             </div>
                <div className="w-full sm:mb-0 mb-2">
-                   <input type="text" placeholder="Name Your Tutor" className="w-full h-15 bg-[#1F2225] border-[1.0px] border-[#4B4D4F] rounded-xl p-2 placeholder:text-gray-500 placeholder:text-sm p-2 placeholder:font-sans placeholder:font-semibold text-gray-500 outline-none font-semibold text-xl font-sans" value={name} onChange={(e) => setName(e.target.value)}/>
+                   <input type="text" placeholder="Name Your Tutor" className="w-full h-15 bg-[#1F2225] border-[1.0px] border-[#4B4D4F] rounded-xl p-2 placeholder:text-gray-300 placeholder:text-sm p-2 placeholder:font-sans placeholder:font-semibold text-gray-300 outline-none font-semibold text-xl font-sans" value={name} onChange={(e) => setName(e.target.value)}/>
                </div>
                <div className="h-48 w-full sm:mb-0 mb-2">
-                    <textarea name="textarea" className="w-full h-full bg-[#1F2225] border-[1.0px] border-[#4B4D4F] rounded-xl p-2 placeholder:text-gray-500 placeholder:text-sm p-2 placeholder:font-sans placeholder:font-semibold text-gray-500 outline-none font-semibold text-xl font-sans" placeholder='What In particular should i help with.' value={topic} onChange={(e) => setTopic(e.target.value)}/>
+                    <textarea name="textarea" className="w-full h-full bg-[#1F2225] border-[1.0px] border-[#4B4D4F] rounded-xl p-2 placeholder:text-gray-300 placeholder:text-sm p-2 placeholder:font-sans placeholder:font-semibold text-gray-300 outline-none font-semibold text-xl font-sans" placeholder='What In particular should i help with.' value={topic} onChange={(e) => setTopic(e.target.value)}/>
 
                </div>
               <div className="flex justify-between items-center w-full gap-4 h-full sm:flex-row flex-col">
@@ -141,10 +145,11 @@ const CreateQuiz = ({type}) => {
 
                 <div className="flex sm:flex-row justify-between items-center w-full gap-4 flex-col h-full ">
                <div className="sm:w-[50%] w-full sm:mb-0 mb-2">
-                   <input type="number" placeholder="Estimated duration in minutes" className="w-full h-15 bg-[#1F2225] border-[1.0px] border-[#4B4D4F] rounded-xl p-2 placeholder:text-gray-500 placeholder:text-sm p-2 placeholder:font-sans placeholder:font-semibold text-gray-500" value={duration} onChange={(e) => setDuration(e.target.value)} min={1} max={60}/>
+                   <input type="number" placeholder="Estimated duration in minutes" className="w-full h-15 bg-[#1F2225] border-[1.0px] border-[#4B4D4F] rounded-xl p-2 placeholder:text-gray-300 placeholder:text-sm p-2 placeholder:font-sans placeholder:font-semibold text-gray-300" value={duration} onChange={(e) => setDuration(e.target.value)} min={1} max={60}/>
                </div>
                <div className="sm:w-[50%] w-full flex gap-2">
-                    <Select value={voice} onChange={(value) => setVoice(value)}  data={data3} title="Select Voice"/>
+                    {/* <Select value={voice} onChange={(value) => setVoice(value)}  data={data3} title="Select Voice"/> */}
+                    <CustomSelect value={voice} onChange={setVoice} options={data3} placeholder="Select Voice" className="w-full text-gray-300 font-sans"/>
                </div>
             </div>
             
@@ -152,17 +157,20 @@ const CreateQuiz = ({type}) => {
                  
                <div className={`${type === 'quiz' ? 'flex sm:flex-row justify-between items-center w-full gap-4 flex-col h-full ' : 'w-full flex gap-2'}`}>
                       { type === 'quiz' && <div className="sm:w-[50%] w-full sm:mb-0 mb-2">
-                   <input type="number" placeholder='Estimated number of question in minutes' className="w-full h-15 bg-[#1F2225] border-[1.0px] border-[#4B4D4F] rounded-xl p-2 placeholder:text-gray-500 placeholder:text-sm p-2 placeholder:font-sans placeholder:font-semibold text-gray-500" value={amount} onChange={(e) => setAmount(e.target.value)} min={1} max={60}/>
+                   <input type="number" placeholder='Estimated number of question in minutes' className="w-full h-15 bg-[#1F2225] border-[1.0px] border-[#4B4D4F] rounded-xl p-2 placeholder:text-gray-300 placeholder:text-sm p-2 placeholder:font-sans placeholder:font-semibold text-gray-300" value={amount} onChange={(e) => setAmount(e.target.value)} min={1} max={60}/>
                  </div> }
                    <div className={`${type === 'quiz' ? 'sm:w-[50%] w-full flex gap-2' : 'w-full'}`}>
-                      <Select value={voicePattern} onChange={(value) => setVoicePattern(value)} data={data4} title="Select Style"/>
+                      {/* <Select value={voicePattern} onChange={(value) => setVoicePattern(value)} data={data4} title="Select Style"/> */}
+                      <CustomSelect value={voicePattern} onChange={setVoicePattern} options={data4} placeholder="Select Style" className="w-full text-gray-300 font-sans"/>
                     </div> 
                     
                </div>
                 <div className='w-full flex gap-2'>
-                      <Select value={level} onChange={(value) => setLevel(value)} data={data5} title="Select Level"/>
+                      {/* <Select value={level} onChange={(value) => setLevel(value)} data={data5} title="Select Level"/> */}
+                      {type === 'quiz' && <CustomSelect value={level} onChange={setLevel} options={data5} placeholder="Select Level" className="w-full text-gray-300 font-sans" overflow/> }
+                      
                </div> 
-               <button className="w-[100%] bg-[#9E4B9E] font-semibold h-15 text-white rounded-xl cursor-pointer sm:mt-0 mt-2" type='submit' disabled={isLoading}>
+               <button className="w-[100%] bg-[#9E4B9E] font-semibold h-15 text-white rounded-xl cursor-pointer sm:mt-0 mt-2" type='submit' disabled={isLoading || isQuizLoading}>
                   {isLoading || isQuizLoading ? '...' : type === 'quiz' ? 'Create Quiz' : 'Create Tutor' } 
                </button>
             </form>

@@ -8,6 +8,7 @@ import {useEffect, useState} from 'react'
 import useSocket from '@/features/socket/socket'
 import { useRouter } from 'next/navigation'
 import { formatDate } from '../libs/utils'
+// import {Bar} from 'react-chartjs-2'
 
 
      const Feed = ({feed, id}) => {
@@ -37,6 +38,9 @@ import { formatDate } from '../libs/utils'
            const [copy, setCopy] = useState('')
            const [likeCount, setLikeCount] = useState(feed?.likes?.length);
            const {id: userId, username} = useAuth()
+
+      // const user = 'nndndsfgndfkgngv'
+      // const username = 'pristine'
            
           const handleDelete = async(e) => {
               e.preventDefault()
@@ -181,7 +185,12 @@ import { formatDate } from '../libs/utils'
                           {Feature.map((items, index) => (
                           <div className='relative group' key={index}>
                           <span className="absolute top-8 mb-1 hidden group-hover:flex px-2 py-1 text-xs text-white bg-gray-700 rounded-md shadow-md z-30">{items.name}</span>
-                          <Image src={items.icons} height={24} width={24} alt={items.name} className='size-5' onClick={items.name === "delete" ? handleModal : null}/>
+
+                          
+                            <Link href={items.name === "edit" ? `/feeds/${feed?._id}/update` : ''}>
+                            <Image src={items.icons} height={24} width={24} alt={items.name} className='size-5' onClick={items.name === "delete" ? handleModal : null}/>
+                            </Link>
+                          
                           </div>
                           ))}
 

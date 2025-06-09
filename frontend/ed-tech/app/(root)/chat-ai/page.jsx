@@ -1,4 +1,4 @@
-import Header from '@/components/shared/Header'
+import Header from '@/component/shared/Header'
 import React from 'react'
 
 const Chat = () => {

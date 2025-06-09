@@ -1,17 +1,62 @@
 "use client"
-import Button from "@/components/shared/Button"
-import Category from "@/components/shared/Category"
+import Button from "@/component/shared/Button"
+import Category from "@/component/shared/Category"
 import {useGetTutorHistoryQuery, useGetQuizHistoryQuery} from "@/features/history/historyApiSlice"
-import Header from "@/components/shared/Header"
-import { Skills } from "@/constants"
+import Header from "@/component/shared/Header"
+import {data2} from "@/constants"
 import Image from "next/image"
 import Link from 'next/link'
 import useAuth from '@/hooks/useAuth'
-import StatCard from "@/components/shared/StatCard"
+import StatCard from "@/component/shared/StatCard"
+import CustomSelect from "@/component/shared/CustomSelect"
+import { useState } from 'react'
+import {useGetTutorStatsQuery} from '@/features/tutor/tutorApiSlice'
+// import { LineChartData } from "@/constants"
+import {Bar, Line} from 'react-chartjs-2'
+import {Chart, LinearScale, CategoryScale, BarElement, Title, Tooltip, Legend, LineElement, PointElement} from 'chart.js'
+
+Chart.register(
+ LinearScale,
+ CategoryScale,
+ BarElement,
+ LineElement,
+ PointElement,
+ Title,
+  Tooltip, 
+  Legend 
+)
 
 const Dashboard = () => {
   
    const {id: user, username} = useAuth()
+
+   
+  const {data: tutorStats} = useGetTutorStatsQuery({userId: user})
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      }
+    }
+  }
+
+
+  const LineChartData = {
+    labels: tutorStats ? tutorStats?.map(stat => stat.subject) : {},
+     datasets: [
+       {
+        label: "Your Quiz monthly progress",
+        data: tutorStats ? tutorStats.map(stat => stat.count) : {},
+        borderColor: "#B391F0",
+        backgroundColor: ["rbga(255, 99, 132, 0.2)"],
+        borderWidth: 1
+     },
+    ],
+  }
+
+  const [filter, setFilter] = useState('')
 
     const statCard = {
        totalTutor: 12450,
@@ -28,7 +73,6 @@ const Dashboard = () => {
 
     const {totalTutor, totalTutorLessonTaken, totalTutorLessonTakenToday, totalQuiz, totalQuizTaken, totalQuizTakenToday} = statCard
 
-   const buttons = ["This Week", "This Month", "This Year"];
 
     const {data: userTutorHistory} = useGetTutorHistoryQuery(user)
     const {data: userQuizHistory, isLoading} = useGetQuizHistoryQuery(user)
@@ -38,6 +82,7 @@ const Dashboard = () => {
        <p>Loading...</p>
       )
       }
+
 
         const {ids: historyTutorIds, entities: historyTutorEntities} = userTutorHistory?.tutors || { }
         const {ids: historyQuizIds, entities: historyQuizsEntities} = userQuizHistory?.quizes || {}
@@ -181,8 +226,6 @@ const Dashboard = () => {
                      
                    
                       {/* End Todo here */}
-
- 
                  {/* </div> */}
                  </div>
                 </div>
@@ -190,14 +233,31 @@ const Dashboard = () => {
 
              <div className="flex flex-col mt-5">
                <div className="w-full flex justify-between items-center">
-               <p className="text-[#FAFAFA] text-2xl font-medium leading-16">My Progress</p>
+               <p className="text-[#FAFAFA] text-2xl font-semibold leading-16 font-sans text-light-100">My Lesson Progress</p>
                   <div className="flex items-center gap-2 h-full">
-               <Category buttons={buttons}/>
+               <CustomSelect value={filter} onChange={setFilter} placeholder="Select a subject" options={data2} className="w-[25rem] text-gray-300 font-sans"/>
                    </div>
                </div>
 
              
              </div>
+             {/* <div className="h-[100rem]"/> */}
+               <div className="mt-10 rounded-md text-white flex flex-col gap-5" >
+                 <div className="bg-[#1F2225] rounded-md h-[35rem]">
+               <Bar options={options} data={LineChartData} />
+               </div>
+               <div className="w-full flex justify-between items-center h-full">
+               <p className="text-[#FAFAFA] text-2xl font-semibold leading-16 font-sans text-light-100">My Quiz Progress</p>
+                  <div className="flex items-center gap-2 h-full">
+               <CustomSelect value={filter} onChange={setFilter} placeholder="Select a subject" options={data2} className="w-[25rem] text-gray-300 font-sans"/>
+                   </div>
+               </div>
+               <div className="bg-[#1F2225] rounded-md cursor-pointer h-[35rem]">
+               <Line options={options} data={LineChartData} />
+               </div>
+               </div>
+             <div className="h-[1rem]"/>
+               
              
     </section>
   )

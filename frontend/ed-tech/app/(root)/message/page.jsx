@@ -1,4 +1,4 @@
-import Search from '@/components/shared/Search'
+import Search from '@/component/shared/Search'
 import Image from 'next/image'
 import React from 'react'
  

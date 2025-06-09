@@ -1,5 +1,5 @@
-import Header from "@/components/shared/Header"
-import Sidebar from "@/components/shared/Sidebar"
+import Header from "@/component/shared/Header"
+import Sidebar from "@/component/shared/Sidebar"
 import PersistLogin from "@/features/auth/PersistLogin"
 import Prefetch from "@/features/auth/Prefetch"
 

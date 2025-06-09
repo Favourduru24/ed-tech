@@ -1,5 +1,5 @@
 "use client"
-import Header from '@/components/shared/Header'
+import Header from '@/component/shared/Header'
 import {useGetTutorIdQuery} from '@/features/tutor/tutorApiSlice'
 import { vapi } from '@/libs/vapi.sdk'
 import Image from 'next/image'

@@ -146,9 +146,62 @@ const createTutor = async (req, res, next) => {
        }
     }
 
+    const getUserLessonsByTopic = async (req, res) => {
+      try {
+          const userId = req.id; // Typically the user ID is here
+          const subject = req.query.subject; // Get specific subject from query params
+  
+          if(!userId) {
+              return res.status(400).json({message: 'No user found.'})
+          }
+  
+          const matchStage = {
+              userId: new mongoose.Types.ObjectId(userId) // Changed from 'user' to 'userId'
+          };
+  
+          if (subject) {
+              matchStage.subject = subject;
+          }
+  
+          const topicCounts = await Tutor.aggregate([
+              { $match: matchStage },
+              {
+                  $group: {
+                      _id: "$subject", // Grouping by subject (change to "$topic" if you want to group by topic)
+                      count: { $sum: 1 }
+                  }
+              },
+              {
+                  $project: {
+                      subject: "$_id",
+                      count: 1,
+                      _id: 0
+                  }
+              },
+              { $sort: { count: -1 } }
+          ]);
+  
+          console.log('Aggregation result:', topicCounts)
+  
+          res.status(200).json({
+              success: true,
+              data: topicCounts
+          });
+  
+      } catch(error) {
+          console.log('Something went wrong fetching the Tutor stats for chart', error);
+          res.status(500).json({
+              success: false,
+              message: "Error fetching lesson counts",
+              error: error.message
+          });
+      }
+  };
+
 module.exports = {
      createTutor,
      getAllTutor,
      getTutorById,
-     getUserTutor
+     getUserTutor,
+     getUserLessonsByTopic
 }

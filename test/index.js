@@ -559,7 +559,7 @@ module.exports = History
 //   tutorId: null // Ensure no tutorId exists
 // })
 
-exports.getUserLessonsByTopic = async (req, res) => {
+ exports.getUserLessonsByTopic = async (req, res) => {
     try {
     // Get user ID from auth middleware and topic from query
     const userId = req.user.id; // From your auth middleware (e.g., JWT)

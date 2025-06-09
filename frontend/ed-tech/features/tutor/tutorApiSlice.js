@@ -46,6 +46,37 @@ export const tutorApiSlice = apiSlice.injectEndpoints({
               }
             }
           }),
+          getTutorStats: builder.query({
+            query: () => '/tutor/get-tutor-chart',
+            validateStatus: (response, result) => {
+              return response.status === 200 && !result.isError;
+            },
+            transformResponse: (responseData) => {
+              console.log('Raw API response:', responseData);
+              const tutorStats = responseData.data || [];
+              
+              // If you just want the array as-is without normalization
+              return tutorStats;
+              
+              // OR if you need to use the adapter, do it properly:
+              /*
+              const normalizedData = tutorStats.map(stat => ({
+                id: stat.subject, // using subject as ID since it's unique in this context
+                ...stat
+              }));
+              return tutorAdapter.setAll(initialState, normalizedData);
+              */
+            },
+            providesTags: (result) => {
+              // Simplified tags since we're not using normalized data
+              return result 
+                ? [
+                    { type: 'Tutor', id: 'LIST' },
+                    ...result.map(stat => ({ type: 'Tutor', id: stat.subject }))
+                  ]
+                : [{ type: 'Tutor', id: 'LIST' }];
+            }
+          }),
           getTutorId: builder.query({
                       query: (id) => `/tutor/get-tutor/${id}`,
                        validateStatus: (response, result) => {
@@ -121,6 +152,7 @@ export const tutorApiSlice = apiSlice.injectEndpoints({
 export const {  
  useGetTutorQuery,
  useGetTutorIdQuery,
+ useGetTutorStatsQuery,
  useGetUserTutorQuery,
  useAddNewTutorMutation,
 } = tutorApiSlice

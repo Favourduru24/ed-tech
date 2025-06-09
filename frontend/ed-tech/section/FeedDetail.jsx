@@ -1,8 +1,8 @@
 "use client"
  import {  useGetFeedQuery, useGetFeedByCategoryQuery} from '@/features/feed/feedApiSclice'
  import {useAddNewCommentMutation, useGetCommentQuery} from '@/features/comment/commentApiSlice'
- import Header from '@/components/shared/Header'
- import Like from '@/components/shared/Like'
+ import Header from '@/component/shared/Header'
+ import Like from '@/component/shared/Like'
 import MDEditor from '@uiw/react-md-editor'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
@@ -43,7 +43,7 @@ const FeedDetail = ({id}) => {
 
      if(isLoading){
          return(
-            <p className="text-white">Loading...</p>
+            <p className="text-white font-semibold text-white">Loading...</p>
          )
      }
 

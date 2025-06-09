@@ -101,6 +101,7 @@ const onSelectDate = (date) => {
       ) : id === 'Date +' ? 
         (
         <div className="w-full"> 
+
         <select
           value={date}
           onChange={(e) => setDate(e.target.value)}
@@ -116,6 +117,8 @@ const onSelectDate = (date) => {
             </option>
           ))}
         </select>
+        {/* <CustomSelect value={date} /> */}
+
         </div>
      ) : id }</div>
     </div>

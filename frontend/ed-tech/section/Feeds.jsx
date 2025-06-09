@@ -1,13 +1,13 @@
 "use client"
 import Image from 'next/image'
 import { useEffect, useState, useRef } from 'react'
-import Category from '@/components/shared/Category'
+import Category from '@/component/shared/Category'
 import Feed from "./Feed"
 import Link from 'next/link'
 import { useGetFeedsQuery } from '@/features/feed/feedApiSclice'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { formUrlQuery, removeKeysFromQuery } from '@/libs/utils'
-import Header from '@/components/shared/Header'
+import Header from '@/component/shared/Header'
 
    const Feeds = ({searchText, cat, date}) => {
 
@@ -33,16 +33,16 @@ import Header from '@/components/shared/Header'
   refetchOnMountOrArgChange: true
 })
 
-    useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
+       useEffect(() => {
+          const observer = new IntersectionObserver(([entry]) => {
 
-      if (entry.isIntersecting && 
-          !isFetching && 
-          page < data?.totalPages
-      ) {
-        setPage(p => p + 1);
-      }
-    }, { threshold: 0.1 });
+        if (entry.isIntersecting && 
+           !isFetching && 
+            page < data?.totalPages
+       ) {
+         setPage(p => p + 1);
+       }
+     }, { threshold: 0.1 });
 
     if (loaderRef.current) observer.observe(loaderRef.current);
     return () => observer.disconnect();

@@ -1,13 +1,13 @@
 "use client"
-import Category from "@/components/shared/Category";
-import Header from "@/components/shared/Header";
-import Search from "@/components/shared/Search"
+import Category from "@/component/shared/Category";
+import Header from "@/component/shared/Header";
+import Search from "@/component/shared/Search"
 import { notify } from "@/constants";
 import Image from "next/image";
 import { useDeleteNotificationMutation, useGetNotificationQuery } from "@/features/notification/notifyApiSclice";
 import useAuth from "@/hooks/useAuth";
 import useSocket from "@/features/socket/socket";
-import Select from "@/components/shared/Select";
+import Select from "@/component/shared/Select";
 import { data5} from '@/constants'
 import { useState } from "react";
 

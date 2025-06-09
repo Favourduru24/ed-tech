@@ -77,6 +77,8 @@ export const navLinks = [
     //    id:'4'
     //  },
   ]
+
+  
   
   export const notify = [
     {
@@ -108,66 +110,66 @@ export const navLinks = [
 
     export const data2 = [
       {
-       title: 'Mathematics',
+       value: 'Mathematics',
        id: 1
         },
       {
-       title: 'Economics',
+       value: 'Economics',
        id: 2
         },
        {
-       title: 'Physic',
+       value: 'Physic',
        id: 3
         },
        {
-       title: 'Coding',
+       value: 'Coding',
        id: 4
         },
        {
-       title: 'Chemistry',
+       value: 'Chemistry',
        id: 5
         }
      ]
 
     export const data5 = [
       {
-       title: 'Beginner',
+       value: 'Beginner',
        id: 1
         },
        {
-       title: 'Intermediate',
+       value: 'Intermediate',
        id: 2
         },
        {
-       title: 'Advance',
+       value: 'Advance',
        id: 3
         },
        {
-       title: 'Under Graduate',
+       value: 'Under Graduate',
        id: 4
         },
        {
-       title: 'Post Graduate',
+       value: 'Post Graduate',
        id: 5
         },
        {
-       title: 'Graduate',
+       value: 'Graduate',
        id: 6
         },
        {
-       title: 'Master',
+       value: 'Master',
        id: 7
         },
        {
-       title: 'SS1',
+       value: 'SS1',
        id: 8
         },
        {
-       title: 'SS2',
+       value: 'SS2',
        id: 9
         },
        {
-       title: 'SS3',
+       value: 'SS3',
        id: 10
         },
      ]
@@ -243,6 +245,29 @@ export const navLinks = [
   female: { casual: "ZIlrSGI4jZqobxRKprJz", formal: "sarah" },
 };
 
+
+export const LineChartData = {
+  labels: [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+     "Thursday",
+     "Friday",
+     "Saturday",
+     "Sunday"  
+  ],
+   datasets: [
+     {
+      label: "Your Quiz monthly progress",
+      data: [5, 25, 34, 30, 70, 90, 95],
+      borderColor: "#B391F0",
+      backgroundColor: ["rbga(255, 99, 132, 0.2)"],
+      borderWidth: 1
+   },
+  ],
+}
+
+  
 //   export const plans = [
 //     {
 //       _id: 1,

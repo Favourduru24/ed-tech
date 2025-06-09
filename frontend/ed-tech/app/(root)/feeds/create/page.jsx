@@ -1,4 +1,4 @@
- import CreateForm from '../../../../components/shared/CreateForm'
+ import CreateForm from '@/component/shared/CreateForm'
 
 const CreateFeed = () => {
   return (

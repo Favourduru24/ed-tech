@@ -1,13 +1,13 @@
 'use client'
-import Header from '@/components/shared/Header'
+import Header from '@/component/shared/Header'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useGetQuizQuery } from '@/features/quiz/quizApiSclice'
-import TutorCategory from '@/components/shared/TutorCategory'
+import TutorCategory from '@/component/shared/TutorCategory'
 import { formUrlQuery, removeKeysFromQuery } from '@/libs/utils'
 import { useSearchParams, useRouter } from 'next/navigation'
-import Pagination from '@/components/shared/Pagination'
+import Pagination from '@/component/shared/Pagination'
 
 const Quiz = ({level, subject, query, page, urlParamName}) => {
 

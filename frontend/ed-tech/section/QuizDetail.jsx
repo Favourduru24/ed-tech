@@ -1,5 +1,5 @@
 "use client"
-import Header from '@/components/shared/Header'
+import Header from '@/component/shared/Header'
 import { vapi } from '@/libs/vapi.sdk'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'

@@ -11,7 +11,7 @@ router.route('/')
 router.get('/feed/:id', feedController.getFeedById)
 router.get('/feed/user/:userId', verifyJwt, feedController.getUserFeed)
 router.get('/feed-category/:id/:categoryId', feedController.getRelatedFeedByCategory)
-router.patch('/feed/user/:id', feedController.updateFeed)
+router.patch('/feed/update/:id', feedController.updateFeed)
 router.put('/feed/like/:id', feedController.likeFeed)
 router.delete('/delete/:id', verifyJwt, feedController.deleteFeed)
 
