@@ -5,7 +5,7 @@ import { vapi } from '@/libs/vapi.sdk'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { cn, configureAssistant } from '@/libs/utils'
-import {useAddNewHistoryMutation} from '@/features/history/historyApiSclice'
+import {useAddNewHistoryMutation} from '@/features/history/historyApiSlice'
 import { useRouter } from 'next/navigation'
 import useAuth from '@/hooks/useAuth'
 

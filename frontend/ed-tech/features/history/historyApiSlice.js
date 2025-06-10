@@ -64,6 +64,48 @@ const initialState = historyAdapter.getInitialState()
               }
             }
           }),
+           getTutorStats: builder.query({
+         query: () => '/history/get-user-tutor-stat',
+         transformResponse: (responseData) => {
+    // Return the data array directly (simplest approach)
+          return responseData.data || [];
+    
+    /* Alternative if you need normalized data:
+    return responseData.data.reduce((acc, stat) => {
+      acc[stat.subject] = stat; // Using subject as unique key
+      return acc;
+    }, {});
+    */
+  },
+  providesTags: (result, error, arg) => 
+    result
+      ? [
+          { type: 'History', id: 'LIST' },
+          ...result.map(stat => ({ type: 'History', id: stat.subject }))
+        ]
+      : [{ type: 'History', id: 'LIST' }]
+}),
+          getQuizStats: builder.query({
+         query: () => '/history/get-user-quiz-stat',
+         transformResponse: (responseData) => {
+    // Return the data array directly (simplest approach)
+          return responseData.data || [];
+    
+    /* Alternative if you need normalized data:
+    return responseData.data.reduce((acc, stat) => {
+      acc[stat.subject] = stat; // Using subject as unique key
+      return acc;
+    }, {});
+    */
+  },
+  providesTags: (result, error, arg) => 
+    result
+      ? [
+          { type: 'History', id: 'LIST' },
+          ...result.map(stat => ({ type: 'History', id: stat.subject }))
+        ]
+      : [{ type: 'History', id: 'LIST' }]
+}),
           addNewHistory: builder.mutation({
             query: initailHistoryData => ({
                 url: '/history/add-user-history',
@@ -84,7 +126,9 @@ const initialState = historyAdapter.getInitialState()
 export const {  
  useGetQuizHistoryQuery,
  useGetTutorHistoryQuery,
+ useGetTutorStatsQuery,
  useAddNewHistoryMutation,
+ useGetQuizStatsQuery
 } = historyApiSlice
 
 // returns the query result object

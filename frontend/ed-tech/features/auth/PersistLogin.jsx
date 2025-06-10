@@ -12,6 +12,7 @@ const PersistLogin = ({ children }) => {
     const token = useSelector(selectCurrentToken)
     const effectRan = useRef(false)
     const [trueSuccess, setTrueSuccess] = useState(false)
+    
 
     const [refresh, {
         isUninitialized,
@@ -48,22 +49,35 @@ const PersistLogin = ({ children }) => {
         return () => { effectRan.current = true }
     }, [])
 
+
+ let content
+
     if (!persist) {
-        return <>{children}</>
+
+         console.log('no-persist')
+        content = <>{children}</>
+
     } else if (isLoading) {
-        return <p className="text-white">Loading...</p>
-    } else if (isError) {
-        return (
+
+         console.log('loading..')
+        content = <p className="text-white">Loading...</p>
+
+    } else if (isError ) {
+        console.log('error')
+         content = (
             <p className='text-white'>
                 {`${error?.data?.message} - `}
                 <Link href="/welcome" >Please login again</Link>.
             </p>
         )
-    } else if ((isSuccess && trueSuccess) || (token && isUninitialized)) {
-        return <>{children}</>
+    } else if ((isSuccess && trueSuccess)) {
+        content = <>{children}</>
+    } else if (token && isUninitialized) { //persist: yes, token: yes
+        console.log('token and uninit')
+        console.log(isUninitialized)
+        content = <>{children}</>
     }
-
-    return null 
+     return content
 }
 
 export default PersistLogin

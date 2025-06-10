@@ -1,7 +1,7 @@
 "use client"
 import Button from "@/component/shared/Button"
 import Category from "@/component/shared/Category"
-import {useGetTutorHistoryQuery, useGetQuizHistoryQuery} from "@/features/history/historyApiSlice"
+import {useGetTutorHistoryQuery, useGetQuizHistoryQuery, useGetTutorStatsQuery, useGetQuizStatsQuery} from "@/features/history/historyApiSlice"
 import Header from "@/component/shared/Header"
 import {data2} from "@/constants"
 import Image from "next/image"
@@ -10,9 +10,7 @@ import useAuth from '@/hooks/useAuth'
 import StatCard from "@/component/shared/StatCard"
 import CustomSelect from "@/component/shared/CustomSelect"
 import { useState } from 'react'
-import {useGetTutorStatsQuery} from '@/features/tutor/tutorApiSlice'
 import { Calendar } from "@/components/ui/calendar"
-
 import {Bar, Line} from 'react-chartjs-2'
 import {Chart, LinearScale, CategoryScale, BarElement, Title, Tooltip, Legend, LineElement, PointElement} from 'chart.js'
 
@@ -29,15 +27,18 @@ Chart.register(
 
  const Dashboard = () => {
   
-   const {id: user, username} = useAuth()
-  // const user = 'iisfhsivhsieh23'
-  // const username = 'Duru Pristine'
+  //  const {id: user, username} = useAuth()
+  const user = 'iisfhsivhsieh23'
+  const username = 'Duru Pristine'
 
    const [date, setDate] = useState(
      new Date(2025, 5, 12)
    )
 
   const {data: tutorStats} = useGetTutorStatsQuery({userId: user})
+  const {data: quizStats} = useGetQuizStatsQuery({userId: user})
+
+  console.log({tutorStats})
 
   const options = {
     responsive: true,
@@ -48,13 +49,37 @@ Chart.register(
     }
   }
 
+  console.log({quizStats})
 
-  const LineChartData = {
+  const quizOption = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      }
+    }
+  }
+
+
+  const BarChartData = {
     labels: tutorStats ? tutorStats?.map(stat => stat.subject) : {},
      datasets: [
        {
+        label: "Your Tutor monthly progress",
+        data: tutorStats ? tutorStats?.map(stat => stat.count) : {},
+        borderColor: "#B391F0",
+        backgroundColor: ["rbga(255, 99, 132, 0.2)"],
+        borderWidth: 1
+     },
+    ],
+  }
+
+  const LineChartData = {
+    labels: quizStats ? quizStats?.map(stat => stat.subject) : {},
+     datasets: [
+       {
         label: "Your Quiz monthly progress",
-        data: tutorStats ? tutorStats.map(stat => stat.count) : {},
+        data: quizStats ? quizStats.map(stat => stat.count) : {},
         borderColor: "#B391F0",
         backgroundColor: ["rbga(255, 99, 132, 0.2)"],
         borderWidth: 1
@@ -238,29 +263,29 @@ Chart.register(
              </div>
 
              <div className="flex flex-col mt-5">
-               <div className="w-full flex justify-between items-center">
+               {/* <div className="w-full flex justify-between items-center">
                <p className="text-[#FAFAFA] text-2xl font-semibold leading-16 font-sans text-light-100">My Lesson Progress</p>
                   <div className="flex items-center gap-2 h-full">
                <CustomSelect value={filter} onChange={setFilter} placeholder="Select a subject" options={data2} className="w-[25rem] text-gray-300 font-sans"/>
                    </div>
-               </div>
+               </div> */}
 
              
              </div>
-               {/* <div className="mt-10 rounded-md text-white flex flex-col gap-5" >
+               <div className="mt-10 rounded-md text-white flex flex-col gap-5" >
                  <div className="bg-[#1F2225] rounded-md h-[35rem]">
-               <Bar options={options} data={LineChartData} />
+               {/* <Bar options={options} data={BarChartData} /> */}
                </div>
-               <div className="w-full flex justify-between items-center h-full">
+               {/* <div className="w-full flex justify-between items-center h-full">
                <p className="text-[#FAFAFA] text-2xl font-semibold leading-16 font-sans text-light-100">My Quiz Progress</p>
                   <div className="flex items-center gap-2 h-full">
                <CustomSelect value={filter} onChange={setFilter} placeholder="Select a subject" options={data2} className="w-[25rem] text-gray-300 font-sans"/>
                    </div>
-               </div>
-               <div className="bg-[#1F2225] rounded-md cursor-pointer h-[35rem]">
-               <Line options={options} data={LineChartData} />
-               </div>
                </div> */}
+               <div className="bg-[#1F2225] rounded-md cursor-pointer h-[35rem]">
+               {/* <Line options={options} data={LineChartData} /> */}
+               </div>
+               </div>
                   
               <div className="h-[1rem]"/>
                

@@ -43,12 +43,25 @@ import {createEntityAdapter, createSelector} from '@reduxjs/toolkit'
                {type:'User', id: 'List'}
            ]
          }),
+         verifyEmail: builder.mutation({
+           query: initailUsersData => ({
+               url: 'auth/verify-account',
+               method: 'POST',
+               body: {
+                   ...initailUsersData
+               }
+           }),
+           invalidatesTags: [
+               {type:'User', id: 'List'}
+           ]
+         }),
     }),
   })
 
  export  const {
     useGetUsersQuery,
-    useAddNewUserMutation
+    useAddNewUserMutation,
+    useVerifyEmailMutation
   } = usersApiSlice
 
 

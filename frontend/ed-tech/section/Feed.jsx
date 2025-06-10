@@ -8,7 +8,6 @@ import {useEffect, useState} from 'react'
 import useSocket from '@/features/socket/socket'
 import { useRouter } from 'next/navigation'
 import { formatDate } from '../libs/utils'
-// import {Bar} from 'react-chartjs-2'
 
 
      const Feed = ({feed, id}) => {
@@ -37,11 +36,8 @@ import { formatDate } from '../libs/utils'
            const [share, setShare] = useState(false)
            const [copy, setCopy] = useState('')
            const [likeCount, setLikeCount] = useState(feed?.likes?.length);
-          //  const {id: userId, username} = useAuth()
+           const {id: userId, username} = useAuth()
 
-      const user = 'nndndsfgndfkgngv'
-      const username = 'pristine'
-           
           const handleDelete = async(e) => {
               e.preventDefault()
                  

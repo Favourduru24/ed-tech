@@ -47,10 +47,10 @@ export const tutorApiSlice = apiSlice.injectEndpoints({
             }
           }),
          getTutorStats: builder.query({
-  query: () => '/get-user-tutor-stat',
-  transformResponse: (responseData) => {
+         query: () => '/history/get-user-tutor-stat',
+         transformResponse: (responseData) => {
     // Return the data array directly (simplest approach)
-    return responseData.data || [];
+          return responseData.data || [];
     
     /* Alternative if you need normalized data:
     return responseData.data.reduce((acc, stat) => {
@@ -62,10 +62,10 @@ export const tutorApiSlice = apiSlice.injectEndpoints({
   providesTags: (result, error, arg) => 
     result
       ? [
-          { type: 'TutorStats', id: 'LIST' },
-          ...result.map(stat => ({ type: 'TutorStats', id: stat.subject }))
+          { type: 'Tutor', id: 'LIST' },
+          ...result.map(stat => ({ type: 'Tutor', id: stat.subject }))
         ]
-      : [{ type: 'TutorStats', id: 'LIST' }]
+      : [{ type: 'Tutor', id: 'LIST' }]
 }),
           getTutorId: builder.query({
                       query: (id) => `/tutor/get-tutor/${id}`,

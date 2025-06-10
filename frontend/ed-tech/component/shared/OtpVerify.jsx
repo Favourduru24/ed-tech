@@ -1,8 +1,12 @@
 "use client"
-import Image from "next/image"
+import { useVerifyEmailMutation } from "@/features/user/usersApiSlice"
 import {useRef, useState } from "react"
+import useAuth from "@/hooks/useAuth"
 
 const OtpVerify = () => {
+
+   const [verifyEmail, {isLoading, isSuccess}] = useVerifyEmailMutation()
+   const {id: userId} = useAuth()
 
   const inputRef = useRef([])
 
@@ -27,11 +31,17 @@ const OtpVerify = () => {
              inputRef.current[index].value = char
          }
        })
-
   }
+
+   const handleVerifyEmail = async (e) => {
+       e.preventDefault()
+
+       await verifyEmail({userId, }) //otp
+   }
  
   return (
-    <form className='rounded-2xl lg:min-w-[56px] mx-20'>
+    <form className='rounded-2xl lg:min-w-[56px] mx-20' > 
+    {/* onSubmit={handleVerifyEmail} */}
     <div className='flex-col flex gap-2   py-14 sm:px-10 rounded-2xl mx-5 bg-gradient-to-b from-[#1A1C20] to-[#08090D] border-[1.9px] border-[#4B4D4F] '>
          <div className="flex flex-col w-full items-center ">
          <h2 className="text-2xl font-bold md:text-[36px] leading-10 uppercase font-sans text-light-100">Otp Verification</h2>
@@ -45,13 +55,13 @@ const OtpVerify = () => {
           </div>
          
      <button type="submit" className="inline-block px-7 py-4 font-bold  leading-5 text-white transition-colors duration-150 bg-[#9E4B9E] border border-transparent rounded-lg shadow-sm focus:outline-none focus:shadow-2xl active:bg-[#9E4B9E] hover:bg-[#b46eb4] min-w-28 cursor-pointer items-center justify-center overflow-visible text-lg mx-5">
-    <p className="font-semibold">Verify Otp</p>
+    <p className="font-semibold">{isLoading ? 'Verify Otp' : 'Loading...'}</p>
     </button>
       <div className="flex items-end gap-2 w-full justify-end pb-0.5 px-5">
     <p className='text-center text-light-100 !font-normal text-sm'> 
         did not recieve the otp 
     </p>
-       <div className="text-[#b46eb4] text-xl underline cursor-pointer" type="submit">Resend</div>
+       <div className="text-[#b46eb4] text-xl underline cursor-pointer" type="submit" >Resend</div>
     </div>
     </div>
    </form>
