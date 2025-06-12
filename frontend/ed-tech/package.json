@@ -9,6 +9,7 @@
         "lint": "next lint"
     },
     "dependencies": {
+        "@next/swc-win32-x64-msvc": "^15.3.3",
         "@radix-ui/react-dialog": "^1.1.14",
         "@radix-ui/react-separator": "^1.1.7",
         "@radix-ui/react-slot": "^1.2.3",
@@ -30,6 +31,7 @@
         "react-day-picker": "^9.7.0",
         "react-dom": "^19.0.0",
         "react-redux": "^9.2.0",
+        "redux-persist": "^6.0.0",
         "socket.io-client": "^4.8.1",
         "tailwind-merge": "^3.0.2"
     },

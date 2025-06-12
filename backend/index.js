@@ -67,7 +67,7 @@ app.use('/history', require('./routes/historyRoutes'))
 
    app.use('/upload', upload, async (req, res) => {
       if(!req.file) {
-        return res.status(400).json({message: 'No image uploaded'})
+        return res.status(400).json({message: 'No Image uploaded'})
       } 
     
       try {

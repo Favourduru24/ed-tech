@@ -60,15 +60,15 @@ const login = async (req, res, next) => {
 
     await foundUser.save();
 
-    const mailOption = {
-      from: 'durupristine@gmail.com',
-      to: foundUser.email,
-      subject: 'Account Verification OTP',
-      text: `Your OTP IS ${otp}. Verify your account using this OTP`,
-    };
+    // const mailOption = {
+    //   from: 'durupristine@gmail.com',
+    //   to: foundUser.email,
+    //   subject: 'Account Verification OTP',
+    //   text: `Your OTP IS ${otp}. Verify your account using this OTP`,
+    // };
 
-    const info = await transporter.sendMail(mailOption);
-    console.log('Email sent', info.response);
+    // const info = await transporter.sendMail(mailOption);
+    // console.log('Email sent', info.response);
 
     return res.json({
       success: true,
@@ -152,7 +152,7 @@ const logout = (req, res) => {
         const user = await User.findById(userId)
 
         if(!user) {
-          return res.status(401).json({ message: 'User not found' });
+          return res.status(400).json({ message: 'User not found' });
         }
 
         if(user.verifyOptExpireAt < Date.now()) {

@@ -104,18 +104,24 @@ const createFeed = async (req, res, next) => {
         };
 
         const skipAmount = (numPage - 1) * numLimit;
-  
+
         const feeds = await Feed.find(conditions)
         .sort({ createdAt: -1 })
         .skip(skipAmount)
         .limit(numLimit)
         .populate("userId", "username")
         .populate("category", "_id name")
-  
-      if(!feeds.length) return res.status(404).json({ message: 'No feed found!' });
-  
-      const feedsCount = await Feed.countDocuments(conditions);
+
+        if(!feeds.length) return res.status(404).json({ message: 'No feed found!' });
+
+         const comments = await Comment?.length
+
+         feeds.map((feed) => {
+         return feed.comment = comments
+       })
        
+      const feedsCount = await Feed.countDocuments(conditions)
+
       return res.status(200).json({
         feeds, 
         totalPages: Math.ceil(feedsCount / numLimit), // 10 / 5 = 2

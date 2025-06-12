@@ -170,7 +170,7 @@ import { formatDate } from '../libs/utils'
                           <button >
                             <Image src="/icons/comment.png" height={24} width={24} alt='img' className="cursor-pointer"/> 
                          </button>
-                         <p className="font-zentry-regular font-semibold text-light-100">{feed?.comment?.length} </p>
+                         <p className="font-zentry-regular font-semibold text-light-100">{feed?.comment} </p>
                         <Image src="/icons/share.png" height={24} width={24} alt='img' onClick={handleShare} className="cursor-pointer"/>
                          
                         {pathname === '/profile' ? (

@@ -105,24 +105,31 @@ const AuthForm = ({type}) => {
         
 
   return (
+      <>
+      <div className='sm:h-16 h-8 w-full flex items-center justify-between py-10 sm:py-10 fixed inset-0 bg-black/10 '>
+               <div className="px-5">
+               <p className='text-light-100 text-4xl capitalize font-semibold font-sans'>Ed-tech</p>
+               </div>
+          </div>
+
     <form className='bg-gradient-to-b from-[#4B4D4F] to-[#4B4D4F33] p-0.5 rounded-2xl w-fit lg:min-w-[566px]' onSubmit={isSignIn ? handleLogin: handleSignIn}>
     <div className='flex-col flex gap-2 bg-gradient-to-b from-[#1A1C20] to-[#08090D] py-14 sm:px-10 rounded-2xl px-5 '>
        <div className='w-full space-y-4 mt-4 w-full flex flex-col mb-5'>
            {!isSignIn && <label className='flex flex-col gap-2'>
             <p className='text-light-100 !font-normal'>Username</p>
-          <input type='text' className='!bg-dark-200 !rounded-lg !min-h-12 !px-5 placeholder:!text-light-100 placeholder:text-sm placeholder:text-sm text-white' placeholder='Username' value={form.username} onChange={(e) => setForm({...form, username: e.target.value})}  autoComplete="name"/>
+          <input type='text' className='!bg-dark-200 !rounded-lg !min-h-12 !px-5 placeholder:!text-light-100 placeholder:text-sm placeholder:text-sm text-light-100' placeholder='Username' value={form.username} onChange={(e) => setForm({...form, username: e.target.value})}  autoComplete="name"/>
           </label> }
            <label className='flex flex-col gap-2'>
             <p className='text-light-100 !font-normal'>Email</p>
-          <input type='email' className='!bg-dark-200 !rounded-lg !min-h-12 !px-5 placeholder:!text-light-100 placeholder:text-sm text-white' placeholder='email@gmail.com' value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} autoComplete="email"/>
+          <input type='email' className='!bg-dark-200 !rounded-lg !min-h-12 !px-5 placeholder:!text-light-100 placeholder:text-sm text-light-100' placeholder='email@gmail.com' value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} autoComplete="email"/>
           </label>
            <label className='flex flex-col gap-2'>
             <p className='text-light-100 !font-normal'>Password</p>
-          <input type='password' className='!bg-dark-200 !rounded-lg !min-h-12 !px-5 placeholder:!text-light-100 placeholder:text-sm text-white' placeholder='Password' value={form.password} onChange={(e) => setForm({...form, password: e.target.value})} />
+          <input type='password' className='!bg-dark-200 !rounded-lg !min-h-12 !px-5 placeholder:!text-light-100 placeholder:text-sm text-light-100' placeholder='Password' value={form.password} onChange={(e) => setForm({...form, password: e.target.value})} />
           </label>
            {!isSignIn && <label className='flex flex-col gap-2'>
             <p className='text-light-100 !font-normal'>Comfirm Password</p>
-          <input type='password' className='!bg-dark-200 !rounded-lg !min-h-12 !px-5 placeholder:!text-light-100 placeholder:text-sm text-white' placeholder='*********' value={form.confirmPassword} onChange={(e) => setForm({...form, confirmPassword: e.target.value})}/>
+          <input type='password' className='!bg-dark-200 !rounded-lg !min-h-12 !px-5 placeholder:!text-light-100 placeholder:text-sm text-light-100' placeholder='*********' value={form.confirmPassword} onChange={(e) => setForm({...form, confirmPassword: e.target.value})}/>
           </label>}
            {loginIsError || isError && (
        <div className='bg-destructive-100/15 p-2 rounded-md flex items-center gap-2 text-md break-all '>
@@ -166,30 +173,30 @@ const AuthForm = ({type}) => {
                          id="checkbox"
                          onChange={handlePersist}
                          checked={persist}
-                         className='cursor-pointer w-5 h-5'
+                         className='cursor-pointer w-5 h-5 accent-[#9E4B9E]'
                          />
                         <p className='text-light-100 text-[1rem]'>i Agree to the terms and condition</p>
                         </div>
-                        <p className='text-light-100 text-[1rem] underline underline-offset-4 font-normal cursor-pointer'>Forget password!</p>
+                        {/* <p className='text-light-100 text-[1rem] underline underline-offset-4 font-normal cursor-pointer'>Forget password!</p> */}
 
                         </div>
                         }
         
-        <div className='flex gap-2 justify-center items-center mt-5'>
+        {/* <div className='flex gap-2 justify-center items-center mt-5'>
 
        <button className='!bg-dark-200 h-10 w-10 rounded-full items-center justify-center flex font-bold transition-colors cursor-pointer text-primary-100'>G</button>
 
        <button className='!bg-dark-200 h-10 w-10 rounded-full items-center justify-center flex cursor-pointer gap-2 text-primary-100'  >
-       {/* <Github className='text-blue-500 size-5' /> */}
+       <Github className='text-blue-500 size-5' />
          <p className=' font-bold transition-color  text-primary-100'>D</p>
        </button>
        <button className='!bg-dark-200 h-10 w-10 rounded-full items-center justify-center flex cursor-pointer gap-2 text-primary-100 font-semibold'  >
-       {/* <Github className='text-blue-500 size-5' /> */}
+       <Github className='text-blue-500 size-5' />
          <p className=' font-bold transition-color  text-primary-100'>F</p>
        </button>
-     </div>
+     </div> */}
         
-     <p className='text-center text-light-100 !font-normal'>{isSignIn ? 'No account yet?' : 'Have an account already?'}{' '}
+     <p className='text-light-100 !font-normal'>{isSignIn ? 'No account yet?' : 'Have an account already?'}{' '}
           <Link href={!isSignIn ? "/sign-in" : 'sign-up'} className='underline text-[#9E4B9E]'>
              {!isSignIn ? "Sign in" : "Sign up"} 
           </Link>
@@ -197,6 +204,7 @@ const AuthForm = ({type}) => {
     </div>
      
 </form>
+</>
   )
 }
 

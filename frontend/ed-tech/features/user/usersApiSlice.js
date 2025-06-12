@@ -55,14 +55,26 @@ import {createEntityAdapter, createSelector} from '@reduxjs/toolkit'
                {type:'User', id: 'List'}
            ]
          }),
-    }),
-  })
+         updateUserProfile: builder.mutation({
+            query: ({ profilePics, userId }) => ({  // Destructure id from arguments
+             url: '/users/profile-pic',
+             method: 'PUT',
+             body: { profilePics }
+            }),
+              invalidatesTags: (result, error, arg) => {
+              return [{type: 'User', id: arg.id}]
+              }
+               }),
+     }),
+       overrideExisting: true
+        })
 
- export  const {
-    useGetUsersQuery,
-    useAddNewUserMutation,
-    useVerifyEmailMutation
-  } = usersApiSlice
+     export  const {
+        useGetUsersQuery,
+        useAddNewUserMutation,
+        useVerifyEmailMutation,
+        useUpdateUserProfileMutation
+      } = usersApiSlice
 
 
   export const selectUsersResult = usersApiSlice.endpoints.getUsers.select()

@@ -78,4 +78,46 @@ const getAllUser = async (req, res) => {
       }
 }
 
-module.exports = {createUser, getAllUser}
+const updateUserProfile = async (req, res) => {
+
+  try {
+    const userId = req.id
+
+   const {profilePics} = req.body
+
+   if(!profilePics) {
+    return res.status(400).json({
+       message: "No profile Image uploaded."
+    })
+   }
+
+   if(!mongoose.Types.ObjectId.isValid(userId)) {
+     return res.status(400).json({
+      message: 'Invalid ID format.'
+     })
+   }
+
+   const user = await User.findById(userId).exec()
+
+   if(!user) {
+     return res.status(400).json({
+      message:'No User Found'
+     })
+   }
+
+   user.profilePics = profilePics
+
+   await user.save()
+
+    res.json({message: `Feed ${user._id} has been updated`})
+
+  } catch(error) {
+      console.error('Error updating profile:', error); // Log the full error
+  res.status(500).json({ message: 'Failed to update profile picture.' });
+  }
+
+   
+
+}
+
+module.exports = {createUser, getAllUser, updateUserProfile}

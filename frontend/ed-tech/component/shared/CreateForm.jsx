@@ -17,10 +17,13 @@ const CreateForm = () => {
     isSuccess,
      isError}] = useAddNewFeedMutation()
 
-  const [addCategory, {isLoading: catIsLoading, isSuccess: catIsSuccess}] = useAddNewCategoryMutation()
+  const [
+    addCategory, 
+    {isLoading: catIsLoading,
+    isSuccess: catIsSuccess
+  }] = useAddNewCategoryMutation()
 
-
-     const router = useRouter()
+    const router = useRouter()
 
      useEffect(() => {
        if(isSuccess) {

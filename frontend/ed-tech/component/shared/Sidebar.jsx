@@ -14,7 +14,7 @@ const Sidebar = () => {
            <h3 className='text-white py-1 pl-2 font-semibold text-2xl'>Ed- Tech</h3>
            <nav className='h-full flex-col justify-between md:flex md:gap-4 bg-[#1F2225] p-2 rounded-md'>
               <ul className='hidden w-full flex-col items-start gap-2 md:flex'>
-                  {navLinks?.slice(0, 4).map((link) => {
+                  {navLinks?.slice(0, 3).map((link) => {
                      const isActive = link.route === pathname 
                       return (
                         <li key={link.route} className={`hidden w-full flex-col items-start gap-2 md:flex group ${isActive ? 'bg-[#B391F0] rounded-lg font-bold' : 'text-[#FAFAFA] items-center'} `}>
@@ -33,7 +33,7 @@ const Sidebar = () => {
 
                       </div>
                   </li>
-               {navLinks?.slice(4).map((link) => {
+               {navLinks?.slice(3).map((link) => {
                      const isActive = link.route === pathname 
                       return (
                         <li key={link.route} className={`hidden w-full flex-col items-start gap-2 md:flex group ${isActive ? 'bg-[#B391F0] rounded-lg font-bold' : 'text-[#FAFAFA] items-center'} `}>

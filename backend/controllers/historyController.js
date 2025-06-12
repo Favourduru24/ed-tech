@@ -36,6 +36,7 @@ const addUserToSessionHistory = async (req, res) => {
     }
 
     const now = new Date();
+
     
     // Current month range (with precise time boundaries)
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0);
@@ -44,6 +45,7 @@ const addUserToSessionHistory = async (req, res) => {
     // Last month range (with precise time boundaries)
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1, 0, 0, 0);
     const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+    const currentDay = new Date(now.getFullYear(), now.getMonth(), now.getDay())
 
     // Base query for quiz-only records
     const quizQuery = {
@@ -53,14 +55,18 @@ const addUserToSessionHistory = async (req, res) => {
     };
 
     // Execute all queries in parallel for better performance
-    const [currentMonthQuizzes, lastMonthQuizzes, fullQuizHistory] = await Promise.all([
+    const [currentMonthQuizzes, lastMonthQuizzes, currentDayQuiz, fullQuizHistory] = await Promise.all([
       History.countDocuments({
         ...quizQuery,
         createdAt: { $gte: currentMonthStart, $lte: currentMonthEnd }
       }),
       History.countDocuments({
         ...quizQuery,
-        createdAt: { $gte: lastMonthStart, $lte: lastMonthEnd }
+        createdAt: { $gte: lastMonthStart, $lte: lastMonthEnd}
+      }),
+      History.countDocuments({
+        ...quizQuery,
+        createdAt: currentDay
       }),
       History.find(quizQuery)
         .populate('quizId', 'topic subject duration name questions voice level')
@@ -74,7 +80,8 @@ const addUserToSessionHistory = async (req, res) => {
       stats: {
         quizCount: fullQuizHistory.length,
         currentMonthQuizzes,
-        lastMonthQuizzes
+        lastMonthQuizzes,
+        currentDayQuiz
       }
     });
 
@@ -104,6 +111,7 @@ const getUserTutorHistory = async (req, res) => {
     // Last month range (1st day to last day)
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1, 0, 0, 0);
     const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+    const currentDay = new Date(now.getFullYear(), now.getMonth(), now.getDay())
 
     // Fetch tutor-only lessons (no quizzes)
     const tutorQuery = { 
@@ -113,7 +121,7 @@ const getUserTutorHistory = async (req, res) => {
     };
 
     // Get counts for current & last month
-    const [currentMonthLessons, lastMonthLessons, tutorHistory] = await Promise.all([
+    const [currentMonthLessons, lastMonthLessons, currentDayLesson, tutorHistory] = await Promise.all([
       History.countDocuments({
         ...tutorQuery,
         createdAt: { $gte: currentMonthStart, $lte: currentMonthEnd }
@@ -121,6 +129,10 @@ const getUserTutorHistory = async (req, res) => {
       History.countDocuments({
         ...tutorQuery,
         createdAt: { $gte: lastMonthStart, $lte: lastMonthEnd }
+      }),
+      History.countDocuments({
+        ...tutorQuery,
+        createdAt: currentDay
       }),
       History.find(tutorQuery)
         .populate('tutorId', 'topic subject duration name')
@@ -133,7 +145,8 @@ const getUserTutorHistory = async (req, res) => {
       stats: {
         tutorCount: tutorHistory.length,
         currentMonthLessons,
-        lastMonthLessons
+        lastMonthLessons,
+        currentDayLesson
       }
     });
 
@@ -148,57 +161,59 @@ const getUserTutorHistory = async (req, res) => {
 
  const getUserQuizStat = async (req, res) => {
 
-     try {
-              const userId = req.id; // Typically the user ID is here
-              const subject = req.query.subject; // Get specific subject from query params
-      
-              if(!userId) {
-                  return res.status(400).json({message: 'No user found.'})
-              }
-      
-              const matchStage = {
-                   userId: new mongoose.Types.ObjectId(userId),
-                   quizId: { $exists: true, $ne: null  },
-                   tutorId: null // Changed from 'user' to 'userId'
-              };
-      
-              if (subject) {
-                  matchStage.subject = subject;
-              }
-      
-              const topicCounts = await History.aggregate([
-                  { $match: matchStage },
-                  {
-                      $group: {
-                          _id: "$subject", // Grouping by subject (change to "$topic" if you want to group by topic)
-                          count: { $sum: 1 }
-                      }
-                  },
-                  {
-                      $project: {
-                          subject: "$_id",
-                          count: 1,
-                          _id: 0
-                      }
-                  },
-                  { $sort: { count: -1 } }
-              ]);
-      
-              console.log('Aggregation result:', topicCounts)
-      
-              res.status(200).json({
-                  success: true,
-                  data: topicCounts
-              });
-      
-          } catch(error) {
-              console.log('Something went wrong fetching the Tutor stats for chart', error);
-              res.status(500).json({
-                  success: false,
-                  message: "Error fetching lesson counts",
-                  error: error.message
-              });
-          }
+      try {
+        const userId = req.id;
+        
+        if (!userId) {
+            return res.status(400).json({ message: 'No user found.' });
+        }
+
+        const subjectCounts = await History.aggregate([
+            {
+                $match: {
+                    userId: new mongoose.Types.ObjectId(userId),
+                    quizId: { $exists: true, $ne: null },
+                    tutorId: null
+                }
+            },
+            {
+                $lookup: {
+                    from: 'quizzes', // The collection name for Tutor model
+                    localField: 'quizId',
+                    foreignField: '_id',
+                    as: 'quizData'
+                }
+            },
+            { $unwind: '$quizData' }, // Flatten the tutorData array
+            {
+                $group: {
+                    _id: "$quizData.subject", // Group by the subject from tutor
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $project: {
+                    subject: "$_id",
+                    count: 1,
+                    _id: 0
+                }
+            },
+            { $sort: { count: -1 } }
+        ]);
+
+        res.status(200).json({
+            success: true,
+            data: subjectCounts
+        });
+
+    } catch (error) {
+        console.error('Error fetching quiz stats:', error);
+        res.status(500).json({
+            success: false,
+            message: "Error fetching quiz session counts",
+            error: error.message
+        });
+    }
 
  }
 

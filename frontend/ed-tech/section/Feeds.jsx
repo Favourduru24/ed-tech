@@ -74,6 +74,7 @@ import Header from '@/component/shared/Header'
      const { ids, entities } =  data || {}
 
      const buttons = ["Category", "Date +"]
+
      
      if(isLoading) {
         return (

@@ -23,6 +23,9 @@
          type: mongoose.Schema.Types.ObjectId,
          ref: 'User'
      },
+     comment: {
+       type: String,
+     },
       description:{
           type:String,
           required: true

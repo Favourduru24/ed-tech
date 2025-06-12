@@ -19,11 +19,11 @@ export const navLinks = [
       route: "/feeds",
       icon: "/icons/feeds.png",
     },
-    {
-      label: "Notification",
-      route: "/notification",
-      icon: "/icons/notify.png",
-    },
+    // {
+    //   label: "Notification",
+    //   route: "/notification",
+    //   icon: "/icons/notify.png",
+    // },
     // {
     //   label: "Explore",
     //   route: "/leadership",

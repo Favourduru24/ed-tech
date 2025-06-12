@@ -3,23 +3,26 @@ import {useGetUserFeedQuery } from '@/features/feed/feedApiSclice'
 import { useGetUserTutorQuery } from '@/features/tutor/tutorApiSlice'
 import {useGetUserQuizQuery} from '@/features/quiz/quizApiSclice'
 import {useGetQuizHistoryQuery} from "@/features/history/historyApiSlice"
+import {useUpdateUserProfileMutation} from '@/features/user/usersApiSlice'
 import Image from 'next/image'
 import Link from 'next/link'
+import {useRouter} from 'next/navigation'
 import Feed from './Feed'
 import useAuth from '@/hooks/useAuth'
 import Header from '@/component/shared/Header'
 import { sideLinks } from '@/constants'
-import { useState} from 'react'
+import { useState, useRef, useEffect} from 'react'
+import { imageCofig } from '@/app/api/axios'
 
      const ProfilePage = () => {
-
         const {id: user, username, email} = useAuth()
 
-         
-         
-       
+        const [imageUrl, setImageUrl] = useState(null)
+        const [open, setOpen] = useState(false)
+
         const [items, setItems] = useState(sideLinks[0]) 
         const {data, isLoading: isFeedLoading} = useGetUserFeedQuery(user) 
+        const [updateProfile, {isLoading: updateProfileLoading, isSuccess: updateProfileSucces}] = useUpdateUserProfileMutation()
         const {data: userTutor} = useGetUserTutorQuery(user)
         const {data: quizTutor} = useGetUserQuizQuery(user)
         
@@ -36,9 +39,83 @@ import { useState} from 'react'
 
         const {quizCount: historyQuizCount} = userQuizHistory?.quizsStats || {}
 
+         const fileInputRef = useRef(null)
+         const router = useRouter()
+
+         useEffect(() => {
+          if(updateProfileSucces) {
+            router.push('/profile')
+          }
+         }, [updateProfileSucces, router])
+
+         const upload = async () => {
+                 try {
+                     const formData = new FormData()
+                     formData.append('image', imageUrl)
+                    const res = await imageCofig.post("/upload", formData)
+                     return  res.data
+                 } catch (error) {
+                   console.log('Error uplading image!', error)
+                 } 
+              }
+
+              const handleClose = (e) => {
+                e.preventDefault()
+              setImageUrl(false)
+               
+              }
+
+        const handleEditProfile = async (e) => {
+  e.preventDefault();
+  
+  if (!imageUrl || !user) {
+    return;
+  }
+
+  try {
+    // 1. Upload image to Cloudinary
+    const imgUrl = await upload(); 
+    
+    if (!imgUrl) {
+      throw new Error('Image upload failed');
+    }
+
+    // 2. Update profile in database
+    const result = await updateProfile({ 
+      profilePics: imgUrl,
+       userId: user
+    }).unwrap(); // Unwrap the RTK Query promise
+
+    // Optional: Update local state if needed
+    // setUser(prev => ({...prev, profilePics: imgUrl}));
+
+    // Close modal or show success
+  } catch (error) {
+    console.error('Profile update failed:', error);
+  }
+}
+
 
          return (
           <>
+            {imageUrl && 
+               <div className='bg-black fixed inset-0 z-50 flex justify-center items-center' >
+                        <div className="w-[30rem] h-[30rem] bg-[#1F2225] rounded-xl flex flex-col p-10 justify-center items-center relative border-ring focus-visible:ring-ring/50 shadow-xl border-[2px] border-[#1F2225]">
+                                 <div className='flex flex-col justify-center w-full items-center'>
+                                       <div className='flex flex-col justify-center w-full items-center gap-8'>
+                                      <div className='  bg-black/10 w-32 h-32 rounded-full relative'>
+                                   <Image src={URL.createObjectURL(imageUrl)}  width={1000} height={200} alt="image" className='object-cover rounded-full w-full h-full'/>
+                                    </div>
+                                    </div>
+                                 </div>
+           
+                               <div className='flex gap-3 absolute right-4 bottom-5'>
+                                    <button className='w-32 h-12 bg-[#B391F0] font-semibold rounded-lg cursor-pointer text-white' onClick={handleEditProfile}>{ updateProfileLoading ? 'Loading...' : 'Edit Profile'}</button>
+                                    <button className='w-32 h-12 bg-destructive-100 font-semibold rounded-lg cursor-pointer text-white' onClick={handleClose}>Cancel</button>
+                               </div>
+                         </div> 
+                      </div>
+             }
             <section className='w-full flex flex-col'>
                <Header title="Profile"/>
                  <div className=' w-full h-full rounded-t-2xl '>
@@ -247,10 +324,14 @@ import { useState} from 'react'
                       <>
                       <div className='flex flex-col gap-4 w-full h-full'>
                              <div className='  bg-black/10 w-32 h-32 rounded-full relative'>
-                            <Image src="/images/user5.png" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
+                                  <Image src='/images/user5.png'  width={1000} height={200} alt="image" className='object-contain border-2 rounded-full w-full h-full'/>
+
                               <div className='absolute bottom-2 -right-2 hover:bg-black/50 cursor-pointer h-10 w-10 p-2 rounded-full group'>
                               <span className="absolute bottom-8 mb-1 hidden group-hover:flex px-2 py-1 text-xs text-white bg-gray-700 rounded-md shadow-md z-30">edit</span>
+                               <div onClick={() => fileInputRef.current?.click()}>
+                               <input type="file"  className="hidden" onChange={(e) => setImageUrl(e.target.files[0])} accept='image/*' ref={fileInputRef}/>
                             <Image src="/icons/edit.png" height={24} width={24} alt='img' className=''/>
+                            </div>
                             </div>
                             </div>
                               
