@@ -143,7 +143,7 @@ import { formatDate } from '../libs/utils'
                  <div className='flex justify-between items-center mb-2'>
                      <div className='flex gap-2 items-center'>
                        <div className='  bg-black/10 w-16 h-16 rounded-full'>
-                  <Image src="/images/user5.png" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
+                  <Image src={feed?.userId?.profilePics?.cloudinaryUrl} width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
                           </div>
                      <p className='text-lg text-white font-semibold'>{feed.userId.username}</p>
                      </div>

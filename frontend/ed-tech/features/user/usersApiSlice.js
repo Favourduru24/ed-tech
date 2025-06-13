@@ -61,9 +61,32 @@ import {createEntityAdapter, createSelector} from '@reduxjs/toolkit'
              method: 'PUT',
              body: { profilePics }
             }),
-              invalidatesTags: (result, error, arg) => {
-              return [{type: 'User', id: arg.id}]
-              }
+              async onQueryStarted(args, {queryFulfilled, dispatch}) {
+                           try {
+            
+                             const {data: updateProfile} = await queryFulfilled
+            
+                             console.log({updateProfile})
+                             console.log({args})
+            
+                              dispatch (
+                                apiSlice.util.updateQueryData("getUsers", undefined, (draft) => {
+                                  console.log({draft})
+
+                                   let project = draft?.find((item) => item?.id === args?.id)
+                                   project.profilePics = updateProfile?.profilePics
+
+                                })
+            
+                              )
+            
+                           } catch(error) {
+                            console.log('Something failed in the updateProfile mutation', error)
+                           }
+                        }
+              // invalidatesTags: (result, error, arg) => {
+              // return [{type: 'User', id: arg.id}]
+              // }
                }),
      }),
        overrideExisting: true

@@ -109,7 +109,7 @@ const createFeed = async (req, res, next) => {
         .sort({ createdAt: -1 })
         .skip(skipAmount)
         .limit(numLimit)
-        .populate("userId", "username")
+        .populate("userId", "username profilePics")
         .populate("category", "_id name")
 
         if(!feeds.length) return res.status(404).json({ message: 'No feed found!' });
@@ -145,7 +145,7 @@ const createFeed = async (req, res, next) => {
 
        const feedQuery = await Feed.findById(id)
                           .populate("category", "name")
-                          .populate("userId", "username")
+                          .populate("userId", "username profilePics")
 
         if(feedQuery._id.toString() !== id) {
          return res.status(400).json({message: 'No feedId found!'})
@@ -274,7 +274,7 @@ const deleteFeed = async (req, res) => {
 
        const userFeed = await Feed.find({userId: user})
         .sort({createdAt: -1})
-        .populate("userId", "username")
+        .populate("userId", "username profilePics")
 
       if(!userFeed) {
         return res.status(400).json({

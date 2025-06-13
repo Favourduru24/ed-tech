@@ -1,11 +1,20 @@
 'use client'
 import { Provider } from "react-redux"
-import { store } from "@/app/store"
+import { PersistGate } from 'redux-persist/lib/integration/react';
+import { store, persistor} from "@/app/store"
+import PersistLogin from "@/features/auth/PersistLogin"
+import Prefetch from "@/features/auth/Prefetch"
 
 const Session = ({children}) => {
   return (
     <Provider store={store}>
-        {children}
+      <PersistGate loading={null} persistor={persistor}>
+        <PersistLogin>
+          <Prefetch>
+          {children}
+          </Prefetch>
+        </PersistLogin>
+        </PersistGate>
     </Provider>
   )
 }

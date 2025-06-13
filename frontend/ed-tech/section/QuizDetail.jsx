@@ -9,12 +9,11 @@ import useAuth from '@/hooks/useAuth'
 import { useGetQuizIdQuery } from '@/features/quiz/quizApiSclice'
 import { configureQuizTutor, cn } from '../libs/utils'
 
-const QuizDetail = ({id}) => {
+   const QuizDetail = ({id}) => {
 
     const {data} = useGetQuizIdQuery(id)
     const [addHistory, {isSuccess}] = useAddNewHistoryMutation()
     const {id: user} = useAuth()
-    // const user = 'henryhw7r7w4387ryfcd'
 
      console.log({data})
 
@@ -36,7 +35,7 @@ const QuizDetail = ({id}) => {
     const [callStatus, setCallStatus] = useState(CallStatus.INACTIVE)
     const [isSpeaking, setIsSpeaking] = useState(false)
     const [isMuted, setIsMuted] = useState(false)
-    const [messages, setMessage] = useState([])
+    const [messages, setMessages] = useState([])
 
     const toggleMicrophone = () => {
       const isMuted = vapi.isMuted()
@@ -50,7 +49,6 @@ const QuizDetail = ({id}) => {
      const onCallEnd = async () => {
       setCallStatus(CallStatus.FINISHED)
       // Add to session history
-        await addHistory({quizId: id, user})
      }
 
      const onSpeechStart = () => setIsSpeaking(true)
@@ -60,7 +58,7 @@ const QuizDetail = ({id}) => {
           if(message.type === 'transcript' && message.transcriptType === 'final') {
              const newMessage = {role: message.role, content: message.transcript}
 
-             setMessage((prev) => [...prev, newMessage])
+             setMessages((prev) => [newMessage, ...prev])
           }
      }
 
@@ -128,6 +126,7 @@ const QuizDetail = ({id}) => {
     const handleDisconnect = async () => {
      setCallStatus(CallStatus.FINISHED)
      vapi.stop()
+      await addHistory({quizId: id, user})
     }
       
   return (

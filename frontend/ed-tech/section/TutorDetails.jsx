@@ -32,7 +32,7 @@ const TutorDetail = ({id}) => {
     const [callStatus, setCallStatus] = useState(CallStatus.INACTIVE)
     const [isSpeaking, setIsSpeaking] = useState(false)
     const [isMuted, setIsMuted] = useState(false)
-    const [messages, setMessage] = useState([])
+    const [messages, setMessages] = useState([])
 
     const toggleMicrophone = () => {
       const isMuted = vapi.isMuted()
@@ -46,7 +46,6 @@ const TutorDetail = ({id}) => {
      const onCallEnd = async () => {
       setCallStatus(CallStatus.FINISHED)
       // Add to session history
-        await addHistory({tutorId: id, user})
      }
 
      const onSpeechStart = () => setIsSpeaking(true)
@@ -56,7 +55,7 @@ const TutorDetail = ({id}) => {
           if(message.type === 'transcript' && message.transcriptType === 'final') {
              const newMessage = {role: message.role, content: message.transcript}
 
-             setMessage((prev) => [...prev, newMessage])
+             setMessages((prev) => [newMessage, ...prev])
           }
      }
 
@@ -104,8 +103,9 @@ const TutorDetail = ({id}) => {
     }
 
     const handleDisconnect = async () => {
-     setCallStatus(CallStatus.FINISHED)
-     vapi.stop()
+       setCallStatus(CallStatus.FINISHED)
+       vapi.stop()
+      await addHistory({tutorId: id, user})
     }
       
   return (
@@ -174,7 +174,7 @@ const TutorDetail = ({id}) => {
                    if(message.role === 'assistant') {
                      return (
                        <p key={index} className="max-sm:text-sm text-center">
-                         {name.split(' ')[0].replace('/[.,]/g', '')}: {message.content}
+                         {name.split(' ')[0].replace('/[.,]/g', '')} : {message.content}
                        </p>
                      )
                    }else {

@@ -13,32 +13,6 @@ const initialState = commentAdapter.getInitialState()
 
 export const commentApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
-  //       getComment: builder.query({
-  //           query: ({feedId}) => `/comment/get-comment/${feedId}`,
-  //           validateStatus: (response, result) => {
-  //             return response.status === 200 && !result.isError;
-  //           },
-  //           transformResponse: (responseData) => {
-  //      const commentsWithIds = responseData.comment.map(comment => ({
-  //   ...comment,
-  //   id: comment._id  // Explicitly set id from _id
-  // }))
-  //              return commentAdapter.setAll(
-  //   commentAdapter.getInitialState(), // Fresh initial state
-  //   commentsWithIds
-  // )
-  //           },
-  //           providesTags: (result, error, arg) => {
-  //             if(result?.ids) {
-  //               return [
-  //                 { type: 'Comment', id: 'List' },
-  //                 ...result.ids.map(id => ({ type: 'Comment', id }))
-  //               ];
-  //             } else {
-  //               return [{ type: 'Comment', id: 'List' }];
-  //             }
-  //           }
-  //         }),
     getComment: builder.query({
       query: (feedId) => `/comment/get-comment/${feedId}`, // Remove object destructuring
       transformResponse: (responseData) => {
@@ -60,18 +34,39 @@ export const commentApiSlice = apiSlice.injectEndpoints({
         ]
       : [{ type: 'Comment', id: 'LIST' }]
 }),
-          addNewComment: builder.mutation({
-            query: initailCommentData => ({
-                url: '/comment/create-comment',
-                method: 'POST',
-                body: {
-                    ...initailCommentData
-                }
-            }),
-            invalidatesTags: [
-                {type:'Comment', id: 'List'}
-            ]
-          }),
+         addNewComment: builder.mutation({
+  query: (initialCommentData) => ({
+    url: '/comment/create-comment',
+    method: 'POST',
+    body: initialCommentData
+  }),
+  async onQueryStarted({ feedId, ...commentData }, { queryFulfilled, dispatch }) {
+    try {
+      const { data: createdComment } = await queryFulfilled;
+      
+      // Create a normalized comment object
+      const normalizedComment = {
+        ...createdComment,
+        id: createdComment._id
+      };
+
+      // Update the cache for the specific feedId
+      dispatch(
+        apiSlice.util.updateQueryData('getComment', feedId, (draft) => {
+          // Use the adapter methods to add the new comment
+          commentAdapter.addOne(draft, normalizedComment);
+        })
+      );
+    } catch (error) {
+      console.error('Failed to update cache for new comment', error);
+    }
+  },
+  // Optionally invalidate tags if needed
+  invalidatesTags: (result, error, { feedId }) => [
+    { type: 'Comment', id: 'LIST' },
+    { type: 'Comment', id: feedId }
+  ]
+}),
          updateComment: builder.mutation({
             query: initailCommentData => ({
                 url: '/comment',
@@ -94,15 +89,50 @@ export const commentApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: (result, error, arg) => [{type: 'Comment', id:arg.id}]
           }),
-           likeComment: builder.mutation({
-         query: ({ commentId }) => ({ // Remove user from body
+          likeComment: builder.mutation({
+  query: ({ commentId }) => ({
     url: `/comment/like-comment/${commentId}`,
-    method: 'PUT'
+    method: 'PUT',
   }),
-  invalidatesTags: (result, error, { commentId }) => [
+  async onQueryStarted({ commentId }, { queryFulfilled, dispatch, getState }) {
+    const token = getState().auth.token;
+    
+    // 2. Decode JWT to extract user ID
+    const decodedToken = JSON.parse(atob(token.split('.')[1]))
+    const currentUser = decodedToken?.UserInfo?.id || decodedToken?.id; // Adjust based on your JWT structure
+
+    if (!currentUser) {
+       console.error("User ID not found in token");
+      return;
+    }
+
+    console.log({currentUser})
+
+    const patchResult = dispatch(
+      apiSlice.util.updateQueryData('getComment', undefined, (draft) => {
+        const comment = draft?.entities[commentId];
+    console.log({comment})
+
+        if (!comment) return;
+
+        const isLiked = comment.likes?.includes(currentUser);
+        comment.likes = isLiked
+          ? comment.likes.filter(id => id !== currentUser) // Unlike
+          : [...(comment.likes || []), currentUser]; // Like
+        comment.likesCount = (comment.likesCount || 0) + (isLiked ? -1 : 1);
+      })
+    );
+
+    try {
+      await queryFulfilled;
+    } catch {
+      patchResult.undo();
+    }
+  },
+  invalidatesTags: (_, __, { commentId }) => [
     { type: 'Comment', id: commentId },
-    { type: 'Comment', id: 'LIST' }
-  ]
+    { type: 'Comment', id: 'LIST' },
+  ],
 }),
         }),
         overrideExisting: true

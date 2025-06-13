@@ -82,6 +82,8 @@ import Header from '@/component/shared/Header'
          )
          }
 
+         console.log({data})
+
   return (     
        <> 
               <Header title="Feed" />

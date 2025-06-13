@@ -10,13 +10,13 @@ import {jwtDecode} from  'jwt-decode'
     
     if (token) {
         const decoded = jwtDecode(token)
-        const  {username, email, id} = decoded.UserInfo   
+        const  {username, email, id, profilePics} = decoded.UserInfo   
 
          
-        return {username, email, id}
+        return {username, email, id, profilePics}
     }
 
-    return {username, email, id}
+    return {username, email, id, profilePics}
 }
 
 export default useAuth

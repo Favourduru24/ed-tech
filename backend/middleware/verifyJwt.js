@@ -17,6 +17,7 @@ const verifyJwt = (req, res, next) => {
             req.id = decoded.UserInfo.id,
             req.username = decoded.UserInfo.username,
             req.email = decoded.UserInfo.email
+            req.profilePics = decoded.UserInfo.profilePics
             
         next()
     }

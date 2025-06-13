@@ -4,6 +4,7 @@ import { useGetUserTutorQuery } from '@/features/tutor/tutorApiSlice'
 import {useGetUserQuizQuery} from '@/features/quiz/quizApiSclice'
 import {useGetQuizHistoryQuery} from "@/features/history/historyApiSlice"
 import {useUpdateUserProfileMutation} from '@/features/user/usersApiSlice'
+import {useSendLogoutMutation} from '@/features/auth/authApiSlice'
 import Image from 'next/image'
 import Link from 'next/link'
 import {useRouter} from 'next/navigation'
@@ -15,16 +16,23 @@ import { useState, useRef, useEffect} from 'react'
 import { imageCofig } from '@/app/api/axios'
 
      const ProfilePage = () => {
-        const {id: user, username, email} = useAuth()
+        const {id: user, username, email, profilePics} = useAuth()
 
         const [imageUrl, setImageUrl] = useState(null)
-        const [open, setOpen] = useState(false)
 
         const [items, setItems] = useState(sideLinks[0]) 
         const {data, isLoading: isFeedLoading} = useGetUserFeedQuery(user) 
         const [updateProfile, {isLoading: updateProfileLoading, isSuccess: updateProfileSucces}] = useUpdateUserProfileMutation()
         const {data: userTutor} = useGetUserTutorQuery(user)
         const {data: quizTutor} = useGetUserQuizQuery(user)
+         const [
+           sendLogout,
+            {isLoading: logoutLoading,
+             isSuccess: logoutIsSuccess
+            }] = useSendLogoutMutation()
+
+
+        const onLogout = () => sendLogout()
         
         const {ids, entities} = data || {}
         const feedCount = ids?.length
@@ -48,6 +56,12 @@ import { imageCofig } from '@/app/api/axios'
           }
          }, [updateProfileSucces, router])
 
+         useEffect(() => {
+          if(logoutIsSuccess) {
+            router.push('/sign-in')
+          }
+         }, [logoutIsSuccess, router])
+
          const upload = async () => {
                  try {
                      const formData = new FormData()
@@ -59,41 +73,39 @@ import { imageCofig } from '@/app/api/axios'
                  } 
               }
 
-              const handleClose = (e) => {
-                e.preventDefault()
+              const handleClose = () => {
               setImageUrl(false)
                
               }
 
         const handleEditProfile = async (e) => {
-  e.preventDefault();
+     e.preventDefault();
   
-  if (!imageUrl || !user) {
+    if (!imageUrl || !user) {
     return;
-  }
+     }
 
   try {
-    // 1. Upload image to Cloudinary
     const imgUrl = await upload(); 
     
-    if (!imgUrl) {
-      throw new Error('Image upload failed');
-    }
-
-    // 2. Update profile in database
     const result = await updateProfile({ 
       profilePics: imgUrl,
        userId: user
-    }).unwrap(); // Unwrap the RTK Query promise
+    }).unwrap();  
 
-    // Optional: Update local state if needed
-    // setUser(prev => ({...prev, profilePics: imgUrl}));
+    
+     handleClose()
 
-    // Close modal or show success
   } catch (error) {
     console.error('Profile update failed:', error);
   }
 }
+
+       
+
+
+
+    console.log({profilePics, email})
 
 
          return (
@@ -110,7 +122,7 @@ import { imageCofig } from '@/app/api/axios'
                                  </div>
            
                                <div className='flex gap-3 absolute right-4 bottom-5'>
-                                    <button className='w-32 h-12 bg-[#B391F0] font-semibold rounded-lg cursor-pointer text-white' onClick={handleEditProfile}>{ updateProfileLoading ? 'Loading...' : 'Edit Profile'}</button>
+                                    <button className='w-32 h-12 bg-[#B391F0] font-semibold rounded-lg cursor-pointer text-white' onClick={handleEditProfile} default={updateProfileLoading}>{ updateProfileLoading ? 'Loading...' : 'Edit Profile'}</button>
                                     <button className='w-32 h-12 bg-destructive-100 font-semibold rounded-lg cursor-pointer text-white' onClick={handleClose}>Cancel</button>
                                </div>
                          </div> 
@@ -147,10 +159,10 @@ import { imageCofig } from '@/app/api/axios'
                                         )
                                     )}
                                           <li className=' w-full flex-col items-start gap-2 md:flex group rounded-lg font-bold text-[#FAFAFA] items-center cursor-pointer'>
-                                             <div className='p-16-semibold flex w-full gap-4 p-4 items-center'>
+                                             <button className='p-16-semibold flex w-full gap-4 p-4 items-center' onClick={onLogout}>
                                                  <Image src="/icons/book.png" height={24} width={24} alt='logo'/>
-                                                 Logout
-                                             </div> 
+                                                {logoutLoading ? 'Loading...' : 'Logout'}
+                                             </button> 
                                           </li>
                                  </ul>
                              </nav>
@@ -324,7 +336,7 @@ import { imageCofig } from '@/app/api/axios'
                       <>
                       <div className='flex flex-col gap-4 w-full h-full'>
                              <div className='  bg-black/10 w-32 h-32 rounded-full relative'>
-                                  <Image src='/images/user5.png'  width={1000} height={200} alt="image" className='object-contain border-2 rounded-full w-full h-full'/>
+                                  <Image src={profilePics.cloudinaryUrl}  width={1000} height={200} alt="image" className='object-contain border-2 rounded-full w-full h-full'/>
 
                               <div className='absolute bottom-2 -right-2 hover:bg-black/50 cursor-pointer h-10 w-10 p-2 rounded-full group'>
                               <span className="absolute bottom-8 mb-1 hidden group-hover:flex px-2 py-1 text-xs text-white bg-gray-700 rounded-md shadow-md z-30">edit</span>

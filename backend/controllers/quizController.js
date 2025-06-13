@@ -254,7 +254,7 @@ const createQuiz = async (req, res, next) => {
          const skipCount = (page - 1) * limit
        
         const quiz = await Quiz.find(conditions)
-                                .populate("userId", "username")
+                                .populate("userId", "username profilePics")
                                 .sort({createdAt: -1})
                                 .skip(skipCount)
                                 .limit(limit)

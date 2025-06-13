@@ -2,13 +2,12 @@ import Header from "@/component/shared/Header"
 import Sidebar from "@/component/shared/Sidebar"
 import PersistLogin from "@/features/auth/PersistLogin"
 import Prefetch from "@/features/auth/Prefetch"
-// import { PersistGate } from 'redux-persist/lib/integration/react';
-import {persistor} from '@/app/store'
+
 
 
 const RootLayout = ({children}) => {
      return (
-        //  <PersistGate persistor={persistor}>
+         
          <main className="flex min-h-screen w-full flex-col bg-[#060606] lg:flex-row">
               <Sidebar/>
              <div className="flex-1 overflow-auto lg:mt-0 lg:max-h-screen">
@@ -23,7 +22,7 @@ const RootLayout = ({children}) => {
                  </div>
              </div>
          </main>
-        //  </PersistGate>
+          
      )
 }
 

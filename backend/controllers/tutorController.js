@@ -68,7 +68,7 @@ const createTutor = async (req, res, next) => {
            const skipAmount = (page - 1) * limit 
 
           const tutor = await Tutor.find(conditions)
-                                    .populate("userId", "username")
+                                    .populate("userId", "username profilePics")
                                     .skip(skipAmount)
                                     .limit(limit)
                                     .sort({createdAt: -1})
