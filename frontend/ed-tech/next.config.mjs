@@ -14,7 +14,7 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/home', // Example: Redirect root to a valid page
+        destination: '/dashboard', // Example: Redirect root to a valid page
         permanent: true,
       },
     ];
