@@ -140,16 +140,16 @@ import { formatDate } from '../libs/utils'
 
              <section className='flex flex-col py-3 w-full gap-2' >
                  <div className='rounded-2xl relative bg-dark-200 border-[1.0px] border-[#4B4D4F] flex flex-col p-4' >
-                 <div className='flex justify-between items-center mb-2'>
-                     <div className='flex sm:gap-2 items-center gap-1'>
-                       <div className='  bg-black/10 w-16 h-16 rounded-full'>
+                 <div className='flex sm:justify-between items-center mb-2 gap-3 justify-between max-sm:justify-envenly'>
+                     <div className='flex sm:gap-2 items-center gap-1 '>
+                       <div className='  bg-black/10 sm:w-16 sm:h-16 w-10 h-10 shrink-0 whitespace-nowrap rounded-full'>
                   <Image src={feed?.userId?.profilePics?.cloudinaryUrl} width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
                           </div>
                      <p className='text-lg text-white font-semibold sm:text-[1rem] text-sm whitespace-nowrap'>{feed.userId.username}</p>
                      </div>
                       <div>
                          <div className='flex gap-2 items-center'>
-                        <p className='font-semibold font-sans text-[#B391F0] sm:text-sm text-xs ' >{formatDate(feed?.createdAt)}</p>
+                         <p className='font-semibold font-sans text-[#B391F0] sm:text-sm text-xs whitespace-nowrap' >{formatDate(feed?.createdAt)}</p>
                          </div>
                       </div>
                   </div>
@@ -172,11 +172,10 @@ import { formatDate } from '../libs/utils'
                          </button>
                          <p className="font-zentry-regular font-semibold text-light-100 sm:text-[1rem] text-sm">{likeCount} </p>
 
-                        {/* <Image src="/icons/skill.png" height={24} width={24} alt='img'/> */}
                           <button >
                             <Image src="/icons/comment.png" height={24} width={24} alt='img' className="cursor-pointer sm:size-6 size-4"/> 
                          </button>
-                         <p className="font-zentry-regular font-semibold text-light-100 sm:text-[1rem] text-sm">{feed?.comment} </p>
+                         <p className="font-zentry-regular font-semibold text-light-100 sm:text-[1rem] text-sm">{feed?.commentCount} </p>
                         <Image src="/icons/share.png" height={24} width={24} alt='img' onClick={handleShare} className="cursor-pointer sm:size-6 size-4"/>
                          
                         {pathname === '/profile' ? (
@@ -202,7 +201,7 @@ import { formatDate } from '../libs/utils'
                      ) : ''} 
                     </div>
                        <Link href={`/feeds/${feed?._id}`}>
-                       <p className='underline font-semibold underline-offset-1 cursor-pointer text-[#B391F0] '>Check out</p>  
+                       <p className='underline font-semibold underline-offset-1 cursor-pointer text-[#B391F0] whitespace-nowrap'>Check out</p>  
                        </Link>
                     </div>  
                     

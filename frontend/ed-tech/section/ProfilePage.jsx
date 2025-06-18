@@ -249,9 +249,9 @@ import Loader from '@/component/shared/Loader'
 
                </div>
 
-                 <div className={`${items.label === 'Personal Information' || items.label === 'My Feeds' ? 'gap-5 py-10' : items.label === 'My History'
-      ? 'gap-5 py-10'  
-      : 'gap-5 xl:gap-5 py-10'}`}>
+                 <div className={`${items.label === 'Personal Information' || items.label === 'My Feeds' ? '' : items.label === 'My History'
+      ? ''  
+      : 'xl:gap-5 py-10'}`}>
                          
                   {items.label === 'My Tranings' ? (
                      <div className="grid gap-5 grid-cols-[repeat(auto-fill,minmax(250px,1fr))] min-h-[71vh]">

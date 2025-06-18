@@ -51,7 +51,7 @@ const Header = ({title}) => {
             <div className='text-white hover:bg-[#1F2225] p-[0.5px] lg:hidden flex'>
                <Sheet>
   <SheetTrigger>
-     <Image src='/icons/menu.png' width={32} height={32} alt='menu' className='cursor-pointer'/>
+     <Image src='/icons/menu.png' width={32} height={32} alt='menu' className='cursor-pointer shrink-0 whitespace-nowrap'/>
   </SheetTrigger>
   <SheetContent className="focus:ring-0 focus-visible:ring-transparent focus:ring-offset-0 focus-visible:ring-offset-0 focus-visible:outline-none focus-visible:border-none sm:w-64 bg-[#1F2225] w-72">
      <h3 className='text-light-100 py-1 pl-2 font-semibold text-2xl'>Ed- Tech</h3>

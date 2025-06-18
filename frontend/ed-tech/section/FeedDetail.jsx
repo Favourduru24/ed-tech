@@ -85,12 +85,12 @@ const FeedDetail = ({id}) => {
                                              </div> 
 
                                              <div className='p-2 flex flex-col gap-3 '>
-                       <h2 className='font-bold  font-sans capitalize text-gray-300 leading-16 text-[min(10vw,40px)]'>{feed?.title}</h2>
+                       <h2 className='font-bold max-sm:text-center font-sans capitalize text-gray-300 leading-16 text-[min(10vw,50px)]'>{feed?.title}</h2>
                       <p className='leading-6 text-justify font-sans text-[#B391F0] text-[1rem] max-sm:text-sm italic'><span className='text-white'>#</span>{feed?.category?.name}</p>
                    </div> 
                
-                  <p className='mt-2 leading-12 sm:text-2xl text-xl text-light-100 pl-2 font-sans font-normal'>{feed?.description}.</p>
-                       <div className="py-10 px-5 leading-10 text-xl text-gray-300 w-full justify-center flex">
+                  <p className='mt-2 leading-12 sm:text-2xl text-xl text-light-100 pl-2 font-sans font-normal max-sm:text-center'>{feed?.description}.</p>
+                       <div className="py-10 px-5 leading-10 sm:text-xl text-gray-300 w-full justify-center flex text-lg">
                          {parsedContent ? (
                            <article
                             className='prose max-w-4xl break-all'
@@ -98,7 +98,7 @@ const FeedDetail = ({id}) => {
                            />
                          ): <p>No details provided</p>}
                        </div>
-                 <div data-color-mode="dark" className='w-[100%] h-[25%] mt-10 relative'>
+                 <div data-color-mode="dark" className='w-[100%] sm:h-[25%] mt-10 relative min-h-[10rem]'>
                         <MDEditor 
                       preview='edit'
                       id="pitch"
@@ -114,7 +114,7 @@ const FeedDetail = ({id}) => {
                       }}
                       />
 
-                    <button className='absolute bottom-4 sm:w-28 sm:h-12 w-14 h-10 right-10 bg-[#B391F0] p-2 font-bold font-sans rounded-lg cursor-pointer' onClick={handleComment} type='submit' disabled={isCommentLoading}>
+                    <button className='absolute bottom-4 sm:w-28 sm:h-12 w-20 h-8 right-10 bg-[#B391F0] p-2 font-bold font-sans  cursor-pointer sm:text-lg  sm:rounded-lg rounded-sm text-sm ' onClick={handleComment} type='submit' disabled={isCommentLoading}>
                          {isCommentLoading ? (
                           <Loader styleName='w-5 w-5'/>
                          ) : 'Comment' }
@@ -133,13 +133,13 @@ const FeedDetail = ({id}) => {
                                   return (
                                      <div className='flex flex-col' key={comment.id}>
                                      <div className='flex gap-3 items-cente mt-5'>
-                                                <div className='  bg-black/10 w-16 h-16 rounded-full '>
+                                                <div className='  bg-black/10 sm:w-16 sm:h-16 rounded-full w-10 h-10 shrink-0 whitespace-nowrap'>
                                                  <Image src={comment.userId?.profilePics?.cloudinaryUrl} width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full size-'/>
                                                </div>
-                                                <div className='flex flex-col '>
-                                                <div className='flex leading-0 gap-3 items-center'>
-                                                  <p className='sm:text-lg font-semibold text-[#FAFAFA] font-sans relative text-sm'>{comment?.userId?.username}<span className="bg-[#B391F0] h-2 w-2 rounded-full flex top-2 absolute -right-3"/></p>
-                                                 <p className='font-semibold text-[#B391F0] font-sans ml-2 text-sm max-sm:text-xs'>{formatDate(comment.createdAt)}</p>
+                                                <div className='flex flex-col justify-center'>
+                                                <div className='sm:flex leading-0 gap-3 items-center flex-co'>
+                                                  <p className='sm:text-lg font-semibold text-[#FAFAFA] font-sans relative text-sm whitespace-nowrap'>{comment?.userId?.username}<span className="bg-[#B391F0] h-2 w-2 rounded-full flex top-2 absolute -right-3 hidden sm:flex"/></p>
+                                                 <p className='font-semibold text-[#B391F0] font-sans sm:ml-2 text-sm max-sm:text-xs'>{formatDate(comment.createdAt)}</p>
                                                 </div>
                                                 <p className='mt-2 leading-6 sm:text-[1rem] text-gray-300 font-sans max-w-3xl mb-2 text-sm break-all'>{comment.content} </p>
                                                     <Like userId={user} commentId={comment.id} comment={comment}/>

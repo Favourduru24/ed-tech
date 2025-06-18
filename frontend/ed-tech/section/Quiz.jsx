@@ -113,7 +113,7 @@ const Quiz = ({level, subject, query, page, urlParamName}) => {
                                               </div>
                                                 <div className='flex flex-col pt-4 pb-2'>
                                                  <p className='text-xl font-semibold leading-8 text-light-100'>{quiz.subject} Quiz<br/>  With {quiz.name}  </p>
-                                                 <p className='text-lg font-semibold font-sans  text-light-100 '>Topic: <span className='text-md text-base leading-6 text-white font-sans lowercase font-normal max-w-72'>{quiz.topic}.</span></p>
+                                                 <p className='text-lg font-semibold font-sans  text-light-100 '>Topic: <span className='text-[#B391F0] text-[1rem] font semibold text-base leading-6 lowercase'>{quiz.topic}.</span></p>
                                                 </div>
                                                 <div className="flex items-center justify-between my-1">
                                                        <Link href={`/quiz/${quiz._id}`}>

@@ -62,83 +62,96 @@ const createFeed = async (req, res, next) => {
   }
 
   const getAllFeed = async (req, res) => {
-
     try {
         const { search, page = 1, limit = 5, category = '', date } = req.query; 
-         const numPage = Number(page);
-         const numLimit = Number(limit);
+        const numPage = Number(page);
+        const numLimit = Number(limit);
 
-          let timeCondition = {}
+        let timeCondition = {};
      
-         if (date) {
-          const now = new Date();
-          
-          if (date === '1hr') {
-              timeCondition.createdAt = { $gte: new Date(now - 60 * 60 * 1000) };
-          } 
-          else if (date === 'yesterday') {
-              const yesterday = new Date(now);
-              yesterday.setDate(yesterday.getDate() - 1);
-              timeCondition.createdAt = { $gte: yesterday };
-          } 
-          else if (date === '1week') {
-              const lastWeek = new Date(now);
-              lastWeek.setDate(lastWeek.getDate() - 7);
-              timeCondition.createdAt = { $gte: lastWeek };
-          }
-      }
+        if (date) {
+            const now = new Date();
+            
+            if (date === '1hr') {
+                timeCondition.createdAt = { $gte: new Date(now - 60 * 60 * 1000) };
+            } 
+            else if (date === 'yesterday') {
+                const yesterday = new Date(now);
+                yesterday.setDate(yesterday.getDate() - 1);
+                timeCondition.createdAt = { $gte: yesterday };
+            } 
+            else if (date === '1week') {
+                const lastWeek = new Date(now);
+                lastWeek.setDate(lastWeek.getDate() - 7);
+                timeCondition.createdAt = { $gte: lastWeek };
+            }
+        }
 
-         const searchCondition = search ? {
-                      $or: [
-                     { title: { $regex: search, $options: 'i' } },
-                     { description: { $regex: search, $options: 'i' } },
-                ]
-                 } : {};
+        const searchCondition = search ? {
+            $or: [
+                { title: { $regex: search, $options: 'i' } },
+                { description: { $regex: search, $options: 'i' } },
+            ]
+        } : {};
 
-          const categoryCondition = category ? await getCategoryByName(category) : null;
+        const categoryCondition = category ? await getCategoryByName(category) : null;
 
-         if (category && !categoryCondition) {
-         return res.status(404).json({ message: 'Category not found' });
+        if (category && !categoryCondition) {
+            return res.status(404).json({ message: 'Category not found' });
         }
 
         const conditions = {
-          $and: [
-            timeCondition,
-            searchCondition, 
-            categoryCondition ? { category: categoryCondition._id } : {}
-          ].filter(cond => Object.keys(cond).length > 0) // Remove empty conditions
+            $and: [
+                timeCondition,
+                searchCondition, 
+                categoryCondition ? { category: categoryCondition._id } : {}
+            ].filter(cond => Object.keys(cond).length > 0)
         };
 
         const skipAmount = (numPage - 1) * numLimit;
 
         const feeds = await Feed.find(conditions)
-        .sort({ createdAt: -1 })
-        .skip(skipAmount)
-        .limit(numLimit)
-        .populate("userId", "username profilePics")
-        .populate("category", "_id name")
+            .sort({ createdAt: -1 })
+            .skip(skipAmount)
+            .limit(numLimit)
+            .populate("userId", "username profilePics")
+            .populate("category", "_id name");
 
         if(!feeds.length) return res.status(404).json({ message: 'No feed found!' });
 
-         const comments = await Comment?.length
+        // Get comment counts for all feeds at once
+        const feedIds = feeds.map(feed => feed._id);
+        const commentCounts = await Comment.aggregate([
+            { $match: { feedId: { $in: feedIds } } },
+            { $group: { _id: "$feedId", count: { $sum: 1 } } }
+        ]);
 
-         feeds.map((feed) => {
-         return feed.comment = comments
-       })
+        // Convert to a map for easy lookup
+        const commentCountMap = commentCounts.reduce((map, item) => {
+            map[item._id.toString()] = item.count;
+            return map;
+        }, {});
+
+        // Add comment counts to each feed
+        const feedsWithCommentCounts = feeds.map(feed => {
+            return {
+                ...feed.toObject(),
+                commentCount: commentCountMap[feed._id.toString()] || 0
+            };
+        });
        
-      const feedsCount = await Feed.countDocuments(conditions)
+        const feedsCount = await Feed.countDocuments(conditions);
 
-      return res.status(200).json({
-        feeds, 
-        totalPages: Math.ceil(feedsCount / numLimit), // 10 / 5 = 2
-        // currentPage: numPage
-      });
+        return res.status(200).json({
+            feeds: feedsWithCommentCounts, 
+            totalPages: Math.ceil(feedsCount / numLimit),
+        });
   
     } catch(error) {
-      console.error('Error fetching feeds:', error);
-      return res.status(500).json({ message: 'Server error fetching feeds' });
+        console.error('Error fetching feeds:', error);
+        return res.status(500).json({ message: 'Server error fetching feeds' });
     }
-  }
+}
  
   const getFeedById = async (req, res) => {
 
