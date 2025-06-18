@@ -44,11 +44,23 @@ import {createEntityAdapter, createSelector} from '@reduxjs/toolkit'
            ]
          }),
          verifyEmail: builder.mutation({
-           query: initailUsersData => ({
+           query: ({otp, userId}) => ({
                url: 'auth/verify-account',
                method: 'POST',
                body: {
-                   ...initailUsersData
+                  otp
+               }
+           }),
+           invalidatesTags: [
+               {type:'User', id: 'List'}
+           ]
+         }),
+         resendOtp: builder.mutation({
+           query: initailUsersData => ({
+               url: '/auth/resend-otp',
+               method: 'POST',
+               body: {
+                 ...initailUsersData
                }
            }),
            invalidatesTags: [
@@ -56,38 +68,43 @@ import {createEntityAdapter, createSelector} from '@reduxjs/toolkit'
            ]
          }),
          updateUserProfile: builder.mutation({
-            query: ({ profilePics, userId }) => ({  // Destructure id from arguments
-             url: '/users/profile-pic',
-             method: 'PUT',
-             body: { profilePics }
-            }),
-              async onQueryStarted(args, {queryFulfilled, dispatch}) {
-                           try {
-            
-                             const {data: updateProfile} = await queryFulfilled
-            
-                             console.log({updateProfile})
-                             console.log({args})
-            
-                              dispatch (
-                                apiSlice.util.updateQueryData("getUsers", undefined, (draft) => {
-                                  console.log({draft})
+  query: ({ profilePics, userId }) => ({
+    url: '/users/profile-pic',
+    method: 'PUT',
+    body: { profilePics }
+  }),
+  async onQueryStarted({ profilePics, userId }, { dispatch, queryFulfilled }) {
+    // Optimistic update using the adapter pattern
+      const patchResult = dispatch(
+       apiSlice.util.updateQueryData("getUsers", undefined, (draft) => {
+        usersAdapter.updateOne(draft, {
+          id: userId,
+          changes: { profilePics }
+        });
+      })
+    );
 
-                                   let project = draft?.find((item) => item?.id === args?.id)
-                                   project.profilePics = updateProfile?.profilePics
-
-                                })
-            
-                              )
-            
-                           } catch(error) {
-                            console.log('Something failed in the updateProfile mutation', error)
-                           }
-                        }
-              // invalidatesTags: (result, error, arg) => {
-              // return [{type: 'User', id: arg.id}]
-              // }
-               }),
+    try {
+      const { data: updatedUser } = await queryFulfilled;
+      
+      // Optional: Update with server response if needed
+      dispatch(
+        apiSlice.util.updateQueryData("getUsers", undefined, (draft) => {
+          usersAdapter.updateOne(draft, {
+            id: userId,
+            changes: { profilePics: updatedUser.profilePics }
+          });
+        })
+      );
+    } catch (error) {
+      patchResult.undo();
+      console.error('Profile update failed:', error);
+    }
+  },
+  invalidatesTags: (result, error, { userId }) => [
+    { type: 'User', id: userId }
+  ]
+}),
      }),
        overrideExisting: true
         })
@@ -96,7 +113,8 @@ import {createEntityAdapter, createSelector} from '@reduxjs/toolkit'
         useGetUsersQuery,
         useAddNewUserMutation,
         useVerifyEmailMutation,
-        useUpdateUserProfileMutation
+        useUpdateUserProfileMutation,
+        useResendOtpMutation
       } = usersApiSlice
 
 

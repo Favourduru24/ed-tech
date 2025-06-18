@@ -64,7 +64,7 @@ const createFeed = async (req, res, next) => {
   const getAllFeed = async (req, res) => {
 
     try {
-        const { search: query, page = 1, limit = 5, category = '', date } = req.query; 
+        const { search, page = 1, limit = 5, category = '', date } = req.query; 
          const numPage = Number(page);
          const numLimit = Number(limit);
 
@@ -88,8 +88,14 @@ const createFeed = async (req, res, next) => {
           }
       }
 
-         const titleCondition = query ? { title: { $regex: query, $options: 'i' } } : {};
-         const categoryCondition = category ? await getCategoryByName(category) : null;
+         const searchCondition = search ? {
+                      $or: [
+                     { title: { $regex: search, $options: 'i' } },
+                     { description: { $regex: search, $options: 'i' } },
+                ]
+                 } : {};
+
+          const categoryCondition = category ? await getCategoryByName(category) : null;
 
          if (category && !categoryCondition) {
          return res.status(404).json({ message: 'Category not found' });
@@ -98,7 +104,7 @@ const createFeed = async (req, res, next) => {
         const conditions = {
           $and: [
             timeCondition,
-            titleCondition, 
+            searchCondition, 
             categoryCondition ? { category: categoryCondition._id } : {}
           ].filter(cond => Object.keys(cond).length > 0) // Remove empty conditions
         };
@@ -357,6 +363,7 @@ const deleteFeed = async (req, res) => {
     };
     
     const feeds = await Feed.find(conditions)
+                          .populate("userId", 'username profilePics')
                           .sort({ createdAt: -1 });
 
     if (!feeds || feeds.length === 0) {

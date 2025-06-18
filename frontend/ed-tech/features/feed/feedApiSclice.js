@@ -13,10 +13,10 @@ const initialState = feedsAdapter.getInitialState()
 export const feedsApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         getFeeds: builder.query({
-          query: ({ searchTerm = '', page = 1, limit = 5, category = '', date = ''}) => ({
+          query: ({search = '', page = 1, limit = 5, category = '', date = ''}) => ({
             url: `/feeds`,
             params: {
-            search: searchTerm,
+            search,
             page,
             limit,
             date,

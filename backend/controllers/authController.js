@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const transporter = require('../config/nodemailer')
 const User = require('../models/User')
-
+const mongoose = require('mongoose')
 
 const login = async (req, res, next) => {
   try {
@@ -54,22 +54,22 @@ const login = async (req, res, next) => {
     }
 
     const otp = String(Math.floor(100000 + Math.random() * 900000));
-    const hashedOtp = await bcrypt.hash(otp, 10);
+    const hashedOtp = await bcrypt.hash(otp, 10)
 
     foundUser.verifyOpt = hashedOtp;
     foundUser.verifyOptExpireAt = Date.now() + 15 * 60 * 1000;
 
     await foundUser.save();
 
-    // const mailOption = {
-    //   from: 'durupristine@gmail.com',
-    //   to: foundUser.email,
-    //   subject: 'Account Verification OTP',
-    //   text: `Your OTP IS ${otp}. Verify your account using this OTP`,
-    // };
+    const mailOption = {
+      from: 'durupristine@gmail.com',
+      to: foundUser.email,
+      subject: 'Account Verification OTP',
+      text: `Your OTP IS ${otp}. Verify your account using this OTP`,
+    };
 
-    // const info = await transporter.sendMail(mailOption);
-    // console.log('Email sent', info.response);
+    const info = await transporter.sendMail(mailOption);
+    console.log('Email sent', info.response);
 
     return res.json({
       success: true,
@@ -143,8 +143,8 @@ const logout = (req, res) => {
 
 
  const verifyEmail = async (req, res) => {
-    const {userId, otp} = req.body
-
+    const { otp} = req.body
+    const userId = req.id
     if(!userId || !otp) {
          return res.status(400).json({message: 'Invalid credential recieved!'})
     }
@@ -250,7 +250,62 @@ const sendResetPassword = async (req, res) => {
     
  }
 
+  const resendOtp = async (req, res) => {
+
+  try {
+      const userId = req.id
+
+      if(!mongoose.Types.ObjectId.isValid(userId)) {
+                     return res.status(400).json({
+                      message:'Invalid ID format'
+                     })
+                  }
+
+     const user = await User.findById(userId)
+
+      if(!user) {
+         return res.status(400).json({
+           message: 'Invalid ID format.'
+         })
+      }
+
+      if (user.isAccountVerified === true) {
+            return res.json({ success: false, message: 'Account Already verified!' });
+          }
+      
+          const otp = String(Math.floor(100000 + Math.random() * 900000));
+          const hashedOtp = await bcrypt.hash(otp, 10)
+      
+          user.verifyOpt = hashedOtp;
+          user.verifyOptExpireAt = Date.now() + 15 * 60 * 1000;
+      
+          await user.save();
+      
+          const mailOption = {
+            from: 'durupristine@gmail.com',
+            to: user.email,
+            subject: 'Account Verification OTP',
+            text: `Your OTP IS ${otp}. Verify your account using this OTP`,
+          };
+      
+          const info = await transporter.sendMail(mailOption);
+          console.log('Email sent', info.response);
+
+          return res.json({
+      success: true,
+       message: 'Verification OTP sent to email.',
+       });
+
+     } catch(error) {
+        console.error('Caught error:', error);
+    // avoid sending another response if already sent
+    if (!res.headersSent) {
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+     }
+   }
 
 
 
-module.exports = {login, refresh, logout, verifyEmail, sendResetPassword, resetPassword}
+
+module.exports = {login, refresh, logout, verifyEmail, sendResetPassword, resetPassword, resendOtp}

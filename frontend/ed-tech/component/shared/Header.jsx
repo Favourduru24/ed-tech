@@ -58,7 +58,7 @@ const Header = ({title}) => {
       <nav className='flex h-full flex-col justify-between md:flex md:gap-4 bg-[#1F2225] p-2 rounded-md'>
 
               <ul className='w-full flex-col items-start gap-2 md:flex'>
-                  {navLinks?.slice(0, 4).map((link) => {
+                  {navLinks?.slice(0, 3).map((link) => {
                      const isActive = link.route === pathname 
                       return (
                         <li key={link.route} className={`w-full flex-col items-start gap-2 md:flex group ${isActive ? 'bg-[#B391F0] rounded-lg font-bold' : 'text-[#FAFAFA] items-center'} `}>
@@ -72,7 +72,7 @@ const Header = ({title}) => {
               </ul>
 
                <ul className='flex justify-center items-center p-16-semibold w-full whitespace-nowrap rounded-full bg-cover  transition-all flex-col'> 
-               {navLinks?.slice(4).map((link) => {
+               {navLinks?.slice(3).map((link) => {
                      const isActive = link.route === pathname 
                       return (
                         <li key={link.route} className={`w-full flex-col items-start gap-2 md:flex group ${isActive ? 'bg-[#B391F0] rounded-lg font-bold' : 'text-[#FAFAFA] items-center'} `}>

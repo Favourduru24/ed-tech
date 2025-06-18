@@ -8,6 +8,7 @@ import TutorCategory from '@/component/shared/TutorCategory'
 import { formUrlQuery, removeKeysFromQuery } from '@/libs/utils'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Pagination from '@/component/shared/Pagination'
+import Loader from '@/component/shared/Loader'
 
 const Quiz = ({level, subject, query, page, urlParamName}) => {
 
@@ -54,7 +55,9 @@ const Quiz = ({level, subject, query, page, urlParamName}) => {
 
     if(isLoading){
          return(
-            <p className="text-white">Loading...</p>
+              <div className="fixed inset-0 z-50 flex justify-center items-cente bg-black">
+                                 <Loader styleName='w-14 h-14'/>
+                              </div>
          )
      }
 
@@ -76,14 +79,15 @@ const Quiz = ({level, subject, query, page, urlParamName}) => {
           /> 
         </div>
       </form>
-      <div className='flex justify-between items-center h-20 p-4 max-2xl:rounded-lg bg-[#1F2225] w-full rounded-r-xl'>
-        <div className='h-15 bg-dark p-2 rounded-full'>
+      <div className='sm:flex justify-between items-center sm:h-20 p-4 max-2xl:rounded-lg bg-[#1F2225] w-full rounded-r-xl'>
+        <div className='bg-dark p-2 rounded-full'>
           <TutorCategory buttons={buttons}/>
         </div>
         <Link href="/quiz/create">
-          <button className="text-white bg-[#B391F0] w-11  flex items-center justify-center p-2 rounded-full cursor-pointer font-semibold h-11">
-            <Image src="/icons/new.png" width={24} height={24} alt='create'/>
-          </button>
+          <button className="text-white bg-[#B391F0] sm:w-36 w-full flex items-center justify-center p-2 rounded-full cursor-pointer font-semibold h-11 m-2">
+                       <Image src="/icons/new.png" width={24} height={24} alt='create'/>
+                              <p>Create Quiz</p>
+                    </button>
         </Link>
       </div>
     </section>
@@ -100,7 +104,7 @@ const Quiz = ({level, subject, query, page, urlParamName}) => {
                                                <div className=' bg-[#1F2225] h-[18rem] rounded-xl border-[1.9px] border-[#4B4D4F] flex flex-col p-2 justify-center' key={quiz?._id}>
                                            <div className='flex gap-3 items-start'>
                                              <div className='  bg-black/10 w-16 h-16 rounded-full'>
-                                                      <Image src="/images/user5.png" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
+                                                      <Image src={quiz?.userId?.profilePics.cloudinaryUrl} width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
                                                 </div>
                                                      <div className='flex flex-col leading-0 gap-2 mt-1'>
                                                        <p className='text-lg font-semibold text-[#FAFAFA] font-sans '>{quiz?.userId?.username}</p>
@@ -127,9 +131,16 @@ const Quiz = ({level, subject, query, page, urlParamName}) => {
                           })} 
                             </div>
                               {data?.totalPages > 1 && <Pagination page={page} urlParamName={urlParamName} totalPages={data.totalPages}/>}
-                              {/* totalPages={} */}
+                              
                            </div>
-                          : ''}
+                          : (
+                                    <div className="w-full  rounded-2xl flex gap-2 items-center p-4 h-[60vh] flex items-center justify-center bg-[#1F2225]">
+                                       <div className="w-full h-52 rounded-2xl flex flex-col items-center justify-center">
+                                           <h2 className="text-3xl text-white font-semibold font-serif">Notification Not Found!</h2>
+                                             <p className="text-gray-300 max-w-md leading-6 text-center mb-5 font-serif ">No notification or reminder for you today seems you have a clean slate!</p>
+                                                 <Image src='/icons/notification.png' width={50} height={50} alt="notification/icon"/>
+                                       </div>
+                                    </div> )}
                                        
             </section>
     </>

@@ -7,10 +7,16 @@ const createComment = async (req, res) => {
     try {
         await session.withTransaction(async () => {
             const { feedId, content } = req.body;
-            const user = req.id;
+            const userId = req.id;
+
+            if(!mongoose.Types.ObjectId.isValid(userId)) {
+               return res.status(400).json({
+                message:'Invalid ID format'
+               })
+            }
             
             // Validate input
-            if (!feedId || !content || !user) {
+            if (!feedId || !content || !userId) {
                 return res.status(400).json({ message: 'Missing required fields!' });
             }
             
@@ -21,7 +27,7 @@ const createComment = async (req, res) => {
             const commentObject = {
                 feedId,
                 content,
-                userId: user
+                userId
             };
             
             const comment = await Comment.create([commentObject], { session });
@@ -50,7 +56,8 @@ const getComment = async (req, res) => {
       return res.status(400).json({ message: 'Invalid ID format' });
     }
 
-    const comment = await Comment.find({feedId: feedId});
+    const comment = await Comment.find({feedId: feedId})
+                                .populate('userId', 'username profilePics');
 
     if (!comment) {
       return res.status(404).json({ message: 'No Comment Found!' }); // 404 is better for "Not Found"
@@ -67,6 +74,12 @@ const getComment = async (req, res) => {
           
         try {
          const {commentId} = req.params
+
+         if(!mongoose.Types.ObjectId.isValid(commentId)) {
+           return res.status(400).json({
+             message: 'Invalid ID format.'
+           })
+         }
              
          const comment = await Comment.deleteOne({
             _id: commentId,

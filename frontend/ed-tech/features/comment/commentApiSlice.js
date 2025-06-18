@@ -34,38 +34,37 @@ export const commentApiSlice = apiSlice.injectEndpoints({
         ]
       : [{ type: 'Comment', id: 'LIST' }]
 }),
-         addNewComment: builder.mutation({
+        addNewComment: builder.mutation({
   query: (initialCommentData) => ({
     url: '/comment/create-comment',
     method: 'POST',
-    body: initialCommentData
+    body: initialCommentData,
   }),
   async onQueryStarted({ feedId, ...commentData }, { queryFulfilled, dispatch }) {
     try {
       const { data: createdComment } = await queryFulfilled;
       
-      // Create a normalized comment object
+       console.log({createdComment})
+      // Normalize the comment with the correct userId
       const normalizedComment = {
         ...createdComment,
-        id: createdComment._id
+        id: createdComment._id,
+        userId: createdComment.userId || commentData.userId, // Fallback to input
       };
 
-      // Update the cache for the specific feedId
       dispatch(
         apiSlice.util.updateQueryData('getComment', feedId, (draft) => {
-          // Use the adapter methods to add the new comment
           commentAdapter.addOne(draft, normalizedComment);
         })
       );
     } catch (error) {
-      console.error('Failed to update cache for new comment', error);
+      console.error('Cache update failed:', error);
     }
   },
-  // Optionally invalidate tags if needed
   invalidatesTags: (result, error, { feedId }) => [
     { type: 'Comment', id: 'LIST' },
-    { type: 'Comment', id: feedId }
-  ]
+    { type: 'Comment', id: feedId },
+  ],
 }),
          updateComment: builder.mutation({
             query: initailCommentData => ({
@@ -111,7 +110,7 @@ export const commentApiSlice = apiSlice.injectEndpoints({
     const patchResult = dispatch(
       apiSlice.util.updateQueryData('getComment', undefined, (draft) => {
         const comment = draft?.entities[commentId];
-    console.log({comment})
+    
 
         if (!comment) return;
 

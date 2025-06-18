@@ -220,23 +220,23 @@ export const navLinks = [
      export const sideLinks = [
              {
                label: "Personal Information",
-               icon: "/icons/lead.png",
+               icon: "/icons/menu.png",
              },
              {
                label: "My Tranings",
-               icon: "/icons/chat.png",
+               icon: "/icons/menu.png",
              },
              {
                label: "My Feeds",
-               icon: "/icons/add.png",
+               icon: "/icons/menu.png",
              },
              {
                label: "My Quizes",
-               icon: "/icons/add.png",
+               icon: "/icons/menu.png",
              },
              {
                label: "My History",
-               icon: "/icons/add.png",
+               icon: "/icons/menu.png",
              }
            ];
 

@@ -2,8 +2,9 @@
 import Image from 'next/image'
 import {useLikeCommentMutation, useDeleteCommentMutation} from '@/features/comment/commentApiSlice'
 import {useState} from 'react'
+import Loader from './Loader'
 
-const Like = ({user, comment, commentId}) => {
+const Like = ({userId, comment, commentId}) => {
 
      const [likeComment, {isLoading}] = useLikeCommentMutation()
      const [deleteComment, {isLoading: deleteLoading}] = useDeleteCommentMutation()
@@ -12,7 +13,7 @@ const Like = ({user, comment, commentId}) => {
    const handleLike = async (e) => {
   e.preventDefault();
   try {
-    const response = await likeComment({ commentId, user}).unwrap();
+    const response = await likeComment({ commentId, userId}).unwrap();
     setLikeCount(response.likeCount);
   } catch (error) {
     console.error('Like failed:', error);
@@ -22,7 +23,7 @@ const Like = ({user, comment, commentId}) => {
     const handleDeleteComment = async (e) => {
        e.preventDefault()
 
-        await deleteComment(commentId, user)
+        await deleteComment({commentId, userId})
     }
 
   return (
@@ -32,10 +33,12 @@ const Like = ({user, comment, commentId}) => {
         <span className="hidden top-7 absolute z-30 group-hover:flex text-sm text-white bg-gray-700 rounded-sm shadow-md z-30 font-sans p-1">like</span>
         </button>
          <p className="font-zentry-regular font-semibold text-light-100 text-sm ">{likeCount} Likes</p>
-            <div className="group relative" onClick={handleDeleteComment}>
-           <Image src='/icons/more.png' width={20} height={20} alt='more' className='rotate-90 size-4 cursor-pointer group' />
+            <div className="group relative" >
+           {deleteLoading ? <Loader styleName="w-4 h-4"/> : <Image src='/icons/more.png' width={20} height={20} alt='more' className='rotate-90 sm:size-4 size-3 cursor-pointer group' onClick={handleDeleteComment}/> }
              <span className="hidden top-7 absolute z-30 group-hover:flex text-sm text-white bg-gray-700 rounded-sm shadow-md z-30 font-sans p-1">delete</span>
              </div>
+             
+            
             </div>
   )
 }

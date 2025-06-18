@@ -70,7 +70,7 @@ const addUserToSessionHistory = async (req, res) => {
       }),
       History.find(quizQuery)
         .populate('quizId', 'topic subject duration name questions voice level')
-        .populate('userId', 'username')
+        .populate('userId', 'username profilePics')
         .sort({ createdAt: -1 }) // Newest first
     ]);
 
@@ -136,7 +136,7 @@ const getUserTutorHistory = async (req, res) => {
       }),
       History.find(tutorQuery)
         .populate('tutorId', 'topic subject duration name')
-        .populate('userId', 'username')
+        .populate('userId', 'username profilePics')
     ]);
 
     res.status(200).json({

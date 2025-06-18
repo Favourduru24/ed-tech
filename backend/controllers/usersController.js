@@ -115,9 +115,6 @@ const updateUserProfile = async (req, res) => {
       console.error('Error updating profile:', error); // Log the full error
   res.status(500).json({ message: 'Failed to update profile picture.' });
   }
-
-   
-
 }
 
 module.exports = {createUser, getAllUser, updateUserProfile}

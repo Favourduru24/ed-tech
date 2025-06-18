@@ -8,6 +8,7 @@ import useAuth from '@/hooks/useAuth'
 import { useAddNewQuizMutation } from '@/features/quiz/quizApiSclice'
 import { data5, data2} from '@/constants'
 import CustomSelect from './CustomSelect'
+import Loader from './Loader'
 
 const CreateQuiz = ({type}) => {
 
@@ -171,7 +172,7 @@ const CreateQuiz = ({type}) => {
                       
                </div> 
                <button className="w-[100%] bg-[#9E4B9E] font-semibold h-15 text-white rounded-xl cursor-pointer sm:mt-0 mt-2" type='submit' disabled={isLoading || isQuizLoading}>
-                  {isLoading || isQuizLoading ? '...' : type === 'quiz' ? 'Create Quiz' : 'Create Tutor' } 
+                  {isLoading || isQuizLoading ? <Loader styleName='w-6 w-6'/> : type === 'quiz' ? 'Create Quiz' : 'Create Tutor' } 
                </button>
             </form>
             </section>

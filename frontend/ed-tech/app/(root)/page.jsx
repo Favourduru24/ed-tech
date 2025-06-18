@@ -13,6 +13,7 @@ import { useState } from 'react'
 import { Calendar } from "@/components/ui/calendar"
 import {Bar, Line} from 'react-chartjs-2'
 import {Chart, LinearScale, CategoryScale, BarElement, Title, Tooltip, Legend, LineElement, PointElement} from 'chart.js'
+import Loader from "@/component/shared/Loader"
 
 Chart.register(
  LinearScale,
@@ -34,8 +35,8 @@ Chart.register(
      new Date()
    )
 
-  const {data: tutorStats} = useGetTutorStatsQuery({userId: user})
-  const {data: quizStats} = useGetQuizStatsQuery({userId: user})
+  const {data: tutorStats, isLoading: isTutorStatLoading} = useGetTutorStatsQuery({userId: user})
+  const {data: quizStats, isLoading: isQuizStatLoading} = useGetQuizStatsQuery({userId: user})
 
   console.log({tutorStats})
 
@@ -47,18 +48,6 @@ Chart.register(
       }
     }
   }
-
-  console.log({quizStats})
-
-  const quizOption = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-      }
-    }
-  }
-
 
   const BarChartData = {
     labels: tutorStats ? tutorStats?.map(stat => stat.subject) : {},
@@ -104,12 +93,14 @@ Chart.register(
     const {totalTutor, totalTutorLessonTaken, totalTutorLessonTakenToday, totalQuiz, totalQuizTaken, totalQuizTakenToday} = statCard
 
 
-    const {data: userTutorHistory} = useGetTutorHistoryQuery(user)
-    const {data: userQuizHistory, isLoading} = useGetQuizHistoryQuery(user)
+    const {data: userTutorHistory, isLoading: isLoadingTutorHistory} = useGetTutorHistoryQuery(user)
+    const {data: userQuizHistory, isLoading: isLoadingQuizHistory} = useGetQuizHistoryQuery(user)
 
-     if(isLoading) {
+     if(isLoadingQuizHistory || isTutorStatLoading || isQuizStatLoading || isLoadingTutorHistory) {
        return ( 
-       <p>Loading...</p>
+        <div className="fixed inset-0 z-50 flex justify-center items-cente bg-black">
+                           <Loader styleName="w-14 h-14"/>
+                        </div>
       )
       }
 
@@ -120,7 +111,8 @@ Chart.register(
         const {currentMonthQuizzes, lastMonthQuizzes, quizCount} = userQuizHistory?.quizsStats || {}
         const {currentMonthLessons, tutorCount, lastMonthLessons, currentDayLesson} = userTutorHistory?.tutorStats || {}
 
-console.log({userTutorHistory})
+         console.log({userTutorHistory})
+         
         const stats = [
           {
             userId: {
@@ -301,7 +293,7 @@ console.log({userTutorHistory})
 
                       {/* Todo here ... */}
                         
-                        {historyTutorIds?.length && historyTutorIds?.slice(0, 3)?.map((id) => {
+                        {historyTutorIds?.length > 0 ? historyTutorIds?.slice(0, 3)?.map((id) => {
                           const history = historyTutorEntities[id]
                            return (
                              <div className="bg-[#1F2225] rounded-r-2xl p-5 border-l-4 border-l-[#9E4B9E] xl:h-[17.2rem] selection:bg-[#B391F0]" key={history?._id}>
@@ -332,7 +324,14 @@ console.log({userTutorHistory})
                      </div> 
                     
                           )
-                        })}
+                        }) : (
+                                              <div className="w-full  rounded-2xl flex gap-2 items-center p-4 h-[60vh] flex items-center justify-center bg-[#1F2225]">
+                                                  <div className="w-full h-52 rounded-2xl flex flex-col items-center justify-center">
+                                                     <h2 className="text-3xl text-white font-semibold font-serif">Notification Not Found!</h2>
+                                                       <p className="text-gray-300 max-w-md leading-6 text-center mb-5 font-serif ">No notification or reminder for you today seems you have a clean slate!</p>
+                                                            <Image src='/icons/notification.png' width={50} height={50} alt="notification/icon"/>
+                                                  </div>
+                                     </div> )}
                      
                    
                       {/* End Todo here */}
@@ -352,7 +351,7 @@ console.log({userTutorHistory})
                     className="rounded-xl border-ring focus-visible:ring-ring/50 shadow-xl bg-black/50 text-white outline-none border-[2px] border-[#1F2225] font-bold font-sans w-full xl:h-[18.5rem] overflow-y-hidden"
                   />
                         
-                        {historyQuizIds?.length && historyQuizIds?.slice(0, 2)?.map((id) => {
+                        {historyQuizIds?.length > 0 ? historyQuizIds?.slice(0, 2)?.map((id) => {
                           const history = historyQuizsEntities[id]
                            return (
                              <div className="bg-[#1F2225] rounded-r-2xl p-5 border-l-4 border-l-[#9E4B9E] xl:h-[17.3rem] selection:bg-[#B391F0]" key={history?._id}>
@@ -383,7 +382,14 @@ console.log({userTutorHistory})
                      </div> 
                     
                           )
-                        })}
+                        }) : (
+                                              <div className="w-full  rounded-2xl flex gap-2 items-center p-4 h-[27vh] flex items-center justify-center bg-[#1F2225]">
+                                                  <div className="w-full h-52 rounded-2xl flex flex-col items-center justify-center">
+                                                     <h2 className="text-3xl text-white font-semibold font-serif">Notification Not Found!</h2>
+                                                       <p className="text-gray-300 max-w-md leading-6 text-center mb-5 font-serif ">No notification or reminder for you today seems you have a clean slate!</p>
+                                                            <Image src='/icons/notification.png' width={50} height={50} alt="notification/icon"/>
+                                                  </div>
+                                     </div> )}
                  </div>
                 </div>
              </div>

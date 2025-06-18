@@ -141,37 +141,43 @@ import { formatDate } from '../libs/utils'
              <section className='flex flex-col py-3 w-full gap-2' >
                  <div className='rounded-2xl relative bg-dark-200 border-[1.0px] border-[#4B4D4F] flex flex-col p-4' >
                  <div className='flex justify-between items-center mb-2'>
-                     <div className='flex gap-2 items-center'>
+                     <div className='flex sm:gap-2 items-center gap-1'>
                        <div className='  bg-black/10 w-16 h-16 rounded-full'>
                   <Image src={feed?.userId?.profilePics?.cloudinaryUrl} width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
                           </div>
-                     <p className='text-lg text-white font-semibold'>{feed.userId.username}</p>
+                     <p className='text-lg text-white font-semibold sm:text-[1rem] text-sm whitespace-nowrap'>{feed.userId.username}</p>
                      </div>
                       <div>
                          <div className='flex gap-2 items-center'>
-                        <p className='font-semibold font-sans text-white'>{formatDate(feed?.createdAt)}</p>
+                        <p className='font-semibold font-sans text-[#B391F0] sm:text-sm text-xs ' >{formatDate(feed?.createdAt)}</p>
                          </div>
                       </div>
                   </div>
     
                    <div className='p-2 flex flex-col gap-3 ' key={id}>
-                     <h2 className='sm:text-4xl font-bold  font-sans capitalize text-gray-300 text-2xl'>{feed?.title}</h2> 
-                    <p className='leading-8 text-justify font-sans text-gray-300 text-lg max-sm:text-sm  font-semibold max-w-4xl'>{feed?.description}</p>
+                     <h2 className='sm:text-4xl font-bold  font-sans capitalize text-gray-300 text-xl break-all'>{feed?.title?.length > 52 
+                              ? `${feed.title.substring(0, 52)}...` 
+                                   : feed?.title
+  }</h2> 
+                    <p className='leading-8 text-justify font-sans text-gray-300 text-lg max-sm:text-[1rem]  sm:font-semibold max-w-4xl trauncate break-all'>{feed?.description?.length > 300 
+                              ? `${feed.description.substring(0, 300)}...` 
+                                   : feed?.description
+  }</p>
                   </div> 
     
                   <div className='flex items-center mt-2 p-2 w-full justify-between'>
                     <div className='flex gap-2 items-center'>
                          <button onClick={handleLike}>
-                            {isLoading ? '..' : <Image src="/icons/like.png" height={24} width={24} alt='img' className="cursor-pointer"/>  }
+                            {isLoading ? '..' : <Image src="/icons/like.png" height={24} width={24} alt='img' className="cursor-pointer sm:size-6 size-4"/>  }
                          </button>
-                         <p className="font-zentry-regular font-semibold text-light-100">{likeCount} </p>
+                         <p className="font-zentry-regular font-semibold text-light-100 sm:text-[1rem] text-sm">{likeCount} </p>
 
                         {/* <Image src="/icons/skill.png" height={24} width={24} alt='img'/> */}
                           <button >
-                            <Image src="/icons/comment.png" height={24} width={24} alt='img' className="cursor-pointer"/> 
+                            <Image src="/icons/comment.png" height={24} width={24} alt='img' className="cursor-pointer sm:size-6 size-4"/> 
                          </button>
-                         <p className="font-zentry-regular font-semibold text-light-100">{feed?.comment} </p>
-                        <Image src="/icons/share.png" height={24} width={24} alt='img' onClick={handleShare} className="cursor-pointer"/>
+                         <p className="font-zentry-regular font-semibold text-light-100 sm:text-[1rem] text-sm">{feed?.comment} </p>
+                        <Image src="/icons/share.png" height={24} width={24} alt='img' onClick={handleShare} className="cursor-pointer sm:size-6 size-4"/>
                          
                         {pathname === '/profile' ? (
                           <div className='flex items-center justify-center rounded-full cursor-pointer   hover:rounded-full p-2 shrink-0 relative' >
@@ -196,7 +202,7 @@ import { formatDate } from '../libs/utils'
                      ) : ''} 
                     </div>
                        <Link href={`/feeds/${feed?._id}`}>
-                       <p className='underline font-semibold underline-offset-1 cursor-pointer text-white '>Check out</p>  
+                       <p className='underline font-semibold underline-offset-1 cursor-pointer text-[#B391F0] '>Check out</p>  
                        </Link>
                     </div>  
                     

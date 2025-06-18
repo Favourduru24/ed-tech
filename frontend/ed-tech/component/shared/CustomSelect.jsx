@@ -34,11 +34,10 @@ const CustomSelect = ({
       ref={selectRef}
       className={`relative ${className}`}
     >
-      {/* Trigger Button */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full px-4 py-2 text-left bg-[#1F2225] border-[1.0px] border-[#4B4D4F] rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-[#9E4B9E] h-15"
+        className="flex items-center justify-between px-4 py-2 text-left bg-[#1F2225] border-[1.0px] border-[#4B4D4F] rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-[#9E4B9E] h-15 "
       >
         <span>{value || placeholder}</span>
         <svg

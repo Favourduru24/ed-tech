@@ -1,5 +1,4 @@
  "use client"
-
 import { useState } from "react"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { formUrlQuery, removeKeysFromQuery } from "@/libs/utils"
@@ -151,12 +150,12 @@ const onSelectLevel = (level) => {
      
 
   return (
-     <div className="flex gap-2 h-full px-1 rounded-full items-center justify-center">
+     <div className="gap-2 flex h-full rounded-full  max-sm:flex-col w-full">
     {buttons.map((id) => (
       <div className="" onClick={() => setItems(id)} key={id}>
       <div className="font-semibold text-light-100">{id === 'Category' ? 
          (
-         <div className="w-[13rem]"> 
+         <div className=""> 
          <CustomSelect
                           options={[
                             { value: '', label: 'Select Subject' },
@@ -168,12 +167,12 @@ const onSelectLevel = (level) => {
                             onSelectSubject(value)
                           }}
                           placeholder="Select Subject"
-                          className="h-full bg-transparent"
+                          className="h-full bg-transparent min-w-[10rem]"
                         />
          </div>
       ) : id === 'Level' && pathname === '/quiz' ? 
       (
-        <div className="w-[13rem]"> 
+        <div className=""> 
         <CustomSelect
                           options={[
                             { value: '', label: 'Select Level' },
@@ -185,13 +184,13 @@ const onSelectLevel = (level) => {
                             onSelectLevel(value)
                           }}
                           placeholder="Select Level"
-                          className="h-full bg-transparent"
+                          className="h-full bg-transparent min-w-[10rem]"
                         />
         </div>
      ) :
        pathname === '/training' && id === 'Date +' ? 
         (
-        <div className="w-[12rem]"> 
+        <div className=""> 
          <CustomSelect
                           options={[
                             { value: '', label: 'Select Duration' },
@@ -203,7 +202,7 @@ const onSelectLevel = (level) => {
                             onSelectDuration(value)
                           }}
                           placeholder="Select Duration"
-                          className="h-full bg-transparent"
+                          className="h-full bg-transparent min-w-[10rem]"
                         />
         </div>
      ) : 

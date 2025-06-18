@@ -17,6 +17,9 @@ router.route('/logout')
 router.route('/verify-account')
 .post(verifyJwt, authController.verifyEmail)
 
+router.route('/resend-otp')
+.post(verifyJwt, authController.resendOtp)
+
 router.route('/send-reset-password')
 .post(authController.sendResetPassword)
 

@@ -8,10 +8,11 @@ import { cn, configureAssistant } from '@/libs/utils'
 import {useAddNewHistoryMutation} from '@/features/history/historyApiSlice'
 import { useRouter } from 'next/navigation'
 import useAuth from '@/hooks/useAuth'
+import Loader from '@/component/shared/Loader'
 
 const TutorDetail = ({id}) => {
 
-    const {data} = useGetTutorIdQuery(id)
+    const {data, isLoading} = useGetTutorIdQuery(id)
     const [addHistory, {isSuccess}] = useAddNewHistoryMutation()
     const {id: user} = useAuth()
      console.log({data})
@@ -107,14 +108,22 @@ const TutorDetail = ({id}) => {
        vapi.stop()
       await addHistory({tutorId: id, user})
     }
+
+     if(isLoading) {
+        return (
+           <div className="fixed inset-0 z-50 flex justify-center items-cente bg-black">
+                             <Loader styleName='w-14 h-14'/>
+                          </div>
+        )
+     }
       
   return (
     <section className='flex flex-col'>
      <Header title="Companion Tutor"/>
-       <div className='flex flex-col gap-4 bg-dark-200 py-5 sm:pt-4 rounded-t-xl'>
-        <div className='flex justify-between items-center w-full gap-2 backdrop-blur-lg'>
+       <div className='flex flex-col gap-4 bg-dark-200 py-5 sm:pt-4 rounded-t-xl max-md:mt-5'>
+        <div className='md:flex justify-between items-center w-full gap-2 backdrop-blur-lg max-md:flex-col'>
 
-           <div className='bg-[#1F2225] h-[36rem] w-[50%] rounded-xl flex items-center justify-center'>
+           <div className='bg-[#1F2225] h-[36rem] w-[50%] rounded-xl flex items-center justify-center max-md:w-full '>
               <div className={cn('bg-[#9E4B9E] rounded-full p-1', callStatus === CallStatus.FINISHED || callStatus === CallStatus.INACTIVE ? 'opacity-100' : 'opacity-0', callStatus === CallStatus.CONNECTING && 'opacity-100 animate-pulse')}>
                <div className='rounded-full bg-dark-200 h-30 w-30 flex items-center justify-center relative'>
                   <Image src="/images/ai-avatar.png" width={50} height={50} alt='ai-avatar' className='rounded-full object-contain'/>
@@ -132,10 +141,10 @@ const TutorDetail = ({id}) => {
            </div>
 
 
-             <div className='bg-[#1F2225] h-[36rem] w-[50%] rounded-xl flex items-center justify-center relative'>
+             <div className='bg-[#1F2225] h-[36rem] w-[50%] rounded-xl  items-center justify-center relative md:flex hidden'>
               <div className='bg-[#B391F0] rounded-full p-1'>
                <div className='rounded-full bg-dark-200 h-30 w-30 flex items-center justify-center relative'>
-                  <Image src="/images/user5.png" width={80} height={80} alt='ai-avatar' className='rounded-full object-contain'/>
+                  <Image src={userId?.profilePics.cloudinary} width={80} height={80} alt='ai-avatar' className='rounded-full object-contain'/>
                          <div className='flex items-center justify-center rounded-full cursor-pointer bg-[#B391F0] hover:rounded-full p-2 shrink-0 absolute -bottom-3 right-0'>
                             <Image src='/icons/white-mic.png' width={20} height={20} alt='white-mic/image' className="size-6"/>
                         </div>

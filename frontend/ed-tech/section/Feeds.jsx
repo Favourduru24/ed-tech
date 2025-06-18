@@ -8,8 +8,9 @@ import { useGetFeedsQuery } from '@/features/feed/feedApiSclice'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { formUrlQuery, removeKeysFromQuery } from '@/libs/utils'
 import Header from '@/component/shared/Header'
+import Loader from '@/component/shared/Loader'
 
-   const Feeds = ({searchText, cat, date}) => {
+   const Feeds = ({search, cat, date}) => {
 
    const [query, setQuery] = useState()
    const [page, setPage] = useState(1);
@@ -21,7 +22,7 @@ import Header from '@/component/shared/Header'
 
   const { data, isLoading, isFetching } = useGetFeedsQuery({
   // Query parameters
-  searchTerm: searchText,
+  search,
   category: cat,
   date,
   page, 
@@ -78,8 +79,10 @@ import Header from '@/component/shared/Header'
      
      if(isLoading) {
         return (
-         <p>Loading...</p>
-         )
+             <div className="fixed inset-0 z-50 flex justify-center items-cente bg-black">
+                    <Loader styleName='w-14 h-14'/>
+                 </div>
+             )
          }
 
          console.log({data})
@@ -87,9 +90,10 @@ import Header from '@/component/shared/Header'
   return (     
        <> 
               <Header title="Feed" />
-     <section className='flex w-full items-center max-2xl:flex-col max-2xl:gap-2 py-5 sm:pt-4'>
-       <form className='flex flex-grow bg-[#1F2225] justify-between h-20 items-center max-2xl:rounded-lg p-2 w-full xl:rounded-l-xl'>
-       <div className='flex gap-2 flex-grow sm:min-w-[200px] rounded-full p-2 items-center'>
+     <section className='flex w-[100%] items-center max-2xl:flex-col max-2xl:gap-2 py-5 sm:pt-4'>
+
+       <form className='flex flex-grow bg-[#1F2225] h-20 items-center max-2xl:rounded-lg p-2 2xl:w-[50%] xl:rounded-l-xl sm:w-full w-full'>
+       <div className='flex gap-2 flex-grow rounded-full p-2 items-center'>
       <Image src='/icons/ask.png' width={28} height={28} alt='search' className='object-cover cursor-pointer'/>
       <input 
         type="text"  
@@ -97,19 +101,20 @@ import Header from '@/component/shared/Header'
         onChange={(e) => setQuery(e.target.value)} 
         className='text-white flex-grow p-1 rounded-full outline-none placeholder:text-gray-300 placeholder:text-xl bg-transparent'
       /> 
-    </div>
+      </div>
      </form>
-     <div className='flex justify-between items-center h-20 p-4 max-2xl:rounded-lg bg-[#1F2225] w-full rounded-r-xl'>
-     <div className='h-15 bg-dark p-2 rounded-full'>
+
+     <div className='sm:flex justify-between items-center p-4 max-2xl:rounded-lg bg-[#1F2225] 2xl:w-[50%] sm:h-20 rounded-r-xl sm:w-full w-full '>
+     <div className='bg-dark rounded-full w-full'>
       <Category buttons={buttons}/>
-       </div>
+      </div>
       <Link href="/feeds/create">
-      <button className="text-white bg-[#B391F0] max-md:w-11 w-36 flex items-center justify-center p-2 rounded-full cursor-pointer font-semibold h-11">
+      <button className="text-white bg-[#B391F0] sm:w-36 w-full flex items-center justify-center p-2 rounded-full cursor-pointer font-semibold h-11 m-2 ">
        <Image src="/icons/new.png" width={24} height={24} alt='create'/>
-        <p className='max-md:hidden'>Create Feed</p>
+        <p>Create Feed</p>
       </button>
       </Link>
-   </div>
+   </div> 
   </section>
 
 {/* Centered feed items container */}
@@ -120,9 +125,16 @@ import Header from '@/component/shared/Header'
       return (
         <Feed feed={feed} id={feed._id} key={feed._id} />
       )
-    }) : <p>No Feed Found!</p>}
-  </div>
- </div>
+    }) : (
+          <div className="w-full  rounded-2xl flex gap-2 items-center p-4 h-[60vh] flex items-center justify-center bg-[#1F2225]">
+             <div className="w-full h-52 rounded-2xl flex flex-col items-center justify-center">
+                 <h2 className="text-3xl text-white font-semibold font-serif">Notification Not Found!</h2>
+                   <p className="text-gray-300 max-w-md leading-6 text-center mb-5 font-serif ">No notification or reminder for you today seems you have a clean slate!</p>
+                       <Image src='/icons/notification.png' width={50} height={50} alt="notification/icon"/>
+             </div>
+          </div> )}
+   </div>
+    </div>
 
  <div ref={loaderRef} style={{ height: '1px' }} />
 

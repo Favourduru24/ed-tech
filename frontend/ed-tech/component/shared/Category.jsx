@@ -70,17 +70,17 @@ const Category = ({ buttons }) => {
   }
 
   return (
-    <div className="flex gap-4 h-full px-1 rounded-full items-center justify-center ">
+    <div className="flex gap-4 h-full rounded-full sm:items-cente justify-cente max-sm:flex-col w-full">
       {buttons.map((id) => (
         <div 
           key={id}
           className="" 
             onClick={() => setItems(id)}
         >
-          <div className="font-semibold text-light-100 flex gap-5">
+          <div className="font-semibold text-light-100 flex gap-5 w-full ">
             {id === 'Category' ? (
 
-              <div className="w-[10rem]">
+              <div className="w-full">
                 <CustomSelect
                   options={[
                     { value: '', label: 'Select Category' },
@@ -92,12 +92,12 @@ const Category = ({ buttons }) => {
                     onSelectCategory(value)
                   }}
                   placeholder="Select Category"
-                  className="h-full bg-transparent"
+                  className="h-full bg-transparent min-w-[10rem]"
                 />
               </div>
             ) : id === 'Date +' ? (
 
-              <div className="w-[10rem]">
+              <div className="w-full">
                 <CustomSelect
                   options={[
                     { value: '', label: 'Date Added' },
@@ -109,7 +109,7 @@ const Category = ({ buttons }) => {
                     onSelectDate(value)
                   }}
                   placeholder="Date Added"
-                  className="h-full bg-transparent"
+                  className="h-full bg-transparent min-w-[10rem]"
                 />
               </div>
             ) : id}

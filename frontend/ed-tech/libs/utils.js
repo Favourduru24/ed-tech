@@ -176,11 +176,33 @@ export const calculateTrendPercentage = (countOfThisMonth, countOfLastMonth) => 
 };
 
 export function formatDate(date) {
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const now = new Date();
+  const inputDate = new Date(date);
+  const seconds = Math.floor((now - inputDate) / 1000);
+  
+  // Time intervals in seconds
+  const intervals = {
+    year: 31536000,
+    month: 2592000,
+    week: 604800,
+    day: 86400,
+    hour: 3600,
+    minute: 60,
+    second: 1
+  };
+  
+  // Calculate time difference for each interval
+  for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+    const interval = Math.floor(seconds / secondsInUnit);
+    
+    if (interval >= 1) {
+      return interval === 1 
+        ? `${interval} ${unit} ago` 
+        : `${interval} ${unit}s ago`;
+    }
+  }
+  
+  return "just now";
 }
 
 // /* eslint-disable prefer-const */

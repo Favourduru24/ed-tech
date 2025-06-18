@@ -53,15 +53,22 @@ const createTutor = async (req, res, next) => {
      try {
             const {subject = '', duration = '', search = '', page = 1, limit = 9} = req.query
 
+            const searchCondition = search ? {
+             $or: [
+            { topic: { $regex: search, $options: 'i' } },
+            { subject: { $regex: search, $options: 'i' } },
+       ]
+        } : {};
+
             const subjectCondition = subject ? { subject: { $regex: subject, $options: 'i' } } : {};
             const durationCondition = duration ? { duration: { $regex: duration, $options: 'i' } } : {};
-            const topicCondition = search ? {topic: {$regex: search, $options: 'i' } } : {};
+            // const topicCondition = search ? {topic: {$regex: search, $options: 'i' } } : {};
 
             const conditions = {
                $and:[
                  subjectCondition,
                  durationCondition,
-                 topicCondition
+                 searchCondition
                ].filter(cond => Object.keys(cond).length > 0)
             }
 
@@ -108,7 +115,7 @@ const createTutor = async (req, res, next) => {
      }
 
      const tutor = await Tutor.findById(id)
-                               .populate("userId", "username id")
+                               .populate("userId", "username id profilePics")
 
      if(tutor._id?.toString() !== id) {
        return res.status(400).json({message: 'Not matching ID'})
@@ -129,7 +136,7 @@ const createTutor = async (req, res, next) => {
        try {
            const user = req.params.userId
 
-            const userTutor = await Tutor.find({userId: user}).populate("userId", "username")
+            const userTutor = await Tutor.find({userId: user}).populate("userId", "username profilePics")
 
              if(!userTutor) {
                return res.status(400).json({

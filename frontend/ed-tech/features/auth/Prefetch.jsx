@@ -12,12 +12,12 @@ const Prefetch = ({children}) => {
 
         console.log('subscribing')
        const users = store.dispatch(usersApiSlice.endpoints.getUsers.initiate())
-       const feeds = store.dispatch(feedsApiSlice.endpoints.getFeeds.initiate())
+    //    const feeds = store.dispatch(feedsApiSlice.endpoints.getFeeds.initiate())
 
         return () => {
             console.log('unsubscribing')
             users.unsubscribe()
-            feeds.unsubscribe()
+            // feeds.unsubscribe()
         }
     }, [])
 

@@ -9,6 +9,7 @@ import { imageCofig } from '@/app/api/axios'
 import useAuth from '../../hooks/useAuth'
 import { useAddNewCategoryMutation} from '@/features/category/categoryApiSlice'
 import Header from './Header'
+import Loader from './Loader'
 
 const CreateForm = () => {
 
@@ -84,7 +85,7 @@ const CreateForm = () => {
            return
         }
 
-       await addFeed({title, pitch, image: imgUrl, description, category, userId: id}) //userId: id
+       await addFeed({title, pitch, image: imgUrl, description, category, userId: id})
        console.log({title, pitch, image: imageUrl, description, category})
     }
 
@@ -112,14 +113,14 @@ const CreateForm = () => {
         />
         <div className="flex gap-2 items-center justify-end">
           <button
-            className="w-20 h-10 bg-[#B391F0] font-semibold rounded-lg cursor-pointer"
+            className="w-20 h-10 bg-[#B391F0] font-semibold rounded-lg cursor-pointer text-white"
             onClick={handleCreateCategory}
             type="submit"
           >
-            {catIsLoading ? "...." : "Add"}
+            {catIsLoading ? <Loader styleName='w-5 w-5'/> : "Add"}
           </button>
           <button
-            className="w-20 h-10 bg-[#9E4B9E] font-semibold rounded-lg cursor-pointer"
+            className="w-20 h-10 bg-[#9E4B9E] font-semibold rounded-lg cursor-pointer text-white"
             onClick={() => setOpen(false)}
           >
             Cancel
@@ -196,7 +197,7 @@ const CreateForm = () => {
                    </div>
                 }
               <button className="w-[100%] bg-[#9E4B9E] font-semibold h-15 text-white rounded-xl cursor-pointer sm:mt-0 mt-2" type='submit' default={isLoading}>
-                 {isLoading ? 'Loading...' : 'Create Feed'}
+                 {isLoading ? <Loader styleName='w-5 w-5' title='loading...'/> : 'Create Feed'}
                </button>
                 
           </form>

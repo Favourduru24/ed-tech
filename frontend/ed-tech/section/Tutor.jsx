@@ -1,5 +1,6 @@
 'use client'
 import Header from '@/component/shared/Header'
+import Loader from '@/component/shared/Loader'
 import Pagination from '@/component/shared/Pagination'
 import TutorCategory from '@/component/shared/TutorCategory'
 import { useGetTutorQuery } from '@/features/tutor/tutorApiSlice'
@@ -52,7 +53,9 @@ const Tutor = ({subject, duration, query, page, urlParamName}) => {
 
      if(isLoading) {
        return (
-         <div>Loading...</div>
+          <div className="fixed inset-0 z-50 flex justify-center items-cente bg-black">
+                             <Loader styleName='w-14 h-14'/>
+                          </div>
        )
      }
           
@@ -62,7 +65,8 @@ const Tutor = ({subject, duration, query, page, urlParamName}) => {
          <Header title="Explore Trainings"/>
      
     <section className='flex w-full items-center max-2xl:flex-col max-2xl:gap-2 py-5 sm:pt-4'>
-      <form className='flex flex-grow bg-[#1F2225] justify-between h-20 items-center max-2xl:rounded-lg p-2 w-full xl:rounded-l-xl'>
+
+      <form className='flex flex-grow bg-[#1F2225] justify-between h-20 items-center max-2xl:rounded-lg p-2 xl:rounded-l-xl 2xl:w-[50%] sm:w-full w-full '>
         <div className='flex gap-2 flex-grow sm:min-w-[250px] rounded-full p-2 items-center'>
           <Image src='/icons/ask.png' width={28} height={28} alt='search' className='object-cover cursor-pointer'/>
           <input 
@@ -73,13 +77,14 @@ const Tutor = ({subject, duration, query, page, urlParamName}) => {
           /> 
         </div>
       </form>
-      <div className='flex justify-between items-center h-20 p-4 max-2xl:rounded-lg bg-[#1F2225] w-full rounded-r-xl'>
-        <div className='h-15 bg-dark p-2 rounded-full'>
+      <div className='sm:flex justify-between items-center sm:h-20 h-full p-4 max-2xl:rounded-lg bg-[#1F2225] 2xl:w-[50%] sm:w-full w-full rounded-r-xl'>
+        <div className='bg-dark p-2 rounded-full'>
           <TutorCategory buttons={buttons}/>
         </div>
         <Link href="/training/create">
-          <button className="text-white bg-[#B391F0] w-11  flex items-center justify-center p-2 rounded-full cursor-pointer font-semibold h-11">
-            <Image src="/icons/new.png" width={24} height={24} alt='create'/>
+          <button className="text-white bg-[#B391F0] sm:w-36 w-full flex items-center justify-center p-2 rounded-full cursor-pointer font-semibold h-11 m-2">
+             <Image src="/icons/new.png" width={24} height={24} alt='create'/>
+                    <p>Create Tutor</p>
           </button>
         </Link>
       </div>
@@ -128,7 +133,14 @@ const Tutor = ({subject, duration, query, page, urlParamName}) => {
                 
                               </div>
                        
-                               :  ''}
+                               : (
+                                                                             <div className="w-full  rounded-2xl flex gap-2 items-center p-4 h-[60vh] flex items-center justify-center bg-[#1F2225]">
+                                                                                 <div className="w-full h-52 rounded-2xl flex flex-col items-center justify-center">
+                                                                                    <h2 className="text-3xl text-white font-semibold font-serif">Notification Not Found!</h2>
+                                                                                      <p className="text-gray-300 max-w-md leading-6 text-center mb-5 font-serif ">No notification or reminder for you today seems you have a clean slate!</p>
+                                                                                           <Image src='/icons/notification.png' width={50} height={50} alt="notification/icon"/>
+                                                                                 </div>
+                                                                    </div> )}
                            </section>
                             </>
 

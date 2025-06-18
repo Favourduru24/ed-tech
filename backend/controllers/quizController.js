@@ -241,13 +241,18 @@ const createQuiz = async (req, res, next) => {
 
          const subjectCondition = subject ? { subject: {$regex: subject, $options: 'i' } } : {};
          const levelCondition = level ? {level: {$regex: level, $options: 'i' } } : {};
-         const topicCondition = search ? {topic: {$regex: search, $options: 'i' } } : {};
+          const searchCondition = search ? {
+                      $or: [
+                     { topic: { $regex: search, $options: 'i' } },
+                     { subject: { $regex: search, $options: 'i' } },
+                ]
+                 } : {};
 
          const conditions = {
            $and: [
             subjectCondition,
             levelCondition,
-            topicCondition
+            searchCondition
            ].filter(cond => Object.keys(cond).length > 0)
          }
 
@@ -292,7 +297,7 @@ const createQuiz = async (req, res, next) => {
            })
         }
 
-        const userQuiz = await Quiz.find({userId: user})
+        const userQuiz = await Quiz.find({userId: user}).populate("userId", "username profilePics")
 
        if(!userQuiz) {
          return res.status(400).json({
