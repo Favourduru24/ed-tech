@@ -17,14 +17,14 @@ import Image from "next/image"
                                <p className="text-3xl font-semibold text-light-100">{total}</p>
     
                                <div className="flex gap-1 items-center">
-                                <Image src={`/icons/${isDecrement ? 'arrow-down-red.svg' : 'arrow-up-green.svg' }`} width={100} height={150} alt="graph" className="size-5"/>
+                                <Image src={`/assets/icons/${isDecrement ? 'arrow-down-red.svg' : 'arrow-up-green.svg' }`} width={100} height={150} alt="graph" className="size-5"/>
                                <p className={cn('text-sm font-semibold font-san', isDecrement ? 'text-destructive-100' : 'text-green-400')}>{Math.round(percentage)}%<span className="text-light-100"> vs last month</span></p>
                               </div>
     
                              </div>
     
                               <div className="flex  gap-2">
-                              <Image src={`/images/${isDecrement ? 'decrement.svg' : 'increment.svg'}`} width={150} height={150} alt="graph"/>
+                              <Image src={`/assets/images/${isDecrement ? 'decrement.svg' : 'increment.svg'}`} width={150} height={150} alt="graph"/>
                               </div>
                          </div>
                           

@@ -1,14 +1,14 @@
  'use client'
  import {Provider} from 'react-redux'
  import { store} from "@/app/store"
-import ProtectAuth from './ProtectAuth'
+ import ProtectAuth from '@/component/shared/ProtectAuth'
 
 const AuthSession = ({children}) => {
   return (
-     <Provider store={store}>
-      {/* <ProtectAuth> */}
+    <Provider store={store}>
+       <ProtectAuth>
          {children}
-      {/* </ProtectAuth> */}
+     </ProtectAuth>
      </Provider>
   )
 }

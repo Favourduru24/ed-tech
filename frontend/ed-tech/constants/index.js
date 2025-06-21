@@ -2,12 +2,12 @@ export const navLinks = [
     {
       label: "Dashboard",
       route: "/",
-      icon: "/icons/dash.png",
+      icon: "/assets/icons/dashboard.png",
     },
     {
       label: "Trainings",
       route: "/training",
-      icon: "/icons/mark.png",
+      icon: "/assets/icons/training.png",
     },
     // {
     //   label: "Message",
@@ -17,7 +17,7 @@ export const navLinks = [
     {
       label: "Feeds",
       route: "/feeds",
-      icon: "/icons/feeds.png",
+      icon: "/assets/icons/explore.png",
     },
     // {
     //   label: "Notification",
@@ -32,12 +32,12 @@ export const navLinks = [
     {
       label: "Quizes",
       route: "/quiz",
-      icon: "/icons/feeds.png",
+      icon: "/assets/icons/feeds.png",
     },
     {
       label: "Profile",
       route: "/profile",
-      icon: "/icons/training.png",
+      icon: "/assets/icons/profile.png",
     },
   ];
 
@@ -45,7 +45,7 @@ export const navLinks = [
      {
        title: 'Today Lesson taken',
        number: '10',
-       image: '/images/decrement.svg',
+       image: '/assets/images/decrement.svg',
        icon: '/icons/arrow-down-red.svg',
        subtitle: '20%',
        color: '#2923D9',
@@ -55,7 +55,7 @@ export const navLinks = [
        title: 'Total Quiz taken',
        number: '20',
        image: '/images/increment.svg',
-       icon:'/icons/arrow-up-green.svg',
+       icon:'/assets/icons/arrow-up-green.svg',
        subtitle: '40%',
        color: '#9E4B9E',
        id:'1'

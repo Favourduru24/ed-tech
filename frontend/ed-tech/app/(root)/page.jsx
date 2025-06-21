@@ -241,7 +241,7 @@ Chart.register(
   return (
     <section className="flex flex-col"> 
         <Header title="Dashboard"/>
-        <p className="text-[#FAFAFA] text-2xl font-medium leading-10 sm:pt-1 pt-5  selection:bg-[#B391F0]">Welcome, <span className="text-light-100">{username}</span></p>
+        <p className="text-[#FAFAFA] sm:text-2xl text-xl font-medium leading-10 sm:pt-1 pt-5  selection:bg-[#B391F0]">Welcome, <span className="text-light-100">{username}</span></p>
         <p className="text-light-100 font-sans selection:bg-[#B391F0] max-sm:text-sm">Here's is a brief summary of your progress and<br/> quizes and lesson taken.</p>
 
          <div className="w-full bg-[#1F2225] my-10 rounded-2xl flex items-cente p-8 justify-between max-lg:flex-col gap-20 ">
@@ -251,7 +251,7 @@ Chart.register(
                   <Button color='#B391F0' otherStyle='max-sm:w-full' title="Start Improving" links="/training"/>
             </div>
                  <div className="flex gap-5 max-xl:hidden">
-                 <Image src='/images/robot.png' alt="robotnic" width={280} height={280} />
+                 <Image src='/assets/images/robot.png' alt="robotnic" width={280} height={280} />
                  </div>
            </div>
           
@@ -301,7 +301,7 @@ Chart.register(
 
                            <div className='flex gap-4 items-start'>
                                              <div className='bg-black/10 w-16 h-16 rounded-full'>
-                                                      <Image src="/images/user2.jpg" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
+                                                      <Image src={history?.userId.profilePics.cloudinaryUrl} width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
                                                 </div>
                                                      <div className='flex flex-col leading-0 gap-2 mt-1'>
                                                        <p className='text-lg font-semibold text-[#FAFAFA] font-sans '>{history?.userId.username}</p>
@@ -309,11 +309,11 @@ Chart.register(
                                                      </div>
                                               </div>
 
-                          <Image src='/icons/book.png' width={24} height={24} alt="book" className="justify-end"/>
+                          <Image src='/assets/icons/book.png' width={24} height={24} alt="book" className="justify-end cursor-pointer"/>
                          </div>
                          <div className="flex flex-col">
                           <h2 className="text-[#FAFAFA] mt-3 text-xl font-semibold leading-8 text-light-100">Learn {history.tutorId.subject}<br/>  With {history.tutorId.name}</h2>
-                           <p className="text-gray-300 max-w-md text-sm leading-6"><span className="text-[#B391F0] text-lg semibold">Topic: </span>{history.tutorId.topic}</p>
+                           <p className="text-lg font-sans text-light-100">Topic: <span className="text-[#B391F0] text-[1rem] text-base leading-6 lowercase">{history.tutorId.topic}</span></p>
                          </div>
                          <div className="w-full flex justify-between mt-5 items-end">
                          <Button title="Start" color='#B391F0' links={`/training/${history.tutorId._id}`} />
@@ -327,9 +327,9 @@ Chart.register(
                         }) : (
                                               <div className="w-full  rounded-2xl flex gap-2 items-center p-4 h-[60vh] flex items-center justify-center bg-[#1F2225]">
                                                   <div className="w-full h-52 rounded-2xl flex flex-col items-center justify-center">
-                                                     <h2 className="text-3xl text-white font-semibold font-serif">Notification Not Found!</h2>
-                                                       <p className="text-gray-300 max-w-md leading-6 text-center mb-5 font-serif ">No notification or reminder for you today seems you have a clean slate!</p>
-                                                            <Image src='/icons/notification.png' width={50} height={50} alt="notification/icon"/>
+                                                     <h2 className="sm:text-3xl text-xl text-white font-semibold font-mona-sans">No Lesson taken yet!</h2>
+                                                       <p className="text-gray-300 max-w-md leading-6 text-center mb-5 font-mona-sans sm:text-[1rem] text-sm">No worries plenty of lesson are available for you!</p>
+                                                            <Image src='/assets/icons/search.png' width={50} height={50} alt="search"/>
                                                   </div>
                                      </div> )}
                      
@@ -359,7 +359,7 @@ Chart.register(
 
                            <div className='flex gap-4 items-start'>
                                              <div className='bg-black/10 w-16 h-16 rounded-full'>
-                                                      <Image src="/images/user2.jpg" width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
+                                                      <Image src={history.userId.profilePics.cloudinaryUrl} width={50} height={50} alt='user/image' className='h-full w-full object-cover rounded-full'/>
                                                 </div>
                                                      <div className='flex flex-col leading-0 gap-2 mt-1'>
                                                        <p className='text-lg font-semibold text-[#FAFAFA] font-sans '>{history.userId.username}</p>
@@ -367,11 +367,11 @@ Chart.register(
                                                      </div>
                                               </div>
 
-                          <Image src='/icons/book.png' width={24} height={24} alt="book" className="justify-end"/>
+                          <Image src='/assets/icons/book.png' width={24} height={24} alt="book" className="justify-end cursor-pointer"/>
                          </div>
                          <div className="flex flex-col">
                           <h2 className="text-[#FAFAFA] mt-3 text-xl font-semibold leading-8 text-light-100">{history.quizId.subject} Quiz <br/> With {history.quizId.name}</h2>
-                           <p className="text-gray-300 max-w-md text-sm leading-6"><span className="text-[#B391F0] text-lg semibold">Topic: </span>{history.quizId.topic}</p>
+                           <p className="text-light-100 text-lg leading-6 max-w-72">Topic: <span className="text-[#B391F0] text-[1rem] text-base leading-6 lowercase">{history.quizId.topic}</span></p>
                          </div>
                          <div className="w-full flex justify-between mt-5 items-end">
                          <Button title="Start" color='#B391F0' links={`/quiz/${history.quizId._id}`}/>
@@ -385,9 +385,9 @@ Chart.register(
                         }) : (
                                               <div className="w-full  rounded-2xl flex gap-2 items-center p-4 h-[27vh] flex items-center justify-center bg-[#1F2225]">
                                                   <div className="w-full h-52 rounded-2xl flex flex-col items-center justify-center">
-                                                     <h2 className="text-3xl text-white font-semibold font-serif">Notification Not Found!</h2>
-                                                       <p className="text-gray-300 max-w-md leading-6 text-center mb-5 font-serif ">No notification or reminder for you today seems you have a clean slate!</p>
-                                                            <Image src='/icons/notification.png' width={50} height={50} alt="notification/icon"/>
+                                                     <h2 className="sm:text-3xl text-white font-semibold font-mona-sans text-xl">No Quiz Taken Not Found!</h2>
+                                                       <p className="text-gray-300 max-w-md leading-6 text-center mb-5 font-mona-sans sm:text-[1rem] text-sm ">No worries, plenty of quiz are available for you!</p>
+                                                            <Image src='/assets/icons/search.png' width={50} height={50} alt="search/icon"/>
                                                   </div>
                                      </div> )}
                  </div>
@@ -398,11 +398,11 @@ Chart.register(
              </div>
                <div className="mt-10 rounded-md text-white flex flex-col gap-5" >
                   <p className=" text-[min(10vw,40px)] selection:bg-[#B391F0] font-semibold text-[#B391F0]">Graph of your Lesson Taken.</p>
-                 <div className="bg-[#1F2225] rounded-md xl:h-[35rem]">
+                 <div className="bg-[#1F2225] rounded-md xl:h-[35rem] min-h-[10rem]">
                <Bar options={options} data={BarChartData} />
                </div>
                 <p className=" text-[min(10vw,40px)] selection:bg-[#B391F0] font-semibold text-[#B391F0]">Graph of your Quizzes Taken.</p>
-               <div className="bg-[#1F2225] rounded-md cursor-pointer xl:h-[35rem]">
+               <div className="bg-[#1F2225] rounded-md cursor-pointer xl:h-[35rem] min-h-[10rem]">
                <Line options={options} data={LineChartData} />
                </div>
                </div>
